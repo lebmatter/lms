@@ -1,0 +1,63 @@
+{
+ "actions": [],
+ "creation": "2023-06-26 11:57:09.309896",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "question",
+  "answer",
+  "is_correct",
+  "evaluator",
+  "evaluator_response"
+ ],
+ "fields": [
+  {
+   "fieldname": "question",
+   "fieldtype": "Text",
+   "in_list_view": 1,
+   "label": "Question",
+   "read_only": 1
+  },
+  {
+   "fieldname": "answer",
+   "fieldtype": "Long Text",
+   "in_list_view": 1,
+   "label": "Users Response",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_correct",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Correct",
+   "read_only": 1
+  },
+  {
+   "fieldname": "evaluator",
+   "fieldtype": "Link",
+   "label": "Evaluator",
+   "options": "User"
+  },
+  {
+   "fieldname": "evaluator_response",
+   "fieldtype": "Long Text",
+   "label": "Evaluator Response"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-06-26 12:56:34.708369",
+ "modified_by": "Administrator",
+ "module": "LMS",
+ "name": "LMS Exam Result",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

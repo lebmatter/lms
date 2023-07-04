@@ -1,0 +1,56 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-07-05 13:05:26.039190",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "exam_schedule",
+  "question",
+  "category"
+ ],
+ "fields": [
+  {
+   "fieldname": "exam_schedule",
+   "fieldtype": "Link",
+   "label": "Exam Schedule",
+   "options": "LMS Exam Schedule"
+  },
+  {
+   "fieldname": "question",
+   "fieldtype": "Link",
+   "label": "Question",
+   "options": "LMS Exam Question"
+  },
+  {
+   "fetch_from": "question.category",
+   "fieldname": "category",
+   "fieldtype": "Data",
+   "label": "Category"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-07-05 13:07:21.980665",
+ "modified_by": "Administrator",
+ "module": "LMS",
+ "name": "Exam Schedule Question",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

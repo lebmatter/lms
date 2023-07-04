@@ -1,0 +1,177 @@
+{
+ "actions": [],
+ "autoname": "format: BATCH-{#####}",
+ "creation": "2023-07-04 17:21:01.908178",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "exam",
+  "start_date_time",
+  "column_break_3",
+  "duration",
+  "registration_end_time",
+  "no_of_candidates_per_examiner",
+  "max_candidates",
+  "section_break_5",
+  "description",
+  "section_break_7",
+  "visibility",
+  "membership",
+  "column_break_9",
+  "status",
+  "stage",
+  "exam_settings_section",
+  "column_break_5bke",
+  "examiners",
+  "questions"
+ ],
+ "fields": [
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_5",
+   "fieldtype": "Section Break",
+   "label": "Schedule Description"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Markdown Editor",
+   "label": "Description"
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break",
+   "label": "Schedule Settings"
+  },
+  {
+   "default": "Public",
+   "fieldname": "visibility",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Visibility",
+   "options": "Public\nUnlisted\nPrivate"
+  },
+  {
+   "fieldname": "membership",
+   "fieldtype": "Select",
+   "label": "Membership",
+   "options": "\nOpen\nRestricted\nInvite Only\nClosed"
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Active\nInactive"
+  },
+  {
+   "default": "Ready",
+   "fieldname": "stage",
+   "fieldtype": "Select",
+   "label": "Stage",
+   "options": "Ready\nIn Progress\nCompleted\nCancelled"
+  },
+  {
+   "fieldname": "exam",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Exam",
+   "options": "LMS Exam",
+   "reqd": 1
+  },
+  {
+   "fieldname": "duration",
+   "fieldtype": "Time",
+   "label": "Duration"
+  },
+  {
+   "fieldname": "examiners",
+   "fieldtype": "Table",
+   "label": "Examiners",
+   "options": "Examiner"
+  },
+  {
+   "fieldname": "exam_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Exam Settings"
+  },
+  {
+   "default": "10",
+   "fieldname": "no_of_candidates_per_examiner",
+   "fieldtype": "Int",
+   "label": "No of Candidates per Examiner"
+  },
+  {
+   "default": "25",
+   "fieldname": "max_candidates",
+   "fieldtype": "Int",
+   "label": "Max Candidates"
+  },
+  {
+   "fieldname": "column_break_5bke",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "registration_end_time",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Registration End Time"
+  },
+  {
+   "fieldname": "start_date_time",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Start Date Time"
+  },
+  {
+   "description": "Select questions by category and marks required",
+   "fieldname": "questions",
+   "fieldtype": "Table",
+   "label": "Questions",
+   "options": "Exam Question Weightage"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "group": "Members",
+   "link_doctype": "LMS Batch Membership",
+   "link_fieldname": "batch"
+  }
+ ],
+ "modified": "2023-07-06 16:46:03.768552",
+ "modified_by": "Administrator",
+ "module": "LMS",
+ "name": "LMS Exam Schedule",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
