@@ -2,7 +2,7 @@
     {% if exams | length %}
     <div class="cards-parent">
         {% for exam in exams %}
-        {{ widgets.CourseCard(course=exam, read_only=False) }}
+        {{ widgets.ExamCard(exam=exam, read_only=False) }}
         {% endfor %}
     </div>
 
