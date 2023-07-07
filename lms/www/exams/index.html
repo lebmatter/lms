@@ -68,9 +68,9 @@
             {% if frappe.session.user != "Guest" %}
             <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#exams-enrolled">
-                    {{ _("Enrolled") }}
+                    {{ _("Registered") }}
                     <span class="course-list-count">
-                        {{ enrolled_exams | length }}
+                        {{ registered_exams | length }}
                     </span>
                 </a>
             </li>
@@ -120,7 +120,7 @@
             {% if frappe.session.user != "Guest" %}
             <div class="tab-pane fade" id="courses-enrolled" role="tabpanel" aria-labelledby="courses-enrolled">
                 {% set exams = enrolled_exams %}
-                {% set title = _("Enrolled Exams") %}
+                {% set title = _("Registered Exams") %}
                 {% set classes = "enrolled-exams" %}
                 {% include "lms/templates/exam_list.html" %}
             </div>
