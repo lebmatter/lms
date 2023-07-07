@@ -120,6 +120,45 @@ def get_enrolled_courses():
 	return {"in_progress": in_progress, "completed": completed}
 
 
+def get_exam_registation(candidate=None):
+	"""Returns all exam registrations of the user."""
+
+	filters = {"candidate": candidate or frappe.session.user}
+	return frappe.get_all("LMS Exam Registration", filters, ["name", "exam", "progress"])
+
+def get_registered_exams():
+	in_progress = []
+	completed = []
+	memberships = get_exam_registation(None)
+
+	for membership in memberships:
+		exam = frappe.db.get_value(
+			"LMS Exam",
+			membership.exam,
+			[
+				"name",
+				"upcoming",
+				"title",
+				"image",
+				"enable_certification",
+				"paid_certificate",
+				"price_certificate",
+				"currency",
+				"published",
+			],
+			as_dict=True,
+		)
+		if not exam.published:
+			continue
+		progress = membership.progress
+		if progress == "Scheduled":
+			in_progress.append(exam)
+		else:
+			completed.append(exam)
+
+	return {"in_progress": in_progress, "completed": completed}
+
+
 def get_course_membership(member=None, member_type=None):
 	"""Returns all memberships of the user."""
 
@@ -128,7 +167,6 @@ def get_course_membership(member=None, member_type=None):
 		filters["member_type"] = member_type
 
 	return frappe.get_all("LMS Batch Membership", filters, ["name", "course", "progress"])
-
 
 def get_authored_courses(member=None, only_published=True):
 	"""Returns the number of courses authored by this user."""
@@ -158,6 +196,35 @@ def get_authored_courses(member=None, only_published=True):
 		course_details.append(detail)
 
 	return course_details
+
+def get_authored_exams(member=None, only_published=True):
+	"""Returns the number of exams authored by this user."""
+	exam_details = []
+	exams = frappe.get_all(
+		"Course Instructor", {"instructor": member or frappe.session.user}, ["parent"]
+	)
+
+	for exam in exams:
+		detail = frappe.db.get_value(
+			"LMS Exam",
+			exam.parent,
+			[
+				"name",
+				"upcoming",
+				"title",
+				"image",
+				"enable_certification",
+				"status",
+				"published",
+			],
+			as_dict=True,
+		)
+
+		if only_published and detail and not detail.published:
+			continue
+		exam_details.append(detail)
+
+	return exam_details
 
 
 def get_palette(full_name):
