@@ -529,6 +529,13 @@ def get_courses_under_review():
 		["name", "upcoming", "title", "image", "enable_certification", "status", "published"],
 	)
 
+def get_exams_under_review():
+	return frappe.get_all(
+		"LMS Exam",
+		{"status": "Under Review"},
+		["name", "upcoming", "title", "image", "enable_certification", "status", "published"],
+	)
+
 
 def get_certificates(member=None):
 	return frappe.get_all(
