@@ -488,6 +488,10 @@ def redirect_to_courses_list():
 	frappe.local.flags.redirect_location = "/courses"
 	raise frappe.Redirect
 
+def redirect_to_exams_list():
+	frappe.local.flags.redirect_location = "/exams"
+	raise frappe.Redirect
+
 
 def has_course_instructor_role(member=None):
 	return frappe.db.get_value(
@@ -495,7 +499,6 @@ def has_course_instructor_role(member=None):
 		{"parent": member or frappe.session.user, "role": "Course Creator"},
 		"name",
 	)
-
 
 def can_create_courses(member=None):
 	if not member:

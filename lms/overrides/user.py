@@ -1,6 +1,9 @@
 import hashlib
 import frappe
 import requests
+from pytz import timezone 
+from datetime import datetime, timedelta
+
 from frappe import _
 from frappe.core.doctype.user.user import User
 from frappe.utils import cint, escape_html, random_string
@@ -225,6 +228,34 @@ def get_authored_exams(member=None, only_published=True):
 		exam_details.append(detail)
 
 	return exam_details
+
+def get_ongoing_exams(member=None):
+	"""
+	Get ongoing exams of a candidate.
+	Check if current time is inbetween start and end time
+	Ideally there should be only one ongoing exam,
+	But the function returns all valid enteies
+	"""
+	exams = []
+	registered_exams = frappe.get_all(
+		"LMS Exam Registration",
+		{"candidate": member or frappe.session.user},
+		["name", "exam_schedule", "status"]
+	)
+	for exam in registered_exams:
+		if exam["status"] != "Scheduled":
+			continue
+		sched = frappe.db.get_doc(
+			"LMS Exam Schedule", exam["exam_schedule"],
+			fields=["exam", "start_date_time", "timezone", "duration"]
+		)
+		tnow = datetime.now(timezone(exam["timezone"]))
+		end_time = sched["start_time"] + timedelta(minutes=sched["duration"])
+		if sched["start_time"] <= tnow <= end_time:
+			exams.append(sched["exam"])
+
+	return False
+
 
 
 def get_palette(full_name):
