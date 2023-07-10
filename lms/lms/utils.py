@@ -75,6 +75,19 @@ def get_membership(course, member, batch=None):
 	return membership
 
 
+def get_exam_registration(exam, member):
+	filters = {"member": member, "exam": exam}
+
+	reg = frappe.db.get_value(
+		"LMS Exam Registration",
+		filters,
+		["name", "exam", "progress"],
+		as_dict=True,
+	)
+
+	return reg
+
+
 def get_chapters(course):
 	"""Returns all chapters of this course."""
 	if not course:
@@ -182,6 +195,11 @@ def get_students(course, batch=None):
 
 	return frappe.get_all("LMS Batch Membership", filters, ["member"])
 
+def get_exam_average_rating(exam):
+	ratings = [review.rating for review in get_exam_reviews(exam)]
+	if not len(ratings):
+		return None
+	return sum(ratings) / len(ratings)
 
 def get_average_rating(course):
 	ratings = [review.rating for review in get_reviews(course)]
@@ -208,6 +226,41 @@ def get_reviews(course):
 		)
 
 	return reviews
+
+def get_exam_reviews(exam):
+	reviews = frappe.get_all(
+		"LMS Exam Review",
+		{"exam": exam},
+		["review", "rating", "owner", "creation"],
+		order_by="creation desc",
+	)
+	out_of_ratings = frappe.db.get_all(
+		"DocField", {"parent": "LMS Exam Review", "fieldtype": "Rating"}, ["options"]
+	)
+	out_of_ratings = (len(out_of_ratings) and out_of_ratings[0].options) or 5
+	for review in reviews:
+		review.rating = review.rating * out_of_ratings
+		review.owner_details = frappe.db.get_value(
+			"User", review.owner, ["name", "username", "full_name", "user_image"], as_dict=True
+		)
+
+	return reviews
+
+
+def get_sorted_exam_reviews(exam):
+	rating_count = rating_percent = frappe._dict()
+	keys = ["5.0", "4.0", "3.0", "2.0", "1.0"]
+	for key in keys:
+		rating_count[key] = 0
+
+	reviews = get_exam_reviews(exam)
+	for review in reviews:
+		rating_count[cstr(review.rating)] += 1
+
+	for key in keys:
+		rating_percent[key] = rating_count[key] / len(reviews) * 100
+
+	return rating_percent
 
 
 def get_sorted_reviews(course):
@@ -330,6 +383,14 @@ def is_eligible_to_review(course, membership):
 		return False
 	if frappe.db.count(
 		"LMS Course Review", {"course": course, "owner": frappe.session.user}
+	):
+		return False
+	return True
+
+def is_eligible_to_review_exam(exam):
+	"""Checks if user is eligible to review the exam"""
+	if frappe.db.count(
+		"LMS Exam Review", {"exam": exam, "owner": frappe.session.user}
 	):
 		return False
 	return True
