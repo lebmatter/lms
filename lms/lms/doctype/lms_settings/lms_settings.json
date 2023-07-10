@@ -32,8 +32,6 @@
   "mentor_request_creation",
   "mentor_request_status_update",
   "storage_tab",
-  "column_break_burr",
-  "hide_instructor_on_exam_card",
   "column_break_ixou",
   "storage_type",
   "aws_key",
@@ -222,16 +220,6 @@
    "label": "S3 Bucket"
   },
   {
-   "fieldname": "column_break_burr",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "0",
-   "fieldname": "hide_instructor_on_exam_card",
-   "fieldtype": "Check",
-   "label": "Hide Instructor on Exam Card"
-  },
-  {
    "fieldname": "column_break_ixou",
    "fieldtype": "Column Break"
   }
@@ -239,7 +227,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-07-07 15:02:36.245723",
+ "modified": "2023-07-10 16:28:35.772776",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Settings",

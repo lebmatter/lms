@@ -19,7 +19,6 @@
   "video_link",
   "image",
   "column_break_3",
-  "instructors",
   "tags",
   "status",
   "section_break_7",
@@ -204,12 +203,6 @@
    "fieldtype": "Currency",
    "label": "Certificate Price",
    "mandatory_depends_on": "paid_certificate"
-  },
-  {
-   "fieldname": "instructors",
-   "fieldtype": "Table MultiSelect",
-   "label": "Instructors",
-   "options": "Course Instructor"
   }
  ],
  "is_published_field": "published",
@@ -221,7 +214,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2023-07-07 12:19:01.816481",
+ "modified": "2023-07-10 16:22:01.663484",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam",
