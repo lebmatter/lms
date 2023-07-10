@@ -18,7 +18,7 @@
    "fieldname": "exam",
    "fieldtype": "Link",
    "label": "Exam",
-   "options": "LMS Scheduled Exam"
+   "options": "LMS Exam"
   },
   {
    "fieldname": "from",
@@ -53,7 +53,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-06-26 15:51:13.016689",
+ "modified": "2023-07-08 13:48:38.787574",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "Exam Messages",
