@@ -9,9 +9,10 @@
  "field_order": [
   "exam",
   "start_date_time",
-  "column_break_3",
+  "timezone",
   "duration",
   "registration_end_time",
+  "column_break_3",
   "no_of_candidates_per_examiner",
   "max_candidates",
   "section_break_5",
@@ -24,6 +25,8 @@
   "stage",
   "exam_settings_section",
   "column_break_5bke",
+  "needs_evaluation",
+  "evaluation_ends_in_days",
   "examiners",
   "questions"
  ],
@@ -91,8 +94,9 @@
   },
   {
    "fieldname": "duration",
-   "fieldtype": "Time",
-   "label": "Duration"
+   "fieldtype": "Int",
+   "label": "Duration in Minutes",
+   "reqd": 1
   },
   {
    "fieldname": "examiners",
@@ -129,9 +133,10 @@
   },
   {
    "fieldname": "start_date_time",
-   "fieldtype": "Date",
+   "fieldtype": "Datetime",
    "in_list_view": 1,
-   "label": "Start Date Time"
+   "label": "Start Date Time",
+   "reqd": 1
   },
   {
    "description": "Select questions by category and marks required",
@@ -139,6 +144,24 @@
    "fieldtype": "Table",
    "label": "Questions",
    "options": "Exam Question Weightage"
+  },
+  {
+   "description": "eg., Asia/Kolkata",
+   "fieldname": "timezone",
+   "fieldtype": "Data",
+   "label": "Timezone",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "needs_evaluation",
+   "fieldtype": "Check",
+   "label": "Needs Evaluation"
+  },
+  {
+   "fieldname": "evaluation_ends_in_days",
+   "fieldtype": "Int",
+   "label": "Evaluation Ends in Days"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -149,7 +172,7 @@
    "link_fieldname": "batch"
   }
  ],
- "modified": "2023-07-06 16:46:03.768552",
+ "modified": "2023-07-08 21:55:20.769898",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",
