@@ -10,7 +10,6 @@
   "course",
   "candidate",
   "email_sent",
-  "exam",
   "assigned_examiner",
   "progress",
   "candidate_video",
@@ -31,12 +30,6 @@
    "fieldtype": "Check",
    "label": "Email Sent",
    "options": "email_sent"
-  },
-  {
-   "fieldname": "exam",
-   "fieldtype": "Link",
-   "label": "Exam",
-   "options": "LMS Exam"
   },
   {
    "fieldname": "assigned_examiner",
@@ -80,7 +73,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-07 12:48:38.478295",
+ "modified": "2023-07-08 13:46:16.738233",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Registration",
