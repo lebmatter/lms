@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "exam_schedule",
+  "exam",
   "course",
   "candidate",
   "email_sent",
@@ -69,11 +70,18 @@
    "fieldtype": "Select",
    "label": "Progress",
    "options": "Scheduled\nCompleted\nAborted"
+  },
+  {
+   "fetch_from": "exam_schedule.exam",
+   "fieldname": "exam",
+   "fieldtype": "Link",
+   "label": "Exam",
+   "options": "LMS Exam"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-08 13:46:16.738233",
+ "modified": "2023-07-10 15:33:07.128714",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Registration",
