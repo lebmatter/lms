@@ -8,13 +8,13 @@
  "engine": "InnoDB",
  "field_order": [
   "exam",
+  "max_candidates",
+  "no_of_candidates_per_examiner",
+  "registration_end_time",
+  "column_break_3",
   "start_date_time",
   "duration",
   "end_date_time",
-  "registration_end_time",
-  "column_break_3",
-  "no_of_candidates_per_examiner",
-  "max_candidates",
   "section_break_5",
   "description",
   "section_break_7",
@@ -27,7 +27,13 @@
   "needs_evaluation",
   "evaluation_ends_in_days",
   "examiners",
-  "questions"
+  "question_management_section",
+  "view_question_bank_overview",
+  "questions",
+  "total_marks",
+  "total_questions",
+  "pass_percentage",
+  "amended_from"
  ],
  "fields": [
   {
@@ -41,7 +47,7 @@
   },
   {
    "fieldname": "description",
-   "fieldtype": "Markdown Editor",
+   "fieldtype": "Small Text",
    "label": "Description"
   },
   {
@@ -88,6 +94,7 @@
    "fieldname": "duration",
    "fieldtype": "Int",
    "label": "Duration in Minutes",
+   "non_negative": 1,
    "reqd": 1
   },
   {
@@ -134,7 +141,7 @@
    "description": "Select questions by category and marks required",
    "fieldname": "questions",
    "fieldtype": "Table",
-   "label": "Questions",
+   "label": "Add Questions",
    "options": "Exam Question Weightage"
   },
   {
@@ -153,17 +160,60 @@
    "fieldtype": "Datetime",
    "label": "End Date Time",
    "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "LMS Exam Schedule",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "question_management_section",
+   "fieldtype": "Section Break",
+   "label": "Question Management"
+  },
+  {
+   "fieldname": "view_question_bank_overview",
+   "fieldtype": "Button",
+   "label": "View Question Category Overview"
+  },
+  {
+   "fieldname": "total_questions",
+   "fieldtype": "Int",
+   "label": "Total No. of Questions",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_marks",
+   "fieldtype": "Int",
+   "label": "Total Marks",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "pass_percentage",
+   "fieldtype": "Percent",
+   "label": "Pass Percentage",
+   "non_negative": 1
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [
   {
    "group": "Members",
    "link_doctype": "LMS Exam Registration",
    "link_fieldname": "exam_schedule"
+  },
+  {
+   "link_doctype": "Exam Schedule Question",
+   "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-07-11 15:42:57.754663",
+ "modified": "2023-07-14 13:13:55.792574",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",

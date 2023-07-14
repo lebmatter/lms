@@ -1,6 +1,6 @@
 {
  "actions": [],
- "allow_rename": 1,
+ "autoname": "field:title",
  "creation": "2023-07-05 11:52:34.499313",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -11,15 +11,22 @@
   {
    "fieldname": "title",
    "fieldtype": "Data",
-   "label": "Title"
+   "label": "Title",
+   "unique": 1
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2023-07-05 11:52:34.499313",
+ "links": [
+  {
+   "link_doctype": "LMS Exam Question",
+   "link_fieldname": "category"
+  }
+ ],
+ "modified": "2023-07-11 15:18:44.130175",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Question Category",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

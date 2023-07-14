@@ -13,7 +13,9 @@
   "email_sent",
   "progress",
   "candidate_video",
-  "messages"
+  "messages",
+  "exam_started",
+  "exam_current_question"
  ],
  "fields": [
   {
@@ -71,11 +73,24 @@
    "in_list_view": 1,
    "label": "Exam",
    "options": "LMS Exam"
+  },
+  {
+   "fieldname": "exam_current_question",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Current Question",
+   "non_negative": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "exam_started",
+   "fieldtype": "Check",
+   "label": "Exam Started"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-11 15:48:37.195502",
+ "modified": "2023-07-13 10:45:06.523072",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Registration",

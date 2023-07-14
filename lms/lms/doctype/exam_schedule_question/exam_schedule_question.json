@@ -7,31 +7,45 @@
  "field_order": [
   "exam_schedule",
   "question",
-  "category"
+  "category",
+  "mark"
  ],
  "fields": [
   {
    "fieldname": "exam_schedule",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Exam Schedule",
-   "options": "LMS Exam Schedule"
+   "options": "LMS Exam Schedule",
+   "reqd": 1
   },
   {
    "fieldname": "question",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Question",
-   "options": "LMS Exam Question"
+   "options": "LMS Exam Question",
+   "reqd": 1
   },
   {
    "fetch_from": "question.category",
    "fieldname": "category",
-   "fieldtype": "Data",
-   "label": "Category"
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Category",
+   "options": "LMS Question Category",
+   "reqd": 1
+  },
+  {
+   "fieldname": "mark",
+   "fieldtype": "Int",
+   "label": "Mark",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-05 13:07:21.980665",
+ "modified": "2023-07-13 11:01:36.232173",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "Exam Schedule Question",

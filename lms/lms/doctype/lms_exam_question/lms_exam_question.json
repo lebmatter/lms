@@ -8,6 +8,7 @@
  "field_order": [
   "question",
   "category",
+  "mark",
   "description_image",
   "type",
   "options_section",
@@ -240,11 +241,22 @@
    "in_list_view": 1,
    "label": "Category",
    "options": "LMS Question Category"
+  },
+  {
+   "fieldname": "mark",
+   "fieldtype": "Int",
+   "label": "Mark",
+   "non_negative": 1
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2023-07-11 15:24:59.208587",
+ "links": [
+  {
+   "link_doctype": "Exam Schedule Question",
+   "link_fieldname": "question"
+  }
+ ],
+ "modified": "2023-07-14 13:00:23.173005",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Question",
