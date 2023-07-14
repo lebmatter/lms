@@ -32,6 +32,7 @@
   "questions",
   "total_marks",
   "total_questions",
+  "randomize_questions",
   "pass_percentage",
   "amended_from"
  ],
@@ -198,6 +199,13 @@
    "fieldtype": "Percent",
    "label": "Pass Percentage",
    "non_negative": 1
+  },
+  {
+   "default": "0",
+   "description": "Each exam in this schedule will have a random order of questions",
+   "fieldname": "randomize_questions",
+   "fieldtype": "Check",
+   "label": "Randomize Questions"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -213,7 +221,7 @@
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-07-14 13:13:55.792574",
+ "modified": "2023-07-14 13:19:06.906026",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",
