@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestLMSExamRegistration(FrappeTestCase):
+class TestLMSCandidateExam(FrappeTestCase):
 	pass

@@ -5,5 +5,6 @@
 from frappe.model.document import Document
 
 
-class LMSExamRegistration(Document):
+class LMSCandidateExam(Document):
 	pass
+

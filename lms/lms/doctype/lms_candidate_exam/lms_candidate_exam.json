@@ -93,7 +93,7 @@
  "modified": "2023-07-13 10:45:06.523072",
  "modified_by": "Administrator",
  "module": "LMS",
- "name": "LMS Exam Registration",
+ "name": "LMS Candidate Exam",
  "owner": "Administrator",
  "permissions": [
   {
