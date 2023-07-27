@@ -11,11 +11,9 @@
   "course",
   "candidate",
   "email_sent",
-  "progress",
   "candidate_video",
   "messages",
-  "exam_started",
-  "exam_current_question"
+  "amended_from"
  ],
  "fields": [
   {
@@ -61,12 +59,6 @@
    "reqd": 1
   },
   {
-   "fieldname": "progress",
-   "fieldtype": "Select",
-   "label": "Progress",
-   "options": "Scheduled\nCompleted\nAborted"
-  },
-  {
    "fetch_from": "exam_schedule.exam",
    "fieldname": "exam",
    "fieldtype": "Link",
@@ -75,22 +67,24 @@
    "options": "LMS Exam"
   },
   {
-   "fieldname": "exam_current_question",
-   "fieldtype": "Int",
-   "hidden": 1,
-   "label": "Current Question",
-   "non_negative": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "exam_started",
-   "fieldtype": "Check",
-   "label": "Exam Started"
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "LMS Candidate Exam",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2023-07-13 10:45:06.523072",
+ "is_submittable": 1,
+ "links": [
+  {
+   "link_doctype": "LMS Exam Result",
+   "link_fieldname": "candidate_exam"
+  }
+ ],
+ "modified": "2023-07-19 16:20:42.650477",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Candidate Exam",

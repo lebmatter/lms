@@ -17,11 +17,11 @@
   "end_date_time",
   "section_break_5",
   "description",
+  "instructions",
   "section_break_7",
   "visibility",
   "membership",
   "column_break_9",
-  "status",
   "exam_settings_section",
   "column_break_5bke",
   "needs_evaluation",
@@ -34,6 +34,7 @@
   "total_questions",
   "randomize_questions",
   "pass_percentage",
+  "enable_calculator",
   "amended_from"
  ],
  "fields": [
@@ -73,14 +74,6 @@
   {
    "fieldname": "column_break_9",
    "fieldtype": "Column Break"
-  },
-  {
-   "default": "Active",
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Status",
-   "options": "Active\nInactive"
   },
   {
    "fieldname": "exam",
@@ -157,6 +150,7 @@
    "label": "Evaluation Ends in Days"
   },
   {
+   "description": "After which candidate will not be able to start the exam.",
    "fieldname": "end_date_time",
    "fieldtype": "Datetime",
    "label": "End Date Time",
@@ -206,22 +200,34 @@
    "fieldname": "randomize_questions",
    "fieldtype": "Check",
    "label": "Randomize Questions"
+  },
+  {
+   "fieldname": "instructions",
+   "fieldtype": "Markdown Editor",
+   "label": "Exam Instructions"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_calculator",
+   "fieldtype": "Check",
+   "label": "Enable Calculator"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [
   {
-   "group": "Members",
-   "link_doctype": "LMS Exam Registration",
+   "group": "Registered Candidates",
+   "link_doctype": "LMS Candidate Exam",
    "link_fieldname": "exam_schedule"
   },
   {
+   "group": "Questions",
    "link_doctype": "Exam Schedule Question",
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-07-14 13:19:06.906026",
+ "modified": "2023-07-20 18:17:47.798805",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",

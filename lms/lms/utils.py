@@ -79,7 +79,7 @@ def get_exam_registration(exam, member):
 	filters = {"member": member, "exam": exam}
 
 	reg = frappe.db.get_value(
-		"LMS Exam Registration",
+		"LMS Candidate Exam",
 		filters,
 		["name", "exam", "progress"],
 		as_dict=True,

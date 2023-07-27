@@ -6,24 +6,16 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "quiz",
+  "candidate_exam",
+  "exam",
   "score",
   "course",
   "column_break_3",
   "member",
   "member_name",
-  "section_break_6",
-  "result"
+  "section_break_6"
  ],
  "fields": [
-  {
-   "fieldname": "quiz",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Quiz",
-   "options": "LMS Quiz"
-  },
   {
    "fieldname": "score",
    "fieldtype": "Data",
@@ -62,16 +54,24 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "result",
-   "fieldtype": "Table",
-   "label": "Result",
-   "options": "LMS Quiz Result"
+   "fieldname": "candidate_exam",
+   "fieldtype": "Link",
+   "label": "Candidate Exam",
+   "options": "LMS Candidate Exam"
+  },
+  {
+   "fieldname": "exam",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Exam",
+   "options": "LMS Exam"
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-26 11:56:37.957162",
+ "modified": "2023-07-17 15:33:05.898267",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",

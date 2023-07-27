@@ -6,14 +6,19 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "candidate_exam",
+  "exam_question",
   "question",
+  "marked_for_later",
   "answer",
   "is_correct",
   "evaluator",
-  "evaluator_response"
+  "evaluator_response",
+  "marks"
  ],
  "fields": [
   {
+   "fetch_from": "exam_question.question",
    "fieldname": "question",
    "fieldtype": "Text",
    "in_list_view": 1,
@@ -45,17 +50,52 @@
    "fieldname": "evaluator_response",
    "fieldtype": "Long Text",
    "label": "Evaluator Response"
+  },
+  {
+   "fieldname": "exam_question",
+   "fieldtype": "Link",
+   "label": "Exam Question",
+   "options": "LMS Exam Question"
+  },
+  {
+   "fieldname": "candidate_exam",
+   "fieldtype": "Link",
+   "label": "Candidate Exam",
+   "options": "LMS Candidate Exam"
+  },
+  {
+   "default": "0",
+   "fieldname": "marked_for_later",
+   "fieldtype": "Check",
+   "label": "Marked for Later"
+  },
+  {
+   "fieldname": "marks",
+   "fieldtype": "Float",
+   "label": "Marks"
   }
  ],
  "index_web_pages_for_search": 1,
- "istable": 1,
  "links": [],
- "modified": "2023-06-26 12:56:34.708369",
+ "modified": "2023-07-17 16:00:01.655742",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Result",
  "owner": "Administrator",
- "permissions": [],
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
