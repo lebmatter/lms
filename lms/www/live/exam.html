@@ -1,0 +1,230 @@
+{% extends "lms/templates/lms_base.html" %}
+<!-- {% from "www/macros/livecode.html" import LiveCodeEditorJS, LiveCodeEditor with context %} -->
+
+
+{% block title %}
+{{ exam.title }}
+{% endblock %}
+
+
+{% block head_include %}
+{% for ext in page_extensions %}
+{{ ext.render_header() }}
+{% endfor %}
+<style>
+    #timer {
+        font-size: 16px;
+    }
+
+    #messages {
+        max-height: 350px;
+        /* Set the maximum height for the container */
+        overflow-y: auto;
+        /* Enable vertical scrolling when content exceeds the max height */
+    }
+
+    <style>
+
+    /* Custom styles for the chat bubble container */
+    .chat-container {
+        position: relative;
+        margin-bottom: 20px;
+        /* Add some spacing between chat containers */
+    }
+
+    /* Custom styles for the chat bubble */
+    .chat-bubble {
+        display: inline-block;
+        /* Set the display to inline-block */
+        background-color: #f0f0f0;
+        border-radius: 10px;
+        padding: 10px;
+        max-width: calc(100% - 20px);
+        /* Adjust the max-width relative to the text content */
+    }
+
+    /* Custom styles for the timestamp */
+    .chat-timestamp {
+        top: -25px;
+        /* Adjust the vertical position as per your design */
+        left: 10px;
+        /* Adjust the horizontal position as per your design */
+        font-size: 12px;
+        color: #999;
+    }
+
+    /* To make the chat bubble align to the left */
+    .chat-left {
+        text-align: left;
+    }
+</style>
+</style>
+{% endblock %}
+
+{% block page_content %}
+
+<div class="container mt-10">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Sidebar content -->
+            <div class="bold-heading mb-3">
+                {{ exam.title }}
+            </div>
+            <!-- Bootstrap Navigation -->
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#messages">Messages <span
+                            class="badge badge-pill badge-warning" id="msgCount"></span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#calculator">Calculator</a>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content mt-5">
+                <div id="messages" class="tab-pane fade show active">
+                    <!-- Tab 1 Content Goes Here -->
+                </div>
+                <div id="calculator" class="tab-pane fade">
+                    <!-- Tab 2 Content Goes Here -->
+                    <div class="tab-pane fade show active">
+                        {{ frappe.render_template('templates/exam/calculator.html', {}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="card  mt-5">
+                <div class="card-body">
+                    <p class="card-text">Video proctoring disabled.</p>
+                    <!-- <button class="btn btn-outline-info">Hide video</button> -->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <!-- Main content -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="d-flex justify-content-start">
+                        <button class="btn btn-info btn-sm" id="toggleInstruction">Hide instructions</button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex justify-content-end" id="timerdiv">
+                        <!-- Right-aligned element -->
+                        <button class="btn btn-info btn-sm" id="showTimer" style="display: none;">Show
+                            timer</button>
+                        <a class="btn btn-link"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye-off"
+                                id="toggleTimer">
+                                <path
+                                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                                </path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                            <span class="badge badge-pill badge-warning" id="timer">--:--</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div id="instruction" class="mt-3">
+                        <div class="alert alert-info pl-9">
+                            {{ exam.instructions }}
+                        </div>
+                    </div>
+                </div>
+                {{ frappe.render_template('templates/exam/examform.html', {"exam": exam}) }}
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap Modal -->
+    <div class="modal" id="examAlert">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body" id="alertText">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    <!-- Scripts -->
+    {%- block script %}
+    {{ super() }}
+    <script>
+        $(document).ready(function () {
+            $('#toggleInstruction').click(function () {
+                $('#instruction').toggle();
+                $(this).text(function (i, text) {
+                    return text === "Show instructions" ? "Hide instructions" : "Show instructions";
+                });
+            });
+            $('#toggleTimer').click(function () {
+                // Replace the content of the timerdiv with the button
+                $('#toggleTimer').hide();
+                $('#timer').hide();
+                $("#showTimer").show();
+            });
+            $('#showTimer').click(function () {
+                // Replace the content of the timerdiv with the button
+                $('#toggleTimer').show();
+                $('#timer').show();
+                $("#showTimer").hide();
+            });
+        });
+    </script>
+    <script>
+        //set current exam code
+        // Get the start time and duration from Jinja variables
+        var exam = {{ exam | tojson }};
+        var startTimeString = exam.candidate_exam_start_time;
+
+        if (startTimeString && startTimeString.trim() !== "") {
+            var duration = exam.duration
+            // duration in minutes
+            // Parse the start time string into a Date object
+            var startTime = new Date(startTimeString);
+
+            // Calculate the end time
+            var endTime = new Date(startTime);
+            endTime.setMinutes(endTime.getMinutes() + duration);
+
+            // Function to update the countdown timer
+            function updateTimer() {
+                var currentTime = new Date().getTime();
+                var remainingTime = new Date(endTime) - currentTime;
+                if (remainingTime <= 0) {
+                    // Display "0m 0s" when time is up
+                    document.getElementById("timer").innerHTML = "00:00";
+                    return; // Stop the timer from updating further
+                }
+                // Calculate minutes and seconds
+                var minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+                // Display the countdown timer
+                document.getElementById("timer").innerHTML = minutes + ":" + seconds;
+
+                // Update the timer every second
+                setTimeout(updateTimer, 1000);
+            }
+
+            // Start the countdown timer
+            updateTimer();
+        };
+    </script>
+    <script type="text/javascript">
+        var exam = {{ exam | tojson }};
+        {% include "lms/templates/exam/examform.js" %}
+        {% include "lms/templates/exam/examutils.js" %}
+        {% include "lms/templates/exam/calculator.js" %}
+    </script>
+    {% endblock %}

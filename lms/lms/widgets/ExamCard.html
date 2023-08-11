@@ -1,7 +1,5 @@
-{% set hide_instructor = frappe.db.get_single_value("LMS Settings",
-"hide_instructor_on_exam_card") %}
 {% if frappe.session.user != "Guest" %}
-{% set membership = frappe.db.get_value("LMS Exam Registration",
+{% set membership = frappe.db.get_value("LMS Exam Submission",
 {"candidate": frappe.session.user, "exam": exam.name},
 ["name", "course", "progress"], as_dict=1) %}
 {% set progress_status = membership.progress %}
@@ -77,37 +75,6 @@
             </div>
         </div>
         <div class="progress-percent">{{ progress }}% {{ _("Completed") }} </div>
-        {% endif %}
-
-        {% if hide_instructor == 0 %}
-        <div class="course-card-footer">
-            <span class="">
-                {% set instructors = get_instructors(exam.name) %}
-                {% set ins_len = instructors | length %}
-                {% for instructor in instructors %}
-                {% if ins_len > 1 and loop.index == 1 %}
-                <div class="avatar-group overlap">
-                    {% endif %}
-                    {{ widgets.Avatar(member=instructor, avatar_class="avatar-small") }}
-
-                    {% if ins_len > 1 and loop.index == ins_len %}
-                </div>
-                {% endif %}
-                {% endfor %}
-                <a class="button-links" href="{{ get_profile_url(instructors[0].username) }}">
-                    <span class="course-instructor">
-                        {% if ins_len == 1 %}
-                        {{ instructors[0].full_name }}
-                        {% elif ins_len == 2 %}
-                        {{ instructors[0].full_name.split(" ")[0] }} and {{ instructors[1].full_name.split(" ")[0] }}
-                        {% else %}
-                        {% set suffix = "other" if ins_len - 1 == 1 else "others" %}
-                        {{ instructors[0].full_name.split(" ")[0] }} and {{ ins_len - 1 }} {{ suffix }}
-                        {% endif %}
-                    </span>
-                </a>
-            </span>
-        </div>
         {% endif %}
 
         {% if read_only %}

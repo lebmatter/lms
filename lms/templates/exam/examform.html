@@ -1,0 +1,77 @@
+<div class="col-md-12 mb-5">
+    <div id="start-banner" class="common-card-style column-card align-items-center mt-3">
+
+        <div class="text-center my-10">
+            <div class="bold-heading" id="quiz-title">
+            </div>
+            <button class="btn btn-secondary btn-sm btn-start-quiz mt-4" id="quiz-btn" style="display: none;">
+            </button>
+            <p id="quiz-message" style="display: none;"></p>
+        </div>
+    </div>
+
+    <form id="quiz-form" class="common-card-style column-card hide">
+        <div class="question" id="question" data-name="" data-type="" data-multi="">
+            <div>
+                <div class="question-number" id="question-number"></div>
+                <div class="question-text" id="question-text"></div>
+                <div class="question-image" style="display: none;"><img src="" class="img-fluid" alt=""
+                        id="question-image"></div>
+            </div>
+
+            <div id="choices"></div>
+
+            <div class="control-input-wrapper" id="examTextInput" style="display: none;">
+                <div class="control-input">
+                    <textarea type="text" autocomplete="off"
+                        class="input-with-feedback form-control bold possibility mt-4" style="height: 150px;"
+                        spellcheck="false"></textarea>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="quiz-footer">
+            <span>
+                Question
+                <span class="current-question" id="current-question">-</span>
+                of
+                <span id="question-length"></span>
+            </span>
+
+            <div class="d-flex justify-content-end">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="markedForLater">
+                    <label class="form-check-label" for="markedForLater">Mark for later</label>
+                </div>
+                <button class="btn btn-secondary btn-sm ml-5" id="nextQs" style="display: none;">
+                    Next Question
+                </button>
+                <button class="btn btn-secondary btn-sm ml-5" id="finish" style="display: none;">
+                    Finish exam
+                </button>
+            </div>
+            <!-- <button class="btn btn-secondary btn-sm" id="summary">
+                Submit
+            </button> -->
+        </div>
+    </form>
+
+</div>
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header">
+            Questions
+        </div>
+        <div class="card-body">
+            <div class="col-md-12">
+                <p>Attempted:<span class="badge badge-pill badge-info" id="answered">-</span> Marked for
+                    later:<span class="badge badge-pill badge-warning" id="markedforlater">-</span> Not attempted:<span
+                        class="badge badge-pill badge-secondary" id="notattempted"></span></p>
+            </div>
+            <div class="col-md-12" id="button-grid">
+                <!-- Buttons will be added here -->
+            </div>
+        </div>
+    </div>
+</div>
