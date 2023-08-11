@@ -11,6 +11,7 @@ from frappe.website.utils import is_signup_disabled
 from lms.lms.utils import validate_image
 from frappe.website.utils import cleanup_page_name
 from frappe.model.naming import append_number_if_name_exists
+from frappe.utils import now
 from lms.widgets import Widgets
 
 
@@ -127,7 +128,7 @@ def get_exam_registation(candidate=None):
 	"""Returns all exam registrations of the user."""
 
 	filters = {"candidate": candidate or frappe.session.user}
-	return frappe.get_all("LMS Exam Registration", filters, ["name", "exam", "progress"])
+	return frappe.get_all("LMS Exam Submission", filters, ["name", "exam", "progress"])
 
 def get_registered_exams():
 	in_progress = []
@@ -229,33 +230,65 @@ def get_authored_exams(member=None, only_published=True):
 
 	return exam_details
 
-def get_ongoing_exams(member=None):
+def get_candidate_exams(member=None):
 	"""
-	Get ongoing exams of a candidate.
+	Get upcoming/ongoing exams of a candidate.
+
 	Check if current time is inbetween start and end time
 	Ideally there should be only one ongoing exam,
 	But the function returns all valid enteies
 	"""
-	exams = []
+	res = {"upcoming": [], "ongoing": []}
+
 	registered_exams = frappe.get_all(
-		"LMS Exam Registration",
-		{"candidate": member or frappe.session.user},
-		["name", "exam_schedule", "status"]
-	)
+		"LMS Exam Submission",
+		{"candidate": member or frappe.session.user},[
+			"name",
+			"exam_schedule",
+			"status",
+			"exam_started_time",
+			"exam_submitted_time",
+			"additional_time_given"
+   ])
 	for exam in registered_exams:
-		if exam["status"] != "Scheduled":
+		if exam["status"] in ["Registration Cancelled", "Aborted"]:
 			continue
-		sched = frappe.db.get_doc(
-			"LMS Exam Schedule", exam["exam_schedule"],
-			fields=["exam", "start_date_time", "timezone", "duration"]
-		)
-		tnow = datetime.now(timezone(exam["timezone"]))
-		end_time = sched["start_time"] + timedelta(minutes=sched["duration"])
-		if sched["start_time"] <= tnow <= end_time:
-			exams.append(sched["exam"])
+		
+		schedule = frappe.get_doc("LMS Exam Schedule", exam["exam_schedule"])
+		# non submitted schedules should not be considered
+		if schedule.docstatus == 0:
+			continue
+		
+		# end time is schedule start time + duration + additional time given
+		end_time = schedule.start_date_time + timedelta(minutes=schedule.duration) + \
+			timedelta(minutes=exam["additional_time_given"])
 
-	return False
+		exam_details = {
+				"candidate_exam": exam["name"],
+				"exam": schedule.exam,
+				"exam_schedule": exam["exam_schedule"],
+				"schedule_start_time": schedule.start_date_time,
+				"schedule_end_time": end_time,
+				"candidate_exam_start_time": exam["exam_started_time"],
+				"candidate_exam_submitted_time": exam["exam_submitted_time"],
+				"additional_time_given": exam["additional_time_given"],
+				"submission_status": exam["status"]
+			}
+		
+		# checks if current time is between schedule start and end time
+		# ongoing exams can be in Not staryed, started or submitted states
+		tnow = datetime.strptime(now(), '%Y-%m-%d %H:%M:%S.%f')
+		if schedule.start_date_time <= tnow <= end_time:
+			res["ongoing"].append(exam_details)
+		elif tnow <= schedule.start_date_time:
+			res["upcoming"].append(exam_details)
+		
+		# make datetime in isoformat
+		for key,val in exam_details.items():
+			if type(val) == datetime:
+				exam_details[key] = val.isoformat()
 
+	return res
 
 
 def get_palette(full_name):

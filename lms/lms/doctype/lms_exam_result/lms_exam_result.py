@@ -6,4 +6,8 @@ from frappe.model.document import Document
 
 
 class LMSExamResult(Document):
-	pass
+	
+	def autoname(self):
+		if not self.name:
+			assert self.exam_submission, self.exam_question
+			self.name = "{}-{}".format(self.exam_submission, self.exam_question)

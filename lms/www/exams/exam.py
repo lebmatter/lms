@@ -2,8 +2,6 @@ import frappe
 from frappe import _
 
 from lms.lms.utils import (
-	get_evaluation_details,
-	get_exam_registration,
 	has_course_moderator_role,
 	is_certified,
 	is_instructor,
@@ -17,7 +15,6 @@ def get_context(context):
 
 	try:
 		exam_name = frappe.form_dict["exam"]
-		print("#"*100, exam_name)
 	except KeyError:
 		redirect_to_exams_list()
 
@@ -74,7 +71,6 @@ def set_exam_context(context, exam_name):
 	exam.related_courses = related_courses
 
 	context.exam = exam
-	# registartion = get_exam_registration(exam.name, frappe.session.user)
 	# context.registartion = registartion
 	context.certificate = is_certified(exam.name)
 	if context.exam.upcoming:

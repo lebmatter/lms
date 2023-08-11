@@ -75,19 +75,6 @@ def get_membership(course, member, batch=None):
 	return membership
 
 
-def get_exam_registration(exam, member):
-	filters = {"member": member, "exam": exam}
-
-	reg = frappe.db.get_value(
-		"LMS Candidate Exam",
-		filters,
-		["name", "exam", "progress"],
-		as_dict=True,
-	)
-
-	return reg
-
-
 def get_chapters(course):
 	"""Returns all chapters of this course."""
 	if not course:
