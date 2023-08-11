@@ -11,7 +11,6 @@
   "to",
   "message",
   "type_of_message",
-  "created_time",
   "seen"
  ],
  "fields": [
@@ -24,6 +23,7 @@
   {
    "fieldname": "from",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "From",
    "options": "User"
   },
@@ -36,19 +36,16 @@
   {
    "fieldname": "message",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Message"
   },
   {
    "default": "General",
    "fieldname": "type_of_message",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Type of Message",
-   "options": "General\nWarning\nTermination\nHold Result"
-  },
-  {
-   "fieldname": "created_time",
-   "fieldtype": "Datetime",
-   "label": "Created Time"
+   "options": "General\nWarning\nCritical"
   },
   {
    "default": "0",
@@ -60,7 +57,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-07-12 11:35:46.846491",
+ "modified": "2023-08-07 11:26:49.759947",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "Exam Messages",

@@ -6,7 +6,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "candidate_exam",
+  "exam_submission",
   "exam_question",
   "question",
   "marked_for_later",
@@ -14,11 +14,10 @@
   "is_correct",
   "evaluator",
   "evaluator_response",
-  "marks"
+  "mark"
  ],
  "fields": [
   {
-   "fetch_from": "exam_question.question",
    "fieldname": "question",
    "fieldtype": "Text",
    "in_list_view": 1,
@@ -55,29 +54,33 @@
    "fieldname": "exam_question",
    "fieldtype": "Link",
    "label": "Exam Question",
-   "options": "LMS Exam Question"
-  },
-  {
-   "fieldname": "candidate_exam",
-   "fieldtype": "Link",
-   "label": "Candidate Exam",
-   "options": "LMS Candidate Exam"
+   "options": "Exam Schedule Question",
+   "reqd": 1
   },
   {
    "default": "0",
    "fieldname": "marked_for_later",
    "fieldtype": "Check",
+   "in_list_view": 1,
    "label": "Marked for Later"
   },
   {
-   "fieldname": "marks",
+   "fieldname": "exam_submission",
+   "fieldtype": "Link",
+   "label": "Exam Submission",
+   "options": "LMS Exam Submission",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "exam_question.mark",
+   "fieldname": "mark",
    "fieldtype": "Float",
-   "label": "Marks"
+   "label": "Mark"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-17 16:00:01.655742",
+ "modified": "2023-08-10 19:31:21.894558",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Result",

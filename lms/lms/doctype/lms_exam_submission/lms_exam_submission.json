@@ -1,77 +1,109 @@
 {
  "actions": [],
- "creation": "2023-06-26 11:56:37.957162",
+ "creation": "2023-07-28 14:51:40.654343",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "candidate_exam",
+  "exam_schedule",
   "exam",
-  "score",
   "course",
-  "column_break_3",
-  "member",
-  "member_name",
-  "section_break_6"
+  "candidate",
+  "email_sent",
+  "candidate_video",
+  "messages",
+  "status",
+  "exam_started_time",
+  "additional_time_given",
+  "exam_submitted_time"
  ],
  "fields": [
   {
-   "fieldname": "score",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Score"
-  },
-  {
-   "fetch_from": "quiz.course",
-   "fieldname": "course",
+   "fieldname": "exam_schedule",
    "fieldtype": "Link",
-   "label": "Course",
-   "options": "LMS Course",
-   "read_only": 1
+   "label": "Exam Schedule",
+   "options": "LMS Exam Schedule",
+   "reqd": 1
   },
   {
-   "fieldname": "column_break_3",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "member",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Member",
-   "options": "User"
-  },
-  {
-   "fetch_from": "member.full_name",
-   "fieldname": "member_name",
-   "fieldtype": "Data",
-   "label": "Member Name",
-   "read_only": 1
-  },
-  {
-   "fieldname": "section_break_6",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "candidate_exam",
-   "fieldtype": "Link",
-   "label": "Candidate Exam",
-   "options": "LMS Candidate Exam"
-  },
-  {
+   "fetch_from": "exam_schedule.exam",
    "fieldname": "exam",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "Exam",
    "options": "LMS Exam"
+  },
+  {
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Course",
+   "options": "LMS Course"
+  },
+  {
+   "fieldname": "candidate",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Candidate",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "email_sent",
+   "fieldtype": "Check",
+   "label": "Email Sent",
+   "options": "email_sent"
+  },
+  {
+   "fieldname": "candidate_video",
+   "fieldtype": "Attach",
+   "label": "Candidate Video"
+  },
+  {
+   "fieldname": "messages",
+   "fieldtype": "Table",
+   "label": "Messages",
+   "options": "Exam Messages"
+  },
+  {
+   "default": "Registered",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Registered\nRegistration Cancelled\nStarted\nSubmitted\nAborted"
+  },
+  {
+   "fieldname": "exam_started_time",
+   "fieldtype": "Datetime",
+   "label": "Exam started at"
+  },
+  {
+   "fieldname": "exam_submitted_time",
+   "fieldtype": "Datetime",
+   "label": "Exam submitted at"
+  },
+  {
+   "default": "0",
+   "description": "Additional time given in minutes",
+   "fieldname": "additional_time_given",
+   "fieldtype": "Int",
+   "label": "Additional Time Given",
+   "non_negative": 1
   }
  ],
- "in_create": 1,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2023-07-17 15:33:05.898267",
+ "links": [
+  {
+   "link_doctype": "LMS Exam Result",
+   "link_fieldname": "candidate_exam"
+  }
+ ],
+ "modified": "2023-08-03 14:29:09.629723",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",
@@ -93,6 +125,5 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "member_name",
  "track_changes": 1
 }
