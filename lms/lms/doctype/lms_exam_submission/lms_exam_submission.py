@@ -61,7 +61,7 @@ class LMSExamSubmission(Document):
 		
 		return res
 
-def can_process_question(doc):
+def can_process_question(doc, member=None):
 	"""
 	validatior function to run before getting or updating a question
 	"""
@@ -268,6 +268,26 @@ def submit_question_response(exam_submission=None, qs_name=None, answer=None, ma
 			result_doc.save()
 		
 	return {"qs_name": qs_name}
+
+@frappe.whitelist()
+def post_exam_message(exam_submission=None, message=None, type_of_message="General"):
+	"""
+	Submit response and add marks if applicable
+	"""
+	assert exam_submission
+	assert message
+
+	submission = frappe.get_doc("LMS Exam Submission", exam_submission)
+	submission.append('messages',{
+		"from_user": frappe.db.get_value(
+		"LMS Exam Submission", exam_submission, "candidate"),
+		"message": message,
+		"type_of_message": type_of_message
+	})
+	submission.save()
+
+	return {"status": 1}
+
 
 @frappe.whitelist()
 def exam_messages(exam_submission=None):
