@@ -212,7 +212,7 @@
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-08-11 14:58:31.652197",
+ "modified": "2023-08-11 17:00:31.652197",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",
@@ -229,7 +229,8 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
-   "write": 1
+   "write": 1,
+   "submit": 1
   }
  ],
  "sort_field": "modified",
