@@ -1,9 +1,12 @@
 # Copyright (c) 2023, Frappe and contributors
 # For license information, please see license.txt
 
-# import frappe
+import frappe
 from frappe.model.document import Document
 
 
 class ExamMessages(Document):
-	pass
+	
+	def before_save(self):
+		if not self.from_user:
+			self.from_user = frappe.session.user
