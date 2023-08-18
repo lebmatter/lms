@@ -1,11 +1,41 @@
 const existingMessages = [];
 frappe.ready(() => {
+    let awayStartTime;
+
     $(window).blur(function () {
+        awayStartTime = new Date();
         examAlert(
             "Tab change detected",
             "Multiple tab changes will result in exam termination!",
         );
     });
+
+    $("#examAlert").on("hidden.bs.modal", function () {
+        if (awayStartTime) {
+            const currentTime = new Date();
+            const timeAwayInMilliseconds = currentTime - awayStartTime;
+            const timeAwayInMinutes = Math.floor(timeAwayInMilliseconds / (1000 * 60));
+            const timeAwayInSeconds = Math.floor((timeAwayInMilliseconds % (1000 * 60)) / 1000);
+
+            console.log(currentTime, awayStartTime);
+            console.log(timeAwayInMinutes, timeAwayInSeconds);
+            tabChangeStr = `Tab changed for ${timeAwayInMinutes}:${timeAwayInSeconds}s`;
+            awayStartTime = null;
+            frappe.call({
+                method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.post_exam_message",
+                type: "POST",
+                args: {
+                    'exam_submission': exam["candidate_exam"],
+                    'message': tabChangeStr,
+                    'type_of_message': 'Warning',
+                },
+                callback: (data) => {
+                    console.log("submitted answer.")
+                },
+            });
+        }
+    });
+
     setInterval(updateMessages, 2000);
 });
 
