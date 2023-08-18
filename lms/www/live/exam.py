@@ -49,6 +49,7 @@ def set_live_exam_context(context, ongoing_exam):
 	exam["candidate_exam_submitted_time"] = ongoing_exam["candidate_exam_submitted_time"]
 	exam["candidate_exam_status"] = ongoing_exam["submission_status"]
 	exam["duration"] = 60
+	exam["end_time"] = ongoing_exam["schedule_end_time"]
 	exam["last_question"] = ""
 	exam["candidate_full_name"] = frappe.db.get_value(
 		"User", frappe.session.user, "full_name"

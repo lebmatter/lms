@@ -186,16 +186,16 @@
         // Get the start time and duration from Jinja variables
         var exam = {{ exam | tojson }};
         var startTimeString = exam.candidate_exam_start_time;
+        var endTimeString = exam.end_time;
 
         if (startTimeString && startTimeString.trim() !== "") {
             var duration = exam.duration
             // duration in minutes
             // Parse the start time string into a Date object
             var startTime = new Date(startTimeString);
+            var endTime = new Date(endTimeString);
 
             // Calculate the end time
-            var endTime = new Date(startTime);
-            endTime.setMinutes(endTime.getMinutes() + duration);
 
             // Function to update the countdown timer
             function updateTimer() {
