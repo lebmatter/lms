@@ -10,22 +10,9 @@ from ...utils import generate_slug, validate_image
 class LMSExam(Document):
 
 	def validate(self):
-		self.validate_instructors()
 		self.validate_video_link()
 		self.validate_status()
 		self.image = validate_image(self.image)
-
-	def validate_instructors(self):
-		if self.is_new() and not self.instructors:
-			frappe.get_doc(
-				{
-					"doctype": "Course Instructor",
-					"instructor": self.owner,
-					"parent": self.name,
-					"parentfield": "instructors",
-					"parenttype": "LMS Course",
-				}
-			).save(ignore_permissions=True)
 
 	def validate_video_link(self):
 		if self.video_link and "/" in self.video_link:
