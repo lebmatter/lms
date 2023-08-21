@@ -296,7 +296,7 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 		"message": message,
 		"type_of_message": type_of_message
 	})
-	submission.save()
+	submission.save(ignore_permissions=True)
 
 	return {"status": 1}
 
