@@ -245,6 +245,10 @@ def submit_question_response(exam_submission=None, qs_name=None, answer=None, ma
 	assert answer
 
 	submission = frappe.get_doc("LMS Exam Submission", exam_submission)
+	# check of the logged in user is same as exam submission candidate
+	if frappe.session.user != submission.candidate:
+		raise PermissionError("You don't have access to submit and answer.")
+
 	can_process_question(submission)
 
 	try:
@@ -277,7 +281,15 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 	assert exam_submission
 	assert message
 
-	submission = frappe.get_doc("LMS Exam Submission", exam_submission)
+	# check of the logged in user is same as exam submission candidate
+	if frappe.session.user != frappe.db.get_value(
+		"LMS Exam Submission", exam_submission, "candidate"
+	):
+		raise PermissionError("You don't have access to post messages.")
+
+	submission = frappe.get_doc(
+		"LMS Exam Submission", exam_submission, ignore_permissions=True
+	)
 	submission.append('messages',{
 		"from_user": frappe.db.get_value(
 		"LMS Exam Submission", exam_submission, "candidate"),
@@ -296,6 +308,10 @@ def exam_messages(exam_submission=None):
 	"""
 	assert exam_submission
 	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
+
+	# check of the logged in user is same as exam submission candidate
+	if frappe.session.user != doc.candidate:
+		raise PermissionError("You don't have access to view messages.")
 
 	return {"messages": doc.get_messages()}
 
