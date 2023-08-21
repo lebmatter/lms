@@ -10,7 +10,6 @@
   "exam",
   "max_candidates",
   "no_of_candidates_per_examiner",
-  "registration_end_time",
   "column_break_3",
   "start_date_time",
   "duration",
@@ -111,12 +110,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "registration_end_time",
-   "fieldtype": "Datetime",
-   "in_list_view": 1,
-   "label": "Registration End Time"
-  },
-  {
    "fieldname": "start_date_time",
    "fieldtype": "Datetime",
    "in_list_view": 1,
@@ -212,7 +205,7 @@
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-08-11 17:00:31.652197",
+ "modified": "2023-08-20 17:00:31.652197",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",
