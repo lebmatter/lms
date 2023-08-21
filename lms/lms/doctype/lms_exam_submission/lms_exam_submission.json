@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_import": 1,
  "creation": "2023-07-28 14:51:40.654343",
  "default_view": "List",
  "doctype": "DocType",
@@ -103,7 +104,7 @@
    "link_fieldname": "candidate_exam"
   }
  ],
- "modified": "2023-08-03 14:29:09.629723",
+ "modified": "2023-08-21 14:29:09.629723",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",
@@ -114,6 +115,7 @@
    "delete": 1,
    "email": 1,
    "export": 1,
+   "import": 1,
    "print": 1,
    "read": 1,
    "report": 1,
