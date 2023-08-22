@@ -72,7 +72,7 @@ def can_process_question(doc, member=None):
 		exam_ended, end_time = doc.exam_ended()
 		if exam_ended:
 			doc.status = "Submitted"
-			doc.save()
+			doc.save(ignore_permissions=True)
 			frappe.throw("This exam has ended at {}".format(end_time))
 	else:
 		frappe.throw("Invalid exam.")
@@ -99,11 +99,14 @@ def start_exam(exam_submission=None):
 	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
 	if doc.exam_started_time:
 		return True
-	
+
+	if frappe.session.user != doc.candidate:
+		raise PermissionError("Incorrect exam for the user.")
+
 	start_time = doc.can_start_exam()
 	doc.exam_started_time = start_time
 	doc.status = "Started"
-	doc.save()
+	doc.save(ignore_permissions=True)
 
 	return True
 
@@ -156,7 +159,9 @@ def validate_and_get_question(exam_submission, question=None, member=None):
 	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
 	can_process_question(doc)
 
-	schedule_doc = frappe.get_doc("LMS Exam Schedule", doc.exam_schedule)
+	schedule_doc = frappe.get_doc(
+		"LMS Exam Schedule", doc.exam_schedule, ignore_permissions=True
+	)
 	submitted = get_submitted_questions(exam_submission)
 	submitted_questions = [s["exam_question"] for s in submitted]
 
@@ -181,7 +186,7 @@ def validate_and_get_question(exam_submission, question=None, member=None):
 			"exam_question": question,
 			"question": frappe.db.get_value("LMS Exam Question", question, "question")
 		})
-		answer_doc.insert()
+		answer_doc.insert(ignore_permissions=True)
 
 	else:
 		# make sure that question belongs to the exam submission
@@ -269,7 +274,7 @@ def submit_question_response(exam_submission=None, qs_name=None, answer=None, ma
 			result_doc.marked_for_later != markdflater:
 			result_doc.answer = answer
 			result_doc.marked_for_later = markdflater
-			result_doc.save()
+			result_doc.save(ignore_permissions=True)
 		
 	return {"qs_name": qs_name}
 
@@ -287,9 +292,7 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 	):
 		raise PermissionError("You don't have access to post messages.")
 
-	submission = frappe.get_doc(
-		"LMS Exam Submission", exam_submission, ignore_permissions=True
-	)
+	submission = frappe.get_doc("LMS Exam Submission", exam_submission)
 	submission.append('messages',{
 		"from_user": frappe.db.get_value(
 		"LMS Exam Submission", exam_submission, "candidate"),

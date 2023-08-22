@@ -30,7 +30,7 @@ frappe.ready(() => {
                     'type_of_message': 'Warning',
                 },
                 callback: (data) => {
-                    console.log("submitted answer.")
+                    console.log(data);
                 },
             });
         }
