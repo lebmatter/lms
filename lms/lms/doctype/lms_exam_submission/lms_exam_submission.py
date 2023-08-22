@@ -242,12 +242,11 @@ def get_question(exam_submission=None, question=None):
 
 
 @frappe.whitelist()
-def submit_question_response(exam_submission=None, qs_name=None, answer=None, markdflater=0):
+def submit_question_response(exam_submission=None, qs_name=None, answer="", markdflater=0):
 	"""
 	Submit response and add marks if applicable
 	"""
 	assert exam_submission, qs_name
-	assert answer
 
 	submission = frappe.get_doc("LMS Exam Submission", exam_submission)
 	# check of the logged in user is same as exam submission candidate
