@@ -272,7 +272,8 @@ def get_candidate_exams(member=None):
 				"candidate_exam_start_time": exam["exam_started_time"],
 				"candidate_exam_submitted_time": exam["exam_submitted_time"],
 				"additional_time_given": exam["additional_time_given"],
-				"submission_status": exam["status"]
+				"submission_status": exam["status"],
+				"duration": schedule.duration
 			}
 		
 		# checks if current time is between schedule start and end time
