@@ -264,17 +264,19 @@ def get_candidate_exams(member=None):
 			timedelta(minutes=exam["additional_time_given"])
 
 		exam_details = {
-				"candidate_exam": exam["name"],
-				"exam": schedule.exam,
-				"exam_schedule": exam["exam_schedule"],
-				"schedule_start_time": schedule.start_date_time,
-				"schedule_end_time": end_time,
-				"candidate_exam_start_time": exam["exam_started_time"],
-				"candidate_exam_submitted_time": exam["exam_submitted_time"],
-				"additional_time_given": exam["additional_time_given"],
-				"submission_status": exam["status"],
-				"duration": schedule.duration
-			}
+			"candidate_exam": exam["name"],
+			"exam": schedule.exam,
+			"exam_schedule": exam["exam_schedule"],
+			"schedule_start_time": schedule.start_date_time,
+			"schedule_end_time": end_time,
+			"candidate_exam_start_time": exam["exam_started_time"],
+			"candidate_exam_submitted_time": exam["exam_submitted_time"],
+			"additional_time_given": exam["additional_time_given"],
+			"submission_status": exam["status"],
+			"duration": schedule.duration,
+			"enable_calculator": schedule.enable_calculator,
+			"allowed_tab_change": schedule.allowed_tab_change 
+		}
 		
 		# checks if current time is between schedule start and end time
 		# ongoing exams can be in Not staryed, started or submitted states

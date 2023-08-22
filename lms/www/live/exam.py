@@ -38,28 +38,19 @@ def set_live_exam_context(context, ongoing_exam):
 	exam = frappe.db.get_value(
 		"LMS Exam", ongoing_exam["exam"], ["name","title"], as_dict=True
 	)
-
-	exam["candidate_exam"] = ongoing_exam["candidate_exam"]
 	instructions = frappe.db.get_value(
 		"LMS Exam Schedule", ongoing_exam["exam_schedule"], "instructions"
 	)
+	for key, value in ongoing_exam.items():
+		exam[key] = value
+
 	exam["instructions"] = markdown(instructions)
-	exam["schedule_start_time"] = ongoing_exam["schedule_start_time"]
-	exam["candidate_exam_start_time"] = ongoing_exam["candidate_exam_start_time"]
-	exam["candidate_exam_submitted_time"] = ongoing_exam["candidate_exam_submitted_time"]
-	exam["candidate_exam_status"] = ongoing_exam["submission_status"]
-	exam["duration"] = 60
-	exam["end_time"] = ongoing_exam["schedule_end_time"]
 	exam["last_question"] = ""
-	exam["candidate_full_name"] = frappe.db.get_value(
-		"User", frappe.session.user, "full_name"
-	)
 
 	attempted = get_submitted_questions(ongoing_exam["candidate_exam"])
 	# return the last question requested in this exam, if applicable
 	if attempted:
 		exam["last_question"] = attempted[-1]["exam_question"]
-
 	context.exam = exam
 
 	# set the canidate exam code in cache
