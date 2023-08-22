@@ -134,7 +134,7 @@ function updateOverviewMap() {
                 button.text(i);
                 button.addClass("exam-map-btn btn " + btnCls + " m-1 btn-sm");
                 button.attr("id", "button-" + i);
-                if (i <= data.message.submitted.length) {
+                if (i <= Object.keys(data.message.submitted).length) {
                     button.prop("disabled", false);
                     if (data.message.submitted[i].marked_for_later) {
                         button.html(answrLater + ' ' + i);
