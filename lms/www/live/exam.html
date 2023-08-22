@@ -181,46 +181,6 @@
             });
         });
     </script>
-    <script>
-        //set current exam code
-        // Get the start time and duration from Jinja variables
-        var exam = {{ exam | tojson }};
-        var startTimeString = exam.candidate_exam_start_time;
-        var endTimeString = exam.end_time;
-
-        if (startTimeString && startTimeString.trim() !== "") {
-            var duration = exam.duration
-            // duration in minutes
-            // Parse the start time string into a Date object
-            var startTime = new Date(startTimeString);
-            var endTime = new Date(endTimeString);
-
-            // Calculate the end time
-
-            // Function to update the countdown timer
-            function updateTimer() {
-                var currentTime = new Date().getTime();
-                var remainingTime = new Date(endTime) - currentTime;
-                if (remainingTime <= 0) {
-                    // Display "0m 0s" when time is up
-                    document.getElementById("timer").innerHTML = "00:00";
-                    return; // Stop the timer from updating further
-                }
-                // Calculate minutes and seconds
-                var minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
-                var seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
-
-                // Display the countdown timer
-                document.getElementById("timer").innerHTML = minutes + ":" + seconds;
-
-                // Update the timer every second
-                setTimeout(updateTimer, 1000);
-            }
-
-            // Start the countdown timer
-            updateTimer();
-        };
-    </script>
     <script type="text/javascript">
         var exam = {{ exam | tojson }};
         {% include "lms/templates/exam/examform.js" %}

@@ -17,6 +17,28 @@ function clearKeyFromLocalStorage(key) {
     localStorage.removeItem(key);
 }
 
+// Function to update the countdown timer
+function updateTimer(endTime) {
+    var currentTime = new Date().getTime();
+    var remainingTime = new Date(endTime) - currentTime;
+    if (remainingTime <= 0) {
+        // Display "0m 0s" when time is up
+        document.getElementById("timer").innerHTML = "00:00";
+        examAlert("Exam ended", "Your exam is submitted.");
+        return; // Stop the timer from updating further
+    }
+    // Calculate minutes and seconds
+    var minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+    // Display the countdown timer
+    document.getElementById("timer").innerHTML = minutes + ":" + seconds;
+
+    // Update the timer every second
+    setTimeout(updateTimer, 1000);
+}
+
+
 /*
 Exam data will be stored in localStorage in following keys
 exam, exanOverview, currentQuestion
@@ -60,6 +82,14 @@ frappe.ready(() => {
         });
     }
 
+    var startTimeString = exam.candidate_exam_start_time;
+    var endTimeString = exam.end_time;
+
+    if (startTimeString && startTimeString.trim() !== "") {
+        var endTime = new Date(endTimeString);
+        // Start the countdown timer
+        updateTimer(endTime);
+    }
 
     $("#nextQs").click((e) => {
         e.preventDefault();
@@ -92,8 +122,6 @@ frappe.ready(() => {
             "You have remaining time in the exam. You can review and revise your answers until the allocated time expires."
         );
         $("#quiz-message").show();
-
-
     });
 
 });
