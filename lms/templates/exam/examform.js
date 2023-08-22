@@ -128,11 +128,11 @@ function updateOverviewMap() {
             // Loop to generate 10 buttons and pill labels
             $("#button-grid").html('');
             for (let i = 1; i <= data.message.total_questions; i++) {
-                btnCls = "btn-outline-secondary";
+                btnCls = "btn-outline-dark";
                 // create a new button
                 const button = $("<button disabled></button>");
                 button.text(i);
-                button.addClass("exam-map-btn btn btn " + btnCls + " m-1 btn-sm");
+                button.addClass("exam-map-btn btn " + btnCls + " m-1 btn-sm");
                 button.attr("id", "button-" + i);
                 if (i <= data.message.submitted.length) {
                     button.prop("disabled", false);
