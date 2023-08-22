@@ -128,21 +128,21 @@ function updateOverviewMap() {
             // Loop to generate 10 buttons and pill labels
             $("#button-grid").html('');
             for (let i = 1; i <= data.message.total_questions; i++) {
-                btnStatus = "btn-outline-secondary";
+                btnCls = "btn-outline-secondary";
                 // create a new button
-                const button = $("<button></button>");
-                if (data.message.submitted[i] === undefined) {
-                    button.text(i);
-                } else if (data.message.submitted[i].marked_for_later) {
+                const button = $("<button disabled></button>");
+                if (data.message.submitted[i].marked_for_later) {
                     button.html(answrLater + ' ' + i);
                 } else if (data.message.submitted[i].answer) {
                     button.html(answrdCheck + ' ' + i);
+                } else {
+                    button.html(i);
                 }
 
-                button.addClass("exam-map-btn btn btn " + btnStatus + " m-1 btn-sm");
+                button.addClass("exam-map-btn btn btn " + btnCls + " m-1 btn-sm");
                 button.attr("id", "button-" + i);
                 if (i <= data.message.submitted.length) {
-                    button.prop("disabled", true);
+                    button.prop("disabled", false);
                 }
                 // append the button and label to the row
                 // buttonRow.append(button, label);
