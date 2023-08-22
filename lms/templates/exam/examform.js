@@ -83,7 +83,7 @@ frappe.ready(() => {
     }
 
     var startTimeString = exam.candidate_exam_start_time;
-    var endTimeString = exam.end_time;
+    var endTimeString = exam.schedule_end_time;
 
     if (startTimeString && startTimeString.trim() !== "") {
         var endTime = new Date(endTimeString);
