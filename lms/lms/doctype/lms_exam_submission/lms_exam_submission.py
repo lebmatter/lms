@@ -277,6 +277,30 @@ def submit_question_response(exam_submission=None, qs_name=None, answer="", mark
 		
 	return {"qs_name": qs_name}
 
+
+@frappe.whitelist()
+def submit_exam(exam_submission=None):
+	"""
+	Submit response and add marks if applicable
+	"""
+	assert exam_submission
+
+	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
+	# check of the logged in user is same as exam submission candidate
+	if frappe.session.user != doc.candidate:
+		raise PermissionError("You don't have access to this exam.")
+
+	if doc.status == "Submitted":
+		frappe.throw("Exam is already submitted!")
+	elif doc.status == "Started":
+		# check if the exam is ended, if so, submit the exam
+		exam_ended, end_time = doc.exam_ended()
+		if exam_ended:
+			doc.status = "Submitted"
+			doc.save(ignore_permissions=True)
+
+	return {"status": "Submitted"}
+
 @frappe.whitelist()
 def post_exam_message(exam_submission=None, message=None, type_of_message="General"):
 	"""

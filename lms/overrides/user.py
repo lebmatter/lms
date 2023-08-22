@@ -240,7 +240,7 @@ def get_candidate_exams(member=None):
 	"""
 	res = {"upcoming": [], "ongoing": []}
 
-	registered_exams = frappe.get_all(
+	submissions = frappe.get_all(
 		"LMS Exam Submission",
 		{"candidate": member or frappe.session.user},[
 			"name",
@@ -250,33 +250,38 @@ def get_candidate_exams(member=None):
 			"exam_submitted_time",
 			"additional_time_given"
    ])
-	for exam in registered_exams:
-		if exam["status"] in ["Registration Cancelled", "Aborted"]:
+	for submission in submissions:
+		if submission["status"] in ["Registration Cancelled", "Aborted"]:
 			continue
 		
-		schedule = frappe.get_doc("LMS Exam Schedule", exam["exam_schedule"])
+		schedule = frappe.get_doc("LMS Exam Schedule", submission["exam_schedule"])
 		# non submitted schedules should not be considered
 		if schedule.docstatus == 0:
 			continue
 		
 		# end time is schedule start time + duration + additional time given
 		end_time = schedule.start_date_time + timedelta(minutes=schedule.duration) + \
-			timedelta(minutes=exam["additional_time_given"])
+			timedelta(minutes=submission["additional_time_given"])
 
 		exam_details = {
-			"candidate_exam": exam["name"],
+			"candidate_exam": submission["name"],
 			"exam": schedule.exam,
-			"exam_schedule": exam["exam_schedule"],
+			"exam_schedule": submission["exam_schedule"],
 			"schedule_start_time": schedule.start_date_time,
 			"schedule_end_time": end_time,
-			"candidate_exam_start_time": exam["exam_started_time"],
-			"candidate_exam_submitted_time": exam["exam_submitted_time"],
-			"additional_time_given": exam["additional_time_given"],
-			"submission_status": exam["status"],
+			"candidate_exam_start_time": submission["exam_started_time"],
+			"candidate_exam_submitted_time": submission["exam_submitted_time"],
+			"additional_time_given": submission["additional_time_given"],
+			"submission_status": submission["status"],
 			"duration": schedule.duration,
 			"enable_calculator": schedule.enable_calculator,
 			"allowed_tab_change": schedule.allowed_tab_change 
 		}
+
+		# make datetime in isoformat
+		for key,val in exam_details.items():
+			if type(val) == datetime:
+				exam_details[key] = val.isoformat()
 		
 		# checks if current time is between schedule start and end time
 		# ongoing exams can be in Not staryed, started or submitted states
@@ -285,11 +290,12 @@ def get_candidate_exams(member=None):
 			res["ongoing"].append(exam_details)
 		elif tnow <= schedule.start_date_time:
 			res["upcoming"].append(exam_details)
-		
-		# make datetime in isoformat
-		for key,val in exam_details.items():
-			if type(val) == datetime:
-				exam_details[key] = val.isoformat()
+		elif tnow > end_time:
+			# if time is over, submit if applicable
+			if submission["status"] != "Submitted":
+				doc = frappe.get_doc("LMS Exam Submission", submission["name"])
+				doc.status == "Submitted"
+				doc.save(ignore_permissions=True)
 
 	return res
 
