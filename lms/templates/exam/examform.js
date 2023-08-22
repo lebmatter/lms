@@ -311,6 +311,7 @@ function getQuestion(question) {
 function submitAnswer() {
     var currentQuestion = getObjectFromLocalStorage(currentQuestionKey);
     let answer;
+    var mrkForLtr = $("#markedForLater").prop('checked') ? 1 : 0;
     if (currentQuestion["type"] == "Choices") {
         let checkedValues = [];
         $("[name='" + currentQuestion["key"] + "']:checked").each(function () {
@@ -323,7 +324,7 @@ function submitAnswer() {
         answer = $("#examTextInput").find("textarea").val();
     }
 
-    if (answer === '') {
+    if (answer === '' && mrkForLtr === 0) {
         examAlert(
             "No answer submitted!", "You need to enter an answer(s) or mark it for later."
         );
@@ -335,7 +336,7 @@ function submitAnswer() {
                 'exam_submission': exam["candidate_exam"],
                 'qs_name': currentQuestion["name"],
                 'answer': answer,
-                'markdflater': $("#markedForLater").prop('checked') ? 1 : 0,
+                'markdflater': mrkForLtr,
             },
             callback: (data) => {
                 console.log("submitted answer.")
