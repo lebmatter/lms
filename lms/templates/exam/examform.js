@@ -131,18 +131,16 @@ function updateOverviewMap() {
                 btnCls = "btn-outline-secondary";
                 // create a new button
                 const button = $("<button disabled></button>");
-                if (data.message.submitted[i].marked_for_later) {
-                    button.html(answrLater + ' ' + i);
-                } else if (data.message.submitted[i].answer) {
-                    button.html(answrdCheck + ' ' + i);
-                } else {
-                    button.html(i);
-                }
-
+                button.text(i);
                 button.addClass("exam-map-btn btn btn " + btnCls + " m-1 btn-sm");
                 button.attr("id", "button-" + i);
                 if (i <= data.message.submitted.length) {
                     button.prop("disabled", false);
+                    if (data.message.submitted[i].marked_for_later) {
+                        button.html(answrLater + ' ' + i);
+                    } else if (data.message.submitted[i].answer) {
+                        button.html(answrdCheck + ' ' + i);
+                    }
                 }
                 // append the button and label to the row
                 // buttonRow.append(button, label);
