@@ -1,7 +1,7 @@
 # Copyright (c) 2023, Frappe and contributors
 # For license information, please see license.txt
 
-# import frappe
+import random
 import frappe
 from frappe.model.document import Document
 
@@ -26,17 +26,17 @@ class LMSExam(Document):
 	def autoname(self):
 		if not self.name:
 			title = self.title
-			if self.title == "New Course":
+			if self.title == "New Exam":
 				title = self.title + str(random.randint(0, 99))
-			self.name = generate_slug(title, "LMS Course")
+			self.name = generate_slug(title, "LMS Exam")
 
 	def __repr__(self):
-		return f"<Course#{self.name}>"
+		return f"<Exam#{self.name}>"
 
 
 @frappe.whitelist(allow_guest=True)
 def search_exam(text):
-	courses = frappe.get_all(
+	exams = frappe.get_all(
 		"LMS Exam",
 		filters={"published": True},
 		or_filters={
@@ -47,5 +47,5 @@ def search_exam(text):
 		},
 		fields=["name", "title"],
 	)
-	return courses
+	return exams
 
