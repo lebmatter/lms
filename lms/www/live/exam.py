@@ -24,16 +24,22 @@ def get_context(context):
 	context.page_context = {}
 
 	if sched_exams["ongoing"]:
+		context.alert = {}
 		set_live_exam_context(context, sched_exams["ongoing"][0])
 	elif sched_exams["upcoming"] and not sched_exams["ongoing"]:
-		raise frappe.PermissionError(
-			"You have an upcoming exam. {} starts at {}".format(
-			sched_exams["upcoming"][0]["exam"],
-			sched_exams["upcoming"][0]["schedule_start_time"]
-		))
+		context.exam = {}
+		context.alert = {
+			"title": "You have an upcoming exam.",
+			"text": "{} exam starts at {}".format(
+				sched_exams["upcoming"][0]["exam"],
+				sched_exams["upcoming"][0]["schedule_start_time"]
+		)}
 	else:
-		raise frappe.PermissionError("You do not have any live or upcoming exams!")
-
+		context.exam = {}
+		context.alert = {
+			"title": "No exams scheduled.",
+			"text": "You do not have any live or upcoming exams."
+		}
 def set_live_exam_context(context, ongoing_exam):
 	exam = frappe.db.get_value(
 		"LMS Exam", ongoing_exam["exam"], ["name","title"], as_dict=True
@@ -52,9 +58,6 @@ def set_live_exam_context(context, ongoing_exam):
 	if attempted:
 		exam["last_question"] = attempted[-1]["exam_question"]
 	context.exam = exam
-
-	# set the canidate exam code in cache
-	# frappe.cache().set(ACTIVE_EXAM_CODE_CACHE, exam["candidate_exam"])
 
 	context.metatags = {
 		"title": exam.title,

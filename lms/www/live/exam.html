@@ -64,6 +64,18 @@
 {% block page_content %}
 
 <div class="container mt-10">
+    {% if alert %}
+    <div class="row justify-content-center mt-10 mb-10">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ alert.title }}</h5>
+                    <p class="card-text">{{ alert.text }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
     <div class="row">
         <div class="col-md-3">
             <!-- Sidebar content -->
@@ -138,6 +150,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
     <!-- Bootstrap Modal -->
     <div class="modal" id="examAlert">
         <div class="modal-dialog">
@@ -181,10 +194,12 @@
             });
         });
     </script>
+    {% if exam %}
     <script type="text/javascript">
         var exam = {{ exam | tojson }};
         {% include "lms/templates/exam/examform.js" %}
         {% include "lms/templates/exam/examutils.js" %}
         {% include "lms/templates/exam/calculator.js" %}
     </script>
+    {% endif %}
     {% endblock %}
