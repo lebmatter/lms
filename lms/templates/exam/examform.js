@@ -18,9 +18,8 @@ function clearKeyFromLocalStorage(key) {
 }
 
 // Function to update the countdown timer
-function updateTimer(endTime) {
-    var currentTime = new Date().getTime();
-    var remainingTime = new Date(endTime) - currentTime;
+function updateTimer() {
+    var remainingTime = new Date(exam.schedule_end_time) - new Date().getTime();
     if (remainingTime <= 0) {
         // Display "0m 0s" when time is up
         document.getElementById("timer").innerHTML = "00:00";
@@ -30,7 +29,6 @@ function updateTimer(endTime) {
     // Calculate minutes and seconds
     var minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
     var seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
-
     // Display the countdown timer
     document.getElementById("timer").innerHTML = minutes + ":" + seconds;
 
@@ -82,13 +80,9 @@ frappe.ready(() => {
         });
     }
 
-    var startTimeString = exam.candidate_exam_start_time;
-    var endTimeString = exam.schedule_end_time;
-
-    if (startTimeString && startTimeString.trim() !== "") {
-        var endTime = new Date(endTimeString);
+    if (exam.schedule_end_time && exam.candidate_exam_start_time.trim() !== "") {
         // Start the countdown timer
-        updateTimer(endTime);
+        updateTimer();
     }
 
     $("#nextQs").click((e) => {
