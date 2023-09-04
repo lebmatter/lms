@@ -256,7 +256,7 @@ def get_live_exam(member=None):
 		
 		schedule = frappe.get_doc("LMS Exam Schedule", submission["exam_schedule"])
 		# non submitted schedules should not be considered
-		if schedule.docstatus == 0:
+		if schedule.docstatus == 0 or schedule.docstatus == 2:
 			continue
 		
 		# end time is schedule start time + duration + additional time given
