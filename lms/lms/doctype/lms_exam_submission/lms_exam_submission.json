@@ -76,7 +76,8 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "Registered\nRegistration Cancelled\nStarted\nSubmitted\nAborted"
+   "options": "Registered\nRegistration Cancelled\nStarted\nSubmitted\nAborted",
+   "read_only": 1
   },
   {
    "fieldname": "exam_started_time",
@@ -104,7 +105,7 @@
    "link_fieldname": "exam_submission"
   }
  ],
- "modified": "2023-08-21 14:29:09.629723",
+ "modified": "2023-09-04 19:47:48.362203",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",

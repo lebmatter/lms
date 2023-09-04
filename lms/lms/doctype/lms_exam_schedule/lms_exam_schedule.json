@@ -3,6 +3,7 @@
  "autoname": "prompt",
  "creation": "2023-07-04 17:21:01.908178",
  "default_view": "List",
+ "description": "Test",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -171,7 +172,8 @@
    "fieldname": "pass_percentage",
    "fieldtype": "Percent",
    "label": "Pass Percentage",
-   "non_negative": 1
+   "non_negative": 1,
+   "reqd": 1
   },
   {
    "default": "0",
@@ -192,11 +194,11 @@
    "label": "Enable Calculator"
   },
   {
+   "default": "3",
    "fieldname": "allowed_tab_change",
    "fieldtype": "Int",
-   "label": "Total Marks",
-   "non_negative": 1,
-   "default": 3
+   "label": "Alloweb tab changes",
+   "non_negative": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -213,7 +215,7 @@
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-08-21 17:00:31.652197",
+ "modified": "2023-09-04 19:54:32.501458",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",
@@ -221,6 +223,8 @@
  "owner": "Administrator",
  "permissions": [
   {
+   "amend": 1,
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -230,8 +234,8 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
-   "write": 1,
-   "submit": 1
+   "submit": 1,
+   "write": 1
   }
  ],
  "sort_field": "modified",
