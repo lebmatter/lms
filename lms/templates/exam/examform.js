@@ -65,12 +65,7 @@ frappe.ready(() => {
     updateOverviewMap();
 
     // check if exam is already started
-    if (exam["last_question"]) {
-        $("#start-banner").addClass("hide");
-        $("#quiz-form").removeClass("hide");
-        // on first load, show the last question loaded
-        getQuestion(exam["last_question"]);
-    } else {
+    if (!exam["last_question"]) {
         $("#quiz-btn").text("Start exam");
         $("#quiz-btn").show();
         $("#quiz-message").hide();
@@ -78,6 +73,11 @@ frappe.ready(() => {
             e.preventDefault();
             startExam();
         });
+    } else {
+        $("#start-banner").addClass("hide");
+        $("#quiz-form").removeClass("hide");
+        // on first load, show the last question loaded
+        getQuestion(exam["last_question"]);
     }
 
     if (exam.schedule_end_time && exam.candidate_exam_start_time.trim() !== "") {
