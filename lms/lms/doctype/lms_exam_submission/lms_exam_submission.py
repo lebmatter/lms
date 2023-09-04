@@ -96,7 +96,7 @@ def start_exam(exam_submission=None):
 	"""
 	assert exam_submission
 	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
-	if doc.exam_started_time:
+	if doc.status == "Started":
 		return True
 
 	if frappe.session.user != doc.candidate:
