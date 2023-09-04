@@ -61,6 +61,6 @@ def get_context(context):
 		context.alert = {
 			"title": "You have an upcoming exam.",
 			"text": "{} exam starts at {}".format(
-				exam_details[0]["exam"],
-				exam_details["upcoming"][0]["schedule_start_time"]
+				exam_details["exam"],
+				exam_details["start_time"]
 		)}
