@@ -71,16 +71,16 @@ frappe.ready(() => {
         $("#quiz-message").hide();
         $("#quiz-btn").click((e) => {
             e.preventDefault();
-            startExam();
+            getQuestion("");
         });
     } else {
         $("#start-banner").addClass("hide");
         $("#quiz-form").removeClass("hide");
         // on first load, show the last question loaded
-        getQuestion(exam["last_question"]);
+        getQuestion("");
     }
 
-    if (exam.end_time && exam.candidate_exam_start_time.trim() !== "") {
+    if (exam.submission_status === "Started") {
         // Start the countdown timer
         updateTimer();
     }
@@ -94,7 +94,7 @@ frappe.ready(() => {
         // if the question is already loaded, get it or get new
         var nextQs = currentQuestion["no"] + 1;
         if (examOverview.submitted[nextQs] === undefined) {
-            getQuestion('');
+            getQuestion("");
         } else {
             getQuestion(examOverview.submitted[nextQs].name);
         }
@@ -119,19 +119,6 @@ frappe.ready(() => {
     });
 
 });
-
-
-function startExam() {
-    frappe.call({
-        method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.start_exam",
-        args: {
-            'exam_submission': exam["candidate_exam"],
-        },
-        callback: (data) => {
-            getQuestion('');
-        },
-    });
-};
 
 function updateOverviewMap() {
     frappe.call({

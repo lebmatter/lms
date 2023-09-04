@@ -90,7 +90,6 @@ def get_submitted_questions(exam_submission, fields=["exam_question"]):
 	return all_submitted
 
 
-@frappe.whitelist()
 def start_exam(exam_submission=None):
 	"""
 	Get questions and store order in cache
@@ -214,6 +213,13 @@ def get_question(exam_submission=None, question=None):
 	if question param is not passed, the function will assign a new question
 	"""
 	assert exam_submission
+	submission_status = frappe.db.get_value(
+		"LMS Exam Submission", exam_submission, "status"
+	)
+	if not question and submission_status != "Registered":
+		# start exam if not started.
+		start_exam(exam_submission)
+
 	question_number, question_doc, answer_doc = validate_and_get_question(
 		exam_submission, question=question
 	)
