@@ -77,7 +77,7 @@ frappe.ready(() => {
         $("#start-banner").addClass("hide");
         $("#quiz-form").removeClass("hide");
         // on first load, show the last question loaded
-        getQuestion("");
+        getQuestion(exam["last_question"]);
     }
 
     if (exam.submission_status === "Started") {
@@ -294,6 +294,18 @@ function displayQuestion(current_qs) {
 
 
 function getQuestion(question) {
+    if (exam["submission_status"] === "Registered") {
+        frappe.call({
+            method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.start_exam",
+            type: "POST",
+            args: {
+                "exam_submission": exam["candidate_exam"],
+            },
+            callback: (data) => {
+                location.reload();
+            }
+        });
+    }
     frappe.call({
         method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.get_question",
         type: "POST",

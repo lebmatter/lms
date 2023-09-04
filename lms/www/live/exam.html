@@ -3,7 +3,11 @@
 
 
 {% block title %}
+{% if alert %}
+Alert!
+{% else %}
 {{ exam.title }}
+{% endif %}
 {% endblock %}
 
 
