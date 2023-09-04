@@ -230,15 +230,15 @@ def get_authored_exams(member=None, only_published=True):
 
 	return exam_details
 
-def get_candidate_exams(member=None):
+def get_live_exam(member=None):
 	"""
-	Get upcoming/ongoing exams of a candidate.
+	Get upcoming/ongoing exam of a candidate.
 
 	Check if current time is inbetween start and end time
-	Ideally there should be only one ongoing exam,
-	But the function returns all valid enteies
+	Function returns only one live/upcoming exam details
+	even if multiple entries are there.
 	"""
-	res = {"upcoming": [], "ongoing": []}
+	exam_details = {}
 
 	submissions = frappe.get_all(
 		"LMS Exam Submission",
@@ -269,13 +269,12 @@ def get_candidate_exams(member=None):
 			"exam_schedule": submission["exam_schedule"],
 			"start_time": schedule.start_date_time,
 			"end_time": end_time,
-			"candidate_exam_start_time": submission["exam_started_time"],
-			"candidate_exam_submitted_time": submission["exam_submitted_time"],
 			"additional_time_given": submission["additional_time_given"],
 			"submission_status": submission["status"],
 			"duration": schedule.duration,
 			"enable_calculator": schedule.enable_calculator,
-			"allowed_tab_change": schedule.allowed_tab_change 
+			"allowed_tab_change": schedule.allowed_tab_change,
+			"live_status": ""
 		}
 
 		# make datetime in isoformat
@@ -287,9 +286,11 @@ def get_candidate_exams(member=None):
 		# ongoing exams can be in Not staryed, started or submitted states
 		tnow = datetime.strptime(now(), '%Y-%m-%d %H:%M:%S.%f')
 		if schedule.start_date_time <= tnow <= end_time:
-			res["ongoing"].append(exam_details)
+			exam_details["live_status"] = "Live"
+			return exam_details
 		elif tnow <= schedule.start_date_time:
-			res["upcoming"].append(exam_details)
+			exam_details["live_status"] = "Upcoming"
+			return exam_details
 		elif tnow > end_time:
 			# if time is over, submit if applicable
 			if submission["status"] != "Submitted":
@@ -297,7 +298,7 @@ def get_candidate_exams(member=None):
 				doc.status == "Submitted"
 				doc.save(ignore_permissions=True)
 
-	return res
+	return exam_details
 
 
 def get_palette(full_name):

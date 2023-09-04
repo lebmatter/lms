@@ -8,7 +8,7 @@ from lms.lms.doctype.lms_exam_submission.lms_exam_submission import \
 from lms.lms.utils import (
 	redirect_to_exams_list
 )
-from lms.overrides.user import get_candidate_exams
+from lms.overrides.user import get_live_exam
 
 # ACTIVE_EXAM_CODE_CACHE = "ACTIVEEXAMCODECACHE"
 
@@ -18,28 +18,26 @@ def get_context(context):
 	if frappe.session.user == "Guest":
 		raise frappe.PermissionError(_("Please login to access this page."))
 
-	sched_exams = get_candidate_exams(frappe.session.user)
-	context.upcoming_exams = sched_exams["upcoming"]
-	context.ongoing_exams = sched_exams["ongoing"]
+	exam_details = get_live_exam(frappe.session.user)
 	context.page_context = {}
 
-	if sched_exams["ongoing"]:
-		context.alert = {}
-		set_live_exam_context(context, sched_exams["ongoing"][0])
-	elif sched_exams["upcoming"] and not sched_exams["ongoing"]:
-		context.exam = {}
-		context.alert = {
-			"title": "You have an upcoming exam.",
-			"text": "{} exam starts at {}".format(
-				sched_exams["upcoming"][0]["exam"],
-				sched_exams["upcoming"][0]["schedule_start_time"]
-		)}
-	else:
+	if not exam_details:
 		context.exam = {}
 		context.alert = {
 			"title": "No exams scheduled.",
 			"text": "You do not have any live or upcoming exams."
 		}
+	elif exam_details["live_status"] == "Live":
+		context.alert = {}
+		set_live_exam_context(context, exam_details[0])
+	elif exam_details["live_status"] == "Upcoming":
+		context.exam = {}
+		context.alert = {
+			"title": "You have an upcoming exam.",
+			"text": "{} exam starts at {}".format(
+				exam_details[0]["exam"],
+				exam_details["upcoming"][0]["schedule_start_time"]
+		)}
 def set_live_exam_context(context, ongoing_exam):
 	exam = frappe.db.get_value(
 		"LMS Exam", ongoing_exam["exam"], ["name","title"], as_dict=True
