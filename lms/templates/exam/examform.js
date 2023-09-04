@@ -19,7 +19,7 @@ function clearKeyFromLocalStorage(key) {
 
 // Function to update the countdown timer
 function updateTimer() {
-    var remainingTime = new Date(exam.schedule_end_time) - new Date().getTime();
+    var remainingTime = new Date(exam.end_time) - new Date().getTime();
     if (remainingTime <= 0) {
         // Display "0m 0s" when time is up
         document.getElementById("timer").innerHTML = "00:00";
@@ -80,7 +80,7 @@ frappe.ready(() => {
         getQuestion(exam["last_question"]);
     }
 
-    if (exam.schedule_end_time && exam.candidate_exam_start_time.trim() !== "") {
+    if (exam.end_time && exam.candidate_exam_start_time.trim() !== "") {
         // Start the countdown timer
         updateTimer();
     }
@@ -307,13 +307,6 @@ function displayQuestion(current_qs) {
 
 
 function getQuestion(question) {
-    // clearAllQuestions();
-    // const cachedQuestion = localStorage.getItem(`${exam["candidate_exam"]}question_${qsNo}`);
-
-    // if (cachedQuestion) {
-    //     // The question is already in the cache, use it
-    //     displayQuestion(JSON.parse(cachedQuestion));
-    // } else {
     frappe.call({
         method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.get_question",
         args: {
