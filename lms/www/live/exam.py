@@ -29,7 +29,33 @@ def get_context(context):
 		}
 	elif exam_details["live_status"] == "Live":
 		context.alert = {}
-		set_live_exam_context(context, exam_details[0])
+		exam = frappe.db.get_value(
+			"LMS Exam", exam_details["exam"], ["name","title"], as_dict=True
+		)
+		instructions = frappe.db.get_value(
+			"LMS Exam Schedule", exam_details["exam_schedule"], "instructions"
+		)
+		for key, value in exam_details.items():
+			exam[key] = value
+
+		exam["instructions"] = markdown(instructions)
+		exam["last_question"] = ""
+
+		attempted = get_submitted_questions(exam_details["candidate_exam"])
+		# return the last question requested in this exam, if applicable
+		if attempted:
+			exam["last_question"] = attempted[-1]["exam_question"]
+		context.exam = exam
+
+		context.metatags = {
+			"title": exam.title,
+			"image": exam.image,
+			"description": exam.short_introduction,
+			"keywords": exam.title,
+			"og:type": "website",
+		}
+
+
 	elif exam_details["live_status"] == "Upcoming":
 		context.exam = {}
 		context.alert = {
@@ -38,30 +64,3 @@ def get_context(context):
 				exam_details[0]["exam"],
 				exam_details["upcoming"][0]["schedule_start_time"]
 		)}
-def set_live_exam_context(context, ongoing_exam):
-	exam = frappe.db.get_value(
-		"LMS Exam", ongoing_exam["exam"], ["name","title"], as_dict=True
-	)
-	instructions = frappe.db.get_value(
-		"LMS Exam Schedule", ongoing_exam["exam_schedule"], "instructions"
-	)
-	for key, value in ongoing_exam.items():
-		exam[key] = value
-
-	exam["instructions"] = markdown(instructions)
-	exam["last_question"] = ""
-
-	attempted = get_submitted_questions(ongoing_exam["candidate_exam"])
-	# return the last question requested in this exam, if applicable
-	if attempted:
-		exam["last_question"] = attempted[-1]["exam_question"]
-	context.exam = exam
-
-	context.metatags = {
-		"title": exam.title,
-		"image": exam.image,
-		"description": exam.short_introduction,
-		"keywords": exam.title,
-		"og:type": "website",
-	}
-
