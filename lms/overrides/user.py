@@ -297,6 +297,8 @@ def get_live_exam(member=None):
 				doc = frappe.get_doc("LMS Exam Submission", submission["name"])
 				doc.status == "Submitted"
 				doc.save(ignore_permissions=True)
+			
+			return {}
 
 	return exam_details
 
