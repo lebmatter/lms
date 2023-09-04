@@ -296,6 +296,7 @@ function displayQuestion(current_qs) {
 function getQuestion(question) {
     frappe.call({
         method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.get_question",
+        type: "POST",
         args: {
             "exam_submission": exam["candidate_exam"],
             "question": question,
