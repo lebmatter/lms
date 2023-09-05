@@ -303,6 +303,7 @@ function startExam() {
             $("#start-banner").addClass("hide");
             $("#quiz-form").removeClass("hide");
             getQuestion("");
+            updateTimer();
         }
     });
 };
