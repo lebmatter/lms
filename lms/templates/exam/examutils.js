@@ -2,13 +2,16 @@ const existingMessages = [];
 frappe.ready(() => {
     let awayStartTime;
 
-    $(window).blur(function () {
-        awayStartTime = new Date();
-        examAlert(
-            "Tab change detected",
-            "Multiple tab changes will result in exam termination!",
-        );
-    });
+    if (exam["submission_status"] === "Started") {
+        $(window).blur(function () {
+            awayStartTime = new Date();
+            examAlert(
+                "Tab change detected",
+                "Multiple tab changes will result in exam termination!",
+            );
+        });
+    }
+
 
     $("#examAlert").on("hidden.bs.modal", function () {
         if (awayStartTime) {
