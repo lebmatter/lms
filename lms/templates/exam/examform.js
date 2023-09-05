@@ -71,7 +71,7 @@ frappe.ready(() => {
         $("#quiz-message").hide();
         $("#quiz-btn").click((e) => {
             e.preventDefault();
-            getQuestion("");
+            startExam();
         });
     } else {
         $("#start-banner").addClass("hide");
@@ -292,20 +292,22 @@ function displayQuestion(current_qs) {
     $("#quiz-form").fadeIn(300);
 };
 
+function startExam() {
+    frappe.call({
+        method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.start_exam",
+        type: "POST",
+        args: {
+            "exam_submission": exam["candidate_exam"],
+        },
+        callback: (data) => {
+            $("#start-banner").addClass("hide");
+            $("#quiz-form").removeClass("hide");
+            getQuestion("");
+        }
+    });
+};
 
 function getQuestion(question) {
-    if (exam["submission_status"] === "Registered") {
-        frappe.call({
-            method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.start_exam",
-            type: "POST",
-            args: {
-                "exam_submission": exam["candidate_exam"],
-            },
-            callback: (data) => {
-                location.reload();
-            }
-        });
-    }
     frappe.call({
         method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.get_question",
         type: "POST",
