@@ -111,7 +111,11 @@ frappe.ready(() => {
         $("#quiz-form").addClass("hide");
 
         $("#quiz-title").html();
-        $("#quiz-btn").hide();
+        $("#quiz-btn").text("Submit exam");
+        $("#quiz-btn").click((e) => {
+            e.preventDefault();
+            endExam();
+        });
         $("#quiz-message").text(
             "You have remaining time in the exam. You can review and revise your answers until the allocated time expires."
         );
@@ -290,6 +294,23 @@ function displayQuestion(current_qs) {
         $('#exam-timer').hide();
     }
     $("#quiz-form").fadeIn(300);
+};
+
+function endExam() {
+    frappe.call({
+        method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.end_exam",
+        type: "POST",
+        args: {
+            "exam_submission": exam["candidate_exam"],
+        },
+        callback: (data) => {
+            $("#quiz-message").text(
+                "Exam submitted."
+            );
+            $("#quiz-btn").hide();
+            examAlert("Exam submitted!", "Your exam is submitted.");
+        }
+    });
 };
 
 function startExam() {

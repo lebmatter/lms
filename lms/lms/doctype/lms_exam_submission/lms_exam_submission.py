@@ -25,7 +25,7 @@ class LMSExamSubmission(Document):
 			frappe.throw("This exam can be started only after {}".format(scheduled_start))
 
 		return start_time
-	
+
 	def exam_ended(self):
 		"""
 		End time is schedule start time + duration + additional time given
@@ -42,7 +42,7 @@ class LMSExamSubmission(Document):
 		if current_time >= end_time:
 			return True, end_time
 		
-		return False, end_time
+		return False, end_time	
 
 	def get_messages(self):
 		"""
@@ -119,8 +119,11 @@ def end_exam(exam_submission=None):
 	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
 	if doc.status == "Submitted":
 		frappe.throw("Exam is sbumitted already.")
+	if doc.status != "Started":
+		frappe.throw("Exam is not in started state.")
 	
-	doc.submit()
+	doc.status = "Submitted"
+	doc.save(ignore_permissions=True)
 
 def pick_new_question(exam_schedule, exclude=[], get_random=False):
 	"""
