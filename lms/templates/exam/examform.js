@@ -23,15 +23,22 @@ function updateTimer() {
     if (remainingTime <= 0) {
         // Display "0m 0s" when time is up
         document.getElementById("timer").innerHTML = "00:00";
-        examAlert("Exam ended", "Your exam is submitted.");
         return; // Stop the timer from updating further
     }
     // Calculate minutes and seconds
     var minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
     var seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
-    // Display the countdown timer
-    document.getElementById("timer").innerHTML = minutes + ":" + seconds;
+    if (remainingTime > (1000 * 60 * 60)) { // 1000 milliseconds * 60 seconds * 60 minutes = 1 hour
+        // Calculate hours, minutes, and seconds
+        var hours = Math.floor(remainingTime / (1000 * 60 * 60));
+        // Display the countdown timer
+        document.getElementById("timer").innerHTML = hours + ":" + minutes + ":" + seconds;
 
+    } else {
+        // Display the countdown timer
+        document.getElementById("timer").innerHTML = minutes + ":" + seconds;
+
+    }
     // Update the timer every second
     setTimeout(updateTimer, 1000);
 }
