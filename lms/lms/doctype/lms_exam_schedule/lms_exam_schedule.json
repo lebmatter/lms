@@ -118,7 +118,7 @@
    "reqd": 1
   },
   {
-   "description": "Select questions by category and marks required",
+   "description": "Select questions by category and marks required. Questions will be added on submit.",
    "fieldname": "questions",
    "fieldtype": "Table",
    "label": "Add Questions",
@@ -152,12 +152,14 @@
    "label": "Questions"
   },
   {
+   "description": "Will be computed on submit.",
    "fieldname": "total_questions",
    "fieldtype": "Int",
    "label": "Total No. of Questions",
    "read_only": 1
   },
   {
+   "description": "Will be computed on submit.",
    "fieldname": "total_marks",
    "fieldtype": "Int",
    "label": "Total Marks",
@@ -246,7 +248,7 @@
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-09-08 16:10:33.533807",
+ "modified": "2023-09-08 16:31:27.383359",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",
