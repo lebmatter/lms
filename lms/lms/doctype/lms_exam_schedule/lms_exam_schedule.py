@@ -28,12 +28,22 @@ class LMSExamSchedule(Document):
 		
 		if self.pass_percentage > 100.0:
 			frappe.throw("Pass percentage should not be more than 100")
+		
+		if self.question_type != "Choices" and not self.examiners:
+			frappe.throw(
+				"Exam with Question type:{} needs evaluation. Add examiner list.".format(
+					self.question_type
+			))
 
 
 	def before_submit(self):
 		self.total_marks, self.total_questions = update_questions_for_schedule(
 			self.name, self.questions
 		)
+	
+	def before_save(self):
+		if self.question_type != "Choices":
+			self.needs_evaluation = 1
 
 
 def validate_weightage_table(cat_weightage):
