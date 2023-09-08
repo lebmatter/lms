@@ -12,6 +12,8 @@
   "marked_for_later",
   "answer",
   "is_correct",
+  "section_break_r1io",
+  "evaluation_status",
   "evaluator",
   "evaluator_response",
   "mark"
@@ -76,11 +78,24 @@
    "fieldname": "mark",
    "fieldtype": "Float",
    "label": "Mark"
+  },
+  {
+   "fieldname": "section_break_r1io",
+   "fieldtype": "Section Break",
+   "label": "Evaluation"
+  },
+  {
+   "description": "Choice questions will be Auto evaluated.",
+   "fieldname": "evaluation_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Evaluation Status",
+   "options": "Auto\nPending\nDone"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-08-10 19:31:21.894558",
+ "modified": "2023-09-08 17:43:45.223624",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Result",
