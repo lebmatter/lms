@@ -49,11 +49,17 @@ def validate_weightage_table(cat_weightage):
 		)
 
 
-def get_random_questions(category, mark_per_qs, no_of_qs):
-	cat_qs = frappe.get_all(
-			"LMS Exam Question",
-			{"category": category, "mark": mark_per_qs},
-	)
+def get_random_questions(category, mark_per_qs, no_of_qs, question_type):
+	if question_type == "Mixed":
+		cat_qs = frappe.get_all(
+				"LMS Exam Question",
+				{"category": category, "mark": mark_per_qs},
+		)
+	else:
+		cat_qs = frappe.get_all(
+				"LMS Exam Question",
+				{"category": category, "mark": mark_per_qs, "type": question_type},
+		)
 	try:
 		return random.sample(cat_qs, no_of_qs)
 	except ValueError:
@@ -77,13 +83,18 @@ def update_questions_for_schedule(exam_schedule, cat_weightage):
 		"Exam Schedule Question", {"exam_schedule": exam_schedule}
 	)
 	for qs in existing_questions:
-		frappe.delete_doc("Exam Schedule Question", qs["name"])\
+		frappe.delete_doc("Exam Schedule Question", qs["name"])
+	
+	question_type = frappe.db.get_value(
+		"LMS Exam Schedule", exam_schedule, "question_type"
+	)
 	
 	total_qs = 0
 	total_marks = 0
 	for cat in cat_weightage:
 		questions = get_random_questions(
-			cat.question_category, cat.mark_per_question, cat.no_of_questions
+			cat.question_category, cat.mark_per_question,
+			cat.no_of_questions, question_type
 		)
 		for qs in questions:
 			doc = frappe.get_doc({
