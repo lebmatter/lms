@@ -10,7 +10,6 @@
  "field_order": [
   "exam",
   "max_candidates",
-  "no_of_candidates_per_examiner",
   "column_break_3",
   "start_date_time",
   "duration",
@@ -20,21 +19,27 @@
   "section_break_7",
   "visibility",
   "column_break_9",
-  "exam_settings_section",
-  "column_break_5bke",
-  "needs_evaluation",
-  "evaluation_ends_in_days",
-  "examiners",
   "question_management_section",
-  "view_question_bank_overview",
+  "question_type",
   "questions",
   "total_marks",
   "total_questions",
   "randomize_questions",
   "pass_percentage",
+  "amended_from",
+  "controls_section",
   "enable_calculator",
+  "column_break_ykuc",
   "allowed_tab_change",
-  "amended_from"
+  "exam_settings_section",
+  "column_break_5bke",
+  "needs_evaluation",
+  "evaluation_ends_in_days",
+  "examiners",
+  "result_section",
+  "show_result",
+  "column_break_ljzv",
+  "show_result_after"
  ],
  "fields": [
   {
@@ -93,13 +98,7 @@
   {
    "fieldname": "exam_settings_section",
    "fieldtype": "Section Break",
-   "label": "Exam Settings"
-  },
-  {
-   "default": "10",
-   "fieldname": "no_of_candidates_per_examiner",
-   "fieldtype": "Int",
-   "label": "No of Candidates per Examiner"
+   "label": "Evaluation"
   },
   {
    "default": "25",
@@ -127,9 +126,11 @@
   },
   {
    "default": "0",
+   "description": "If Question Type = Choices, evaluation is not required ",
    "fieldname": "needs_evaluation",
    "fieldtype": "Check",
-   "label": "Needs Evaluation"
+   "label": "Needs Evaluation",
+   "read_only": 1
   },
   {
    "fieldname": "evaluation_ends_in_days",
@@ -148,12 +149,7 @@
   {
    "fieldname": "question_management_section",
    "fieldtype": "Section Break",
-   "label": "Question Management"
-  },
-  {
-   "fieldname": "view_question_bank_overview",
-   "fieldtype": "Button",
-   "label": "View Question Category Overview"
+   "label": "Questions"
   },
   {
    "fieldname": "total_questions",
@@ -197,8 +193,43 @@
    "default": "3",
    "fieldname": "allowed_tab_change",
    "fieldtype": "Int",
-   "label": "Alloweb tab changes",
+   "label": "Allowed tab changes",
    "non_negative": 1
+  },
+  {
+   "fieldname": "question_type",
+   "fieldtype": "Select",
+   "label": "Question type",
+   "options": "Choices\nUser Input\nMixed"
+  },
+  {
+   "fieldname": "result_section",
+   "fieldtype": "Section Break",
+   "label": "Result"
+  },
+  {
+   "fieldname": "show_result",
+   "fieldtype": "Select",
+   "label": "Show result",
+   "options": "After exam submission\nAfter date"
+  },
+  {
+   "fieldname": "column_break_ljzv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "show_result_after",
+   "fieldtype": "Datetime",
+   "label": "Show result after"
+  },
+  {
+   "fieldname": "controls_section",
+   "fieldtype": "Section Break",
+   "label": "Controls"
+  },
+  {
+   "fieldname": "column_break_ykuc",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -215,7 +246,7 @@
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-09-04 19:54:32.501458",
+ "modified": "2023-09-08 16:10:33.533807",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",
