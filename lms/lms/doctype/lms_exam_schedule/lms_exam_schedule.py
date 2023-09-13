@@ -21,7 +21,7 @@ class LMSExamSchedule(Document):
 		if self.duration <= 0:
 			frappe.thow("Duration should be greater than 0.")
 		
-		validate_weightage_table(self.questions)
+		self.validate_weightage_table()
 
 		if not self.pass_percentage:
 			frappe.throw("Please enter a valid pass percentage")
