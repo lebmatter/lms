@@ -13,6 +13,4 @@ class LMSExamQuestion(Document):
 		if self.type == "Choices":
 			validate_duplicate_options(self)
 			validate_correct_options(self)
-		else:
-			validate_possible_answer(self)
 
