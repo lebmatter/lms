@@ -33,7 +33,7 @@
   "allowed_tab_change",
   "exam_settings_section",
   "column_break_5bke",
-  "needs_evaluation",
+  "evaluation_required",
   "evaluation_ends_in_days",
   "examiners",
   "result_section",
@@ -123,14 +123,6 @@
    "fieldtype": "Table",
    "label": "Add Questions",
    "options": "Exam Question Weightage"
-  },
-  {
-   "default": "0",
-   "description": "If Question Type = Choices, evaluation is not required ",
-   "fieldname": "needs_evaluation",
-   "fieldtype": "Check",
-   "label": "Needs Evaluation",
-   "read_only": 1
   },
   {
    "fieldname": "evaluation_ends_in_days",
@@ -232,6 +224,14 @@
   {
    "fieldname": "column_break_ykuc",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "If Question Type = Choices, evaluation is not required ",
+   "fieldname": "evaluation_required",
+   "fieldtype": "Check",
+   "label": "Evaluation Required",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -248,7 +248,7 @@
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-09-08 16:31:27.383359",
+ "modified": "2023-09-13 15:10:48.435226",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",

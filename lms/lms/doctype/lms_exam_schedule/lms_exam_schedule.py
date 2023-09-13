@@ -41,7 +41,7 @@ class LMSExamSchedule(Document):
 	
 	def before_save(self):
 		if self.question_type != "Choices":
-			self.needs_evaluation = 1
+			self.evaluation_required = 1
 
 
 	def validate_weightage_table(self):
