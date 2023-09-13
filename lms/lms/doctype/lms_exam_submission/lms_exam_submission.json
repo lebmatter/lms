@@ -13,11 +13,17 @@
   "candidate",
   "email_sent",
   "candidate_video",
-  "messages",
+  "column_break_ngvn",
   "status",
   "exam_started_time",
   "additional_time_given",
-  "exam_submitted_time"
+  "exam_submitted_time",
+  "result_section",
+  "evaluation_required",
+  "evaluation_pending",
+  "total_marks",
+  "chat_tab",
+  "messages"
  ],
  "fields": [
   {
@@ -76,7 +82,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "Registered\nRegistration Cancelled\nStarted\nSubmitted\nAborted",
+   "options": "Registered\nRegistration Cancelled\nStarted\nSubmitted",
    "read_only": 1
   },
   {
@@ -96,6 +102,39 @@
    "fieldtype": "Int",
    "label": "Additional Time Given",
    "non_negative": 1
+  },
+  {
+   "fieldname": "chat_tab",
+   "fieldtype": "Tab Break",
+   "label": "Chat"
+  },
+  {
+   "fieldname": "column_break_ngvn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "result_section",
+   "fieldtype": "Section Break",
+   "label": "Result"
+  },
+  {
+   "description": "Total marks after evaluation",
+   "fieldname": "total_marks",
+   "fieldtype": "Float",
+   "label": "Total marks"
+  },
+  {
+   "description": "No. of questions pending to be evaluated",
+   "fieldname": "evaluation_pending",
+   "fieldtype": "Int",
+   "label": "Evaluation pending"
+  },
+  {
+   "default": "0",
+   "fetch_from": "exam_schedule.needs_evaluation",
+   "fieldname": "evaluation_required",
+   "fieldtype": "Check",
+   "label": "Evaluation required"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -105,7 +144,7 @@
    "link_fieldname": "exam_submission"
   }
  ],
- "modified": "2023-09-04 19:47:48.362203",
+ "modified": "2023-09-13 15:00:37.024997",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",
