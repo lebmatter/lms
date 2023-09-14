@@ -40,6 +40,7 @@
   "total_questions",
   "total_marks",
   "section_break_b4lr",
+  "select_questions",
   "questions"
  ],
  "fields": [
@@ -112,11 +113,10 @@
    "reqd": 1
   },
   {
-   "description": "Select questions by category and marks required. Questions will be added on submit.",
    "fieldname": "questions",
    "fieldtype": "Table",
-   "label": "Add Questions",
-   "options": "Exam Question Weightage"
+   "label": "Added Questions",
+   "options": "Exam Schedule Question"
   },
   {
    "depends_on": "evaluation_required",
@@ -241,6 +241,13 @@
    "fieldname": "controls_column",
    "fieldtype": "Column Break",
    "label": "Controls"
+  },
+  {
+   "description": "Select questions by category and marks required. Questions will be added on save.",
+   "fieldname": "select_questions",
+   "fieldtype": "Table",
+   "label": "Select Questions",
+   "options": "Exam Question Weightage"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -251,7 +258,7 @@
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-09-14 15:59:07.069107",
+ "modified": "2023-09-14 16:04:00.078731",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",
