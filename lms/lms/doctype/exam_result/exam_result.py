@@ -4,6 +4,7 @@
 # import frappe
 from frappe.model.document import Document
 
-
 class ExamResult(Document):
-	pass
+	
+	def autoname(self):
+		self.name = "{}-{}".format(self.exam_submission, self.exam_question)

@@ -67,28 +67,23 @@ class LMSExamSchedule(Document):
 		"""
 		self.validate_weightage_table()
 
-		existing_questions = frappe.get_all(
-			"Exam Schedule Question", {"exam_schedule": self.name}
-		)
-		for qs in existing_questions:
-			frappe.delete_doc("Exam Schedule Question", qs["name"])
+		self.questions = []
 		
 		total_qs = 0
 		total_marks = 0
-		for cat in self.questions:
+		for cat in self.select_questions:
 			questions = get_random_questions(
 				cat.question_category, cat.mark_per_question,
 				cat.no_of_questions, self.question_type
 			)
 			for qs in questions:
-				doc = frappe.get_doc({
+				self.questions.append({
 						"doctype": "Exam Schedule Question",
 						"exam_schedule": self.name,
 						"question": qs["name"],
 						"mark": cat.mark_per_question,
 						"category": cat.question_category
 				})
-				doc.insert()
 				total_marks += cat.mark_per_question
 				total_qs += 1
 		

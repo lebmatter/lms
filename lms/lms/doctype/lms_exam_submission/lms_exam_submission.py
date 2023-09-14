@@ -81,12 +81,13 @@ def can_process_question(doc, member=None):
 
 
 def get_submitted_questions(exam_submission, fields=["exam_question"]):
-	all_submitted = frappe.get_all(
-		"LMS Exam Result",
-		filters={"exam_submission": exam_submission},
+	all_submitted = frappe.db.get_all(
+		"Exam Result",
+		filters={"parent": exam_submission},
 		fields=fields,
 		order_by="creation asc"
 	)
+
 	return all_submitted
 
 @frappe.whitelist()
@@ -133,11 +134,11 @@ def pick_new_question(exam_schedule, exclude=[], get_random=False):
 	"""
 	all_qs = frappe.get_all(
 		"Exam Schedule Question",
-		filters={"exam_schedule": exam_schedule},
-		fields=["question"],
+		filters={"parent": exam_schedule},
+		fields=["exam_question"],
 		order_by="creation desc"
 	)
-	all_qs_list = [q["question"] for q in all_qs]
+	all_qs_list = [q["exam_question"] for q in all_qs]
 	if get_random:
 		random.shuffle(all_qs_list)
 	
@@ -182,13 +183,12 @@ def validate_and_get_question(exam_submission, question=None, member=None):
 			get_random=schedule_doc.randomize_questions
 		)
 		# create a new answer doc
-		answer_doc = frappe.get_doc({
-			"doctype": "LMS Exam Result",
+		doc.append('submitted_answers',{
 			"exam_submission": exam_submission,
 			"exam_question": question,
 			"question": frappe.db.get_value("LMS Exam Question", question, "question")
 		})
-		answer_doc.insert(ignore_permissions=True)
+		doc.save(ignore_permissions=True)
 
 	else:
 		# make sure that question belongs to the exam submission
@@ -198,7 +198,7 @@ def validate_and_get_question(exam_submission, question=None, member=None):
 			frappe.throw("Invalid question requested.")
 		else:
 			answer_doc = frappe.get_doc(
-				"LMS Exam Result", "{}-{}".format(exam_submission, question)
+				"Exam Result", "{}-{}".format(exam_submission, question)
 			)
 
 	try:
@@ -264,7 +264,7 @@ def submit_question_response(exam_submission=None, qs_name=None, answer="", mark
 
 	try:
 		result_doc = frappe.get_doc(
-			"LMS Exam Result", "{}-{}".format(exam_submission, qs_name)
+			"Exam Result", "{}-{}".format(exam_submission, qs_name)
 		)
 	except frappe.DoesNotExistError:
 		frappe.throw("Invalid question.")
