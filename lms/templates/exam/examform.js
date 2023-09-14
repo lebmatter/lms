@@ -277,13 +277,42 @@ function displayQuestion(current_qs) {
             $('#markedForLater').prop("checked", true);
         }
         $('#examTextInput').hide();
+        $('#savingStatus').hide();
         $('#choices').html('');
         $('#choices').append(choicesHtml);
+
+        $('input[name="' + currentQuestion["key"] + '"').on('change', function () {
+            submitAnswer();
+        });
 
     } else {
         $('#choices').hide();
         $('#examTextInput').show();
-        $("#examTextInput").find("textarea").val(currentQuestion["answer"]);
+        $('#savingStatus').show();
+        var inputTextArea = $("#examTextInput").find("textarea");
+        inputTextArea.val(currentQuestion["answer"]);
+        var previousValue = inputTextArea.val(); // initial value of the textarea
+        var hasChanged = false;
+        inputTextArea.on('input', function () {
+            // Set the flag when the content changes
+            hasChanged = true;
+        });
+
+        // Function to check and call API every 3 seconds
+        setInterval(function () {
+            var currentValue = inputTextArea.val();
+
+            // Only trigger the API call if content has changed
+            if (hasChanged && currentValue !== previousValue) {
+                $('#savingStatus').text('Status: Saving...');
+                submitAnswer();
+
+                // Update the previous value and reset the changed flag
+                previousValue = currentValue;
+                hasChanged = false;
+            }
+        }, 3000); // 3 seconds
+
     }
     // if this is the lastQs, change button
     if (currentQuestion["no"] === examOverview["total_questions"]) {
@@ -301,6 +330,7 @@ function displayQuestion(current_qs) {
         $('#exam-timer').hide();
     }
     $("#quiz-form").fadeIn(300);
+
 };
 
 function endExam() {
