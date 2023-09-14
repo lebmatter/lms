@@ -35,13 +35,12 @@ class LMSExamSchedule(Document):
 					self.question_type
 			))
 
-
-	def before_submit(self):
-		self.total_marks, self.total_questions = self.update_questions_for_schedule()
 	
 	def before_save(self):
 		if self.question_type != "Choices":
 			self.evaluation_required = 1
+		# TODO update question list only if the picked list is changed
+		self.total_marks, self.total_questions = self.update_questions_for_schedule()
 
 
 	def validate_weightage_table(self):
