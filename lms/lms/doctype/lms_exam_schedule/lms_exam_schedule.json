@@ -10,8 +10,8 @@
  "field_order": [
   "exam",
   "max_candidates",
-  "column_break_3",
   "visibility",
+  "column_break_3",
   "start_date_time",
   "duration",
   "section_break_5",
@@ -32,15 +32,15 @@
   "show_result_after",
   "questions_tab",
   "question_management_section",
-  "question_type",
-  "questions",
-  "section_break_b4lr",
   "column_break_ulco",
+  "question_type",
   "randomize_questions",
   "pass_percentage",
   "column_break_ldcz",
   "total_questions",
-  "total_marks"
+  "total_marks",
+  "section_break_b4lr",
+  "questions"
  ],
  "fields": [
   {
@@ -251,7 +251,7 @@
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-09-14 15:17:03.362911",
+ "modified": "2023-09-14 15:59:07.069107",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",
