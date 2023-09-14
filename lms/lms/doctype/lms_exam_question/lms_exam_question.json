@@ -56,6 +56,7 @@
   {
    "fieldname": "type",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Type",
    "options": "Choices\nUser Input"
   },
@@ -247,6 +248,7 @@
   {
    "fieldname": "mark",
    "fieldtype": "Int",
+   "in_list_view": 1,
    "label": "Mark",
    "non_negative": 1
   }
@@ -258,7 +260,7 @@
    "link_fieldname": "question"
   }
  ],
- "modified": "2023-08-29 15:31:48.444247",
+ "modified": "2023-09-13 16:05:48.632269",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Question",

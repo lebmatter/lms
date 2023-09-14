@@ -25,11 +25,6 @@
   "certification_section",
   "enable_certification",
   "expiry",
-  "section_break_23",
-  "grant_certificate_after",
-  "column_break_26",
-  "max_attempts",
-  "duration",
   "pricing_section",
   "paid_certificate",
   "currency",
@@ -124,41 +119,13 @@
   {
    "default": "0",
    "depends_on": "enable_certification",
+   "description": "Keep 0 if certificate doesn't have an expiry.",
    "fieldname": "expiry",
    "fieldtype": "Int",
    "label": "Certification Expires After (Years)"
   },
   {
-   "fieldname": "section_break_23",
-   "fieldtype": "Section Break"
-  },
-  {
    "depends_on": "enable_certification",
-   "fieldname": "grant_certificate_after",
-   "fieldtype": "Select",
-   "label": "Grant Certificate After",
-   "options": "Completion\nEvaluation"
-  },
-  {
-   "fieldname": "column_break_26",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "1",
-   "depends_on": "eval: doc.grant_certificate_after == \"Evaluation\"",
-   "fieldname": "max_attempts",
-   "fieldtype": "Int",
-   "label": "Max Attempts for Evaluations"
-  },
-  {
-   "depends_on": "eval: doc.grant_certificate_after == \"Evaluation\"",
-   "fieldname": "duration",
-   "fieldtype": "Select",
-   "label": "Duration for Attempts",
-   "options": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12"
-  },
-  {
-   "depends_on": "eval: doc.grant_certificate_after == \"Evaluation\"",
    "fieldname": "pricing_section",
    "fieldtype": "Section Break",
    "label": "Pricing"
@@ -195,7 +162,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2023-08-29 15:28:14.295613",
+ "modified": "2023-09-14 12:17:58.801654",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam",
