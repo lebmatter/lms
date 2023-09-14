@@ -17,19 +17,18 @@
   "section_break_5",
   "description",
   "instructions",
-  "controls_section",
-  "enable_calculator",
-  "column_break_ykuc",
-  "restrict_tab_changes",
-  "allowed_tab_change",
   "exam_settings_section",
   "column_break_5bke",
   "evaluation_required",
   "evaluation_ends_in_days",
   "examiners",
-  "result_section",
+  "controls_section",
+  "controls_column",
+  "enable_calculator",
+  "restrict_tab_changes",
+  "allowed_tab_change",
+  "column_break_ykuc",
   "show_result",
-  "column_break_ljzv",
   "show_result_after",
   "questions_tab",
   "question_management_section",
@@ -187,19 +186,10 @@
    "options": "Choices\nUser Input\nMixed"
   },
   {
-   "fieldname": "result_section",
-   "fieldtype": "Section Break",
-   "label": "Result"
-  },
-  {
    "fieldname": "show_result",
    "fieldtype": "Select",
    "label": "Show result",
    "options": "After exam submission\nAfter date"
-  },
-  {
-   "fieldname": "column_break_ljzv",
-   "fieldtype": "Column Break"
   },
   {
    "depends_on": "eval: doc.show_result == 'After Specific Date'",
@@ -209,12 +199,12 @@
   },
   {
    "fieldname": "controls_section",
-   "fieldtype": "Section Break",
-   "label": "Controls"
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "column_break_ykuc",
-   "fieldtype": "Column Break"
+   "fieldtype": "Column Break",
+   "label": "Result"
   },
   {
    "default": "0",
@@ -246,6 +236,11 @@
   {
    "fieldname": "column_break_ldcz",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "controls_column",
+   "fieldtype": "Column Break",
+   "label": "Controls"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -254,14 +249,9 @@
    "group": "Candidates",
    "link_doctype": "LMS Exam Submission",
    "link_fieldname": "exam_schedule"
-  },
-  {
-   "group": "Questions",
-   "link_doctype": "Exam Schedule Question",
-   "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-09-14 13:16:13.966580",
+ "modified": "2023-09-14 15:17:03.362911",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",

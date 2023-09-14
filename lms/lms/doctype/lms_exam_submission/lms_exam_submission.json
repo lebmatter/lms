@@ -7,6 +7,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "section_break_lmge",
   "candidate",
   "exam_schedule",
   "exam",
@@ -17,7 +18,8 @@
   "exam_started_time",
   "additional_time_given",
   "exam_submitted_time",
-  "chat_tab",
+  "section_break_pylf",
+  "chat_messages_column",
   "messages",
   "result_tab",
   "total_marks",
@@ -98,11 +100,6 @@
    "non_negative": 1
   },
   {
-   "fieldname": "chat_tab",
-   "fieldtype": "Tab Break",
-   "label": "Chat"
-  },
-  {
    "fieldname": "column_break_ngvn",
    "fieldtype": "Column Break"
   },
@@ -136,16 +133,24 @@
   {
    "fieldname": "section_break_rxvo",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "chat_messages_column",
+   "fieldtype": "Column Break",
+   "label": "Chat Messages"
+  },
+  {
+   "fieldname": "section_break_lmge",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_pylf",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [
-  {
-   "link_doctype": "LMS Exam Result",
-   "link_fieldname": "exam_submission"
-  }
- ],
- "modified": "2023-09-14 14:10:19.580748",
+ "links": [],
+ "modified": "2023-09-14 14:39:40.384433",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",
