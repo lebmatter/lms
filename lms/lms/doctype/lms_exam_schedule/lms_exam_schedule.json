@@ -189,7 +189,7 @@
    "fieldname": "show_result",
    "fieldtype": "Select",
    "label": "Show result",
-   "options": "After exam submission\nAfter date"
+   "options": "After Exam Submission\nAfter Specific Date"
   },
   {
    "depends_on": "eval: doc.show_result == 'After Specific Date'",
@@ -258,7 +258,7 @@
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-09-14 16:04:00.078731",
+ "modified": "2023-09-14 16:37:09.698220",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",
