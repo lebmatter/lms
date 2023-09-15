@@ -24,12 +24,6 @@ class LMSExam(Document):
 		
 		if self.pass_percentage > 100.0:
 			frappe.throw("Pass percentage should not be more than 100")
-		
-		if self.question_type != "Choices" and not self.examiners:
-			frappe.msgprint(
-				"Warning: Exam with question type:{} needs evaluation. Add examiner list.".format(
-					self.question_type
-			))
 
 
 	def validate_video_link(self):
