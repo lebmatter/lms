@@ -68,8 +68,15 @@ class LMSExam(Document):
 				cat.no_of_questions, self.question_type
 			)
 			for qs in picked_questions:
+				qs_data = frappe.db.get_value(
+					"LMS Exam Question", qs["name"],
+					["question", "mark", "type"], as_dict=True
+				)
 				self.append("added_questions", {
-						"exam_question": qs["name"]
+						"exam_question": qs["name"],
+						"question": qs_data["question"],
+						"mark": qs_data["mark"],
+						"question_type": qs_data["type"]
 				})
 				total_marks += cat.mark_per_question
 				total_qs += 1
