@@ -43,8 +43,6 @@ class LMSExam(Document):
 			self.name = generate_slug(title, "LMS Exam")
 
 	def before_save(self):
-		if self.question_type != "Choices":
-			self.evaluation_required = 1
 		# TODO update question list only if the picked list is changed
 		"""
 		Function to update assigned questions
@@ -54,6 +52,10 @@ class LMSExam(Document):
 
 		returns: total marks, no of marks
 		"""
+		if self.question_type != "Choices":
+			self.evaluation_required = 1
+		else:
+			self.evaluation_required = 0
 		self.validate_weightage_table()
 
 		self.added_questions = []
