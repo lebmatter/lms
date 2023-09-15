@@ -26,7 +26,6 @@
   "short_introduction",
   "description",
   "instructions",
-  "related_courses",
   "certification_section",
   "enable_certification",
   "expiry",
@@ -118,12 +117,6 @@
    "fieldtype": "Text Editor",
    "label": "Description",
    "reqd": 1
-  },
-  {
-   "fieldname": "related_courses",
-   "fieldtype": "Table",
-   "label": "Related Courses",
-   "options": "Related Courses"
   },
   {
    "fieldname": "certification_section",
@@ -235,7 +228,8 @@
    "fieldname": "pass_percentage",
    "fieldtype": "Float",
    "label": "Pass Percentage",
-   "non_negative": 1
+   "non_negative": 1,
+   "reqd": 1
   },
   {
    "fieldname": "show_result",
@@ -299,7 +293,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2023-09-15 16:58:09.655330",
+ "modified": "2023-09-15 17:50:15.535729",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam",
