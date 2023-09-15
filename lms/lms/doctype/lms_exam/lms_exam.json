@@ -15,12 +15,18 @@
   "tags",
   "section_break_7",
   "published",
-  "column_break_10",
   "upcoming",
+  "column_break_10",
+  "evaluation_required",
+  "evaluation_ends_in_days",
   "column_break_12",
+  "candidates_per_exam",
+  "show_result",
+  "show_result_after_date",
   "section_break_18",
   "short_introduction",
   "description",
+  "instructions",
   "related_courses",
   "certification_section",
   "enable_certification",
@@ -28,7 +34,17 @@
   "pricing_section",
   "paid_certificate",
   "currency",
-  "price_certificate"
+  "price_certificate",
+  "questions_tab",
+  "question_type",
+  "randomize_questions",
+  "pass_percentage",
+  "column_break_otly",
+  "total_questions",
+  "total_marks",
+  "section_break_tpbr",
+  "select_questions",
+  "added_questions"
  ],
  "fields": [
   {
@@ -151,6 +167,103 @@
    "fieldtype": "Currency",
    "label": "Certificate Price",
    "mandatory_depends_on": "paid_certificate"
+  },
+  {
+   "default": "25",
+   "fieldname": "candidates_per_exam",
+   "fieldtype": "Int",
+   "label": "Candidates per Exam",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "instructions",
+   "fieldtype": "Markdown Editor",
+   "label": "Instructions"
+  },
+  {
+   "fieldname": "questions_tab",
+   "fieldtype": "Tab Break",
+   "label": "Questions"
+  },
+  {
+   "default": "1",
+   "description": "If Question Type = Choices, evaluation is not required ",
+   "fieldname": "evaluation_required",
+   "fieldtype": "Check",
+   "label": "Evaluation Required"
+  },
+  {
+   "depends_on": "evaluation_required",
+   "fieldname": "evaluation_ends_in_days",
+   "fieldtype": "Int",
+   "label": "Evaluation ends in days",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "question_type",
+   "fieldtype": "Select",
+   "label": "Question Type",
+   "options": "Choices\nUser Input\nMixed"
+  },
+  {
+   "fieldname": "column_break_otly",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_questions",
+   "fieldtype": "Int",
+   "label": "Total no. of question",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_marks",
+   "fieldtype": "Int",
+   "label": "Total Marks",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "description": "Each exam will have a random order of questions",
+   "fieldname": "randomize_questions",
+   "fieldtype": "Check",
+   "label": "Randomize Questions"
+  },
+  {
+   "fieldname": "pass_percentage",
+   "fieldtype": "Float",
+   "label": "Pass Percentage",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "show_result",
+   "fieldtype": "Select",
+   "label": "Show Result",
+   "options": "After Exam Submission\nAfter Specific Date"
+  },
+  {
+   "depends_on": "eval: doc.show_result == 'After Specific Date'",
+   "fieldname": "show_result_after_date",
+   "fieldtype": "Datetime",
+   "label": "Show Result After Date"
+  },
+  {
+   "fieldname": "section_break_tpbr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "select_questions",
+   "fieldtype": "Table",
+   "label": "Select Questions",
+   "options": "Exam Question Weightage"
+  },
+  {
+   "fieldname": "added_questions",
+   "fieldtype": "Table",
+   "label": "Added Questions",
+   "options": "Schedule Exam Question",
+   "read_only": 1
   }
  ],
  "is_published_field": "published",
@@ -162,7 +275,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2023-09-14 12:17:58.801654",
+ "modified": "2023-09-15 13:55:35.012909",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam",

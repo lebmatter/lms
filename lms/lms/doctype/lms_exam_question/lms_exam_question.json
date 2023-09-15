@@ -254,13 +254,8 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [
-  {
-   "link_doctype": "Exam Schedule Question",
-   "link_fieldname": "question"
-  }
- ],
- "modified": "2023-09-13 16:05:48.632269",
+ "links": [],
+ "modified": "2023-09-14 18:10:01.665308",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Question",

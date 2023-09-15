@@ -1,0 +1,55 @@
+{
+ "actions": [],
+ "creation": "2023-09-14 18:04:01.634354",
+ "description": "Question added to an exam schedule",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "exam_question",
+  "question",
+  "mark",
+  "question_type"
+ ],
+ "fields": [
+  {
+   "fieldname": "exam_question",
+   "fieldtype": "Link",
+   "label": "Exam Question",
+   "options": "LMS Exam Question",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "exam_question.question",
+   "fieldname": "question",
+   "fieldtype": "Text Editor",
+   "in_list_view": 1,
+   "label": "Question"
+  },
+  {
+   "fetch_from": "exam_question.",
+   "fieldname": "mark",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Mark"
+  },
+  {
+   "fetch_from": "exam_question.type",
+   "fieldname": "question_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Question Type"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-09-14 21:38:46.475456",
+ "modified_by": "Administrator",
+ "module": "LMS",
+ "name": "Schedule Exam Question",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

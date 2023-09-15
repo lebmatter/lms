@@ -9,55 +9,19 @@
  "engine": "InnoDB",
  "field_order": [
   "exam",
-  "max_candidates",
   "visibility",
   "column_break_3",
   "start_date_time",
   "duration",
-  "section_break_5",
-  "description",
-  "instructions",
   "exam_settings_section",
   "column_break_5bke",
-  "evaluation_required",
-  "evaluation_ends_in_days",
-  "examiners",
-  "controls_section",
-  "controls_column",
-  "enable_calculator",
-  "restrict_tab_changes",
-  "allowed_tab_change",
-  "column_break_ykuc",
-  "show_result",
-  "show_result_after",
-  "questions_tab",
-  "question_management_section",
-  "column_break_ulco",
-  "question_type",
-  "randomize_questions",
-  "pass_percentage",
-  "column_break_ldcz",
-  "total_questions",
-  "total_marks",
-  "section_break_b4lr",
-  "select_questions",
-  "questions"
+  "examiners"
  ],
  "fields": [
   {
    "fieldname": "column_break_3",
    "fieldtype": "Column Break",
    "label": "Schedule Settings"
-  },
-  {
-   "fieldname": "section_break_5",
-   "fieldtype": "Section Break",
-   "label": "Schedule Description"
-  },
-  {
-   "fieldname": "description",
-   "fieldtype": "Small Text",
-   "label": "Description"
   },
   {
    "default": "Public",
@@ -92,14 +56,7 @@
   },
   {
    "fieldname": "exam_settings_section",
-   "fieldtype": "Section Break",
-   "label": "Evaluation"
-  },
-  {
-   "default": "25",
-   "fieldname": "max_candidates",
-   "fieldtype": "Int",
-   "label": "Max Candidates"
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "column_break_5bke",
@@ -111,143 +68,6 @@
    "in_list_view": 1,
    "label": "Start Date Time",
    "reqd": 1
-  },
-  {
-   "fieldname": "questions",
-   "fieldtype": "Table",
-   "label": "Added Questions",
-   "options": "Exam Schedule Question"
-  },
-  {
-   "depends_on": "evaluation_required",
-   "fieldname": "evaluation_ends_in_days",
-   "fieldtype": "Int",
-   "label": "Evaluation Ends in Days"
-  },
-  {
-   "description": "Added questions cannot be modified once the exam starts.",
-   "fieldname": "question_management_section",
-   "fieldtype": "Section Break",
-   "label": "Add Questions"
-  },
-  {
-   "description": "Will be computed on submit.",
-   "fieldname": "total_questions",
-   "fieldtype": "Int",
-   "label": "Total No. of Questions",
-   "read_only": 1
-  },
-  {
-   "description": "Will be computed on submit.",
-   "fieldname": "total_marks",
-   "fieldtype": "Int",
-   "label": "Total Marks",
-   "non_negative": 1,
-   "read_only": 1
-  },
-  {
-   "default": "50",
-   "fieldname": "pass_percentage",
-   "fieldtype": "Percent",
-   "label": "Pass Percentage",
-   "non_negative": 1,
-   "reqd": 1
-  },
-  {
-   "default": "1",
-   "description": "Each exam in this schedule will have a random order of questions",
-   "fieldname": "randomize_questions",
-   "fieldtype": "Check",
-   "label": "Randomize Questions"
-  },
-  {
-   "fieldname": "instructions",
-   "fieldtype": "Markdown Editor",
-   "label": "Exam Instructions"
-  },
-  {
-   "default": "1",
-   "fieldname": "enable_calculator",
-   "fieldtype": "Check",
-   "label": "Enable Calculator"
-  },
-  {
-   "depends_on": "eval: doc.restrict_tab_changes == 1;",
-   "description": "Exam will terminate after the no. of allowed tab changes",
-   "fieldname": "allowed_tab_change",
-   "fieldtype": "Int",
-   "label": "Allowed number of tab changes",
-   "non_negative": 1
-  },
-  {
-   "fieldname": "question_type",
-   "fieldtype": "Select",
-   "label": "Question type",
-   "options": "Choices\nUser Input\nMixed"
-  },
-  {
-   "fieldname": "show_result",
-   "fieldtype": "Select",
-   "label": "Show result",
-   "options": "After Exam Submission\nAfter Specific Date"
-  },
-  {
-   "depends_on": "eval: doc.show_result == 'After Specific Date'",
-   "fieldname": "show_result_after",
-   "fieldtype": "Datetime",
-   "label": "Show result after"
-  },
-  {
-   "fieldname": "controls_section",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "column_break_ykuc",
-   "fieldtype": "Column Break",
-   "label": "Result"
-  },
-  {
-   "default": "0",
-   "description": "If Question Type = Choices, evaluation is not required ",
-   "fieldname": "evaluation_required",
-   "fieldtype": "Check",
-   "label": "Evaluation Required",
-   "read_only": 1
-  },
-  {
-   "default": "1",
-   "fieldname": "restrict_tab_changes",
-   "fieldtype": "Check",
-   "label": "Restrict tab changes"
-  },
-  {
-   "fieldname": "section_break_b4lr",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "questions_tab",
-   "fieldtype": "Tab Break",
-   "label": "Questions"
-  },
-  {
-   "fieldname": "column_break_ulco",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "column_break_ldcz",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "controls_column",
-   "fieldtype": "Column Break",
-   "label": "Controls"
-  },
-  {
-   "description": "Select questions by category and marks required. Questions will be added on save.",
-   "fieldname": "select_questions",
-   "fieldtype": "Table",
-   "label": "Select Questions",
-   "options": "Exam Question Weightage"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -258,7 +78,7 @@
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-09-14 16:37:09.698220",
+ "modified": "2023-09-15 13:57:01.448589",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",
@@ -278,6 +98,7 @@
    "write": 1
   }
  ],
+ "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
