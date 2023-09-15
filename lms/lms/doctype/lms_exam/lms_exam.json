@@ -178,7 +178,7 @@
   {
    "fieldname": "instructions",
    "fieldtype": "Markdown Editor",
-   "label": "Instructions"
+   "label": "Instruction to Candidate"
   },
   {
    "fieldname": "questions_tab",
@@ -275,7 +275,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2023-09-15 13:55:35.012909",
+ "modified": "2023-09-15 16:44:21.409660",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam",

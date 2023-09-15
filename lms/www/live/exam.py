@@ -30,15 +30,12 @@ def get_context(context):
 	elif exam_details["live_status"] == "Live":
 		context.alert = {}
 		exam = frappe.db.get_value(
-			"LMS Exam", exam_details["exam"], ["name","title"], as_dict=True
-		)
-		instructions = frappe.db.get_value(
-			"LMS Exam Schedule", exam_details["exam_schedule"], "instructions"
+			"LMS Exam", exam_details["exam"], ["name","title", "instructions"], as_dict=True
 		)
 		for key, value in exam_details.items():
 			exam[key] = value
 
-		exam["instructions"] = markdown(instructions)
+		exam["instructions"] = markdown(exam["instructions"])
 		exam["last_question"] = ""
 
 		attempted = get_submitted_questions(exam_details["candidate_exam"])

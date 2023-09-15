@@ -255,6 +255,7 @@ def get_live_exam(member=None):
 			continue
 		
 		schedule = frappe.get_doc("LMS Exam Schedule", submission["exam_schedule"])
+		exam = frappe.get_doc("LMS Exam", schedule.exam)
 		
 		# end time is schedule start time + duration + additional time given
 		end_time = schedule.start_date_time + timedelta(minutes=schedule.duration) + \
@@ -269,8 +270,8 @@ def get_live_exam(member=None):
 			"additional_time_given": submission["additional_time_given"],
 			"submission_status": submission["status"],
 			"duration": schedule.duration,
-			"enable_calculator": schedule.enable_calculator,
-			"allowed_tab_change": schedule.allowed_tab_change,
+			"enable_calculator": exam.enable_calculator,
+			"allowed_tab_change": exam.allowed_tab_change,
 			"live_status": ""
 		}
 

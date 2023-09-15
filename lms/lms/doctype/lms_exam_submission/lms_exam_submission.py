@@ -126,15 +126,15 @@ def end_exam(exam_submission=None):
 	doc.status = "Submitted"
 	doc.save(ignore_permissions=True)
 
-def pick_new_question(exam_schedule, exclude=[], get_random=False):
+def pick_new_question(exam, exclude=[], get_random=False):
 	"""
 	Get question list,
 	check if to get random qs or not
 	exclude is the list of questions that is 
 	"""
 	all_qs = frappe.get_all(
-		"Exam Schedule Question",
-		filters={"parent": exam_schedule},
+		"Schedule Exam Question",
+		filters={"parent": exam},
 		fields=["exam_question"],
 		order_by="creation desc"
 	)
@@ -165,6 +165,9 @@ def validate_and_get_question(exam_submission, question=None, member=None):
 	schedule_doc = frappe.get_doc(
 		"LMS Exam Schedule", doc.exam_schedule, ignore_permissions=True
 	)
+	exam_doc = frappe.get_doc(
+		"LMS Exam", doc.exam, ignore_permissions=True
+	)
 	submitted = get_submitted_questions(exam_submission)
 	submitted_questions = [s["exam_question"] for s in submitted]
 
@@ -173,14 +176,14 @@ def validate_and_get_question(exam_submission, question=None, member=None):
 	answer_doc = None
 	if not question:
 		# check if the user reached max no. of questions
-		if len(submitted_questions) >= schedule_doc.total_questions:
+		if len(submitted_questions) >= exam_doc.total_questions:
 			frappe.throw("No more questions in the exam.")
 		# new qs no
 		question_number = len(submitted_questions) + 1
 		question = pick_new_question(
-			schedule_doc.name,
+			doc.exam,
 			exclude=submitted_questions,
-			get_random=schedule_doc.randomize_questions
+			get_random=exam_doc.randomize_questions
 		)
 		# create a new answer doc
 		doc.append('submitted_answers',{
@@ -356,9 +359,8 @@ def exam_overview(exam_submission=None):
 	exam_schedule = frappe.db.get_value(
 		"LMS Exam Submission", exam_submission, "exam_schedule"
 	)
-	total_questions = frappe.db.get_value(
-		"LMS Exam Schedule", exam_schedule, "total_questions"
-	)
+	exam = frappe.db.get_value("LMS Exam Schedule", exam_schedule, "exam")
+	total_questions = frappe.db.get_value("LMS Exam", exam, "total_questions")
 	res = {
 		"exam_submission": exam_submission,
 		"submitted": {},
