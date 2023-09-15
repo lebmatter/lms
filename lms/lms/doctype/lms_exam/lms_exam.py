@@ -78,11 +78,12 @@ class LMSExam(Document):
 						"mark": qs_data["mark"],
 						"question_type": qs_data["type"]
 				})
-				total_marks += cat.mark_per_question
+				total_marks += qs_data["mark"]
 				total_qs += 1
 		
 		# update count fields
 		self.total_questions = total_qs
+		self.total_marks = total_marks
 
 	def validate_weightage_table(self):
 		for cat in self.select_questions:
