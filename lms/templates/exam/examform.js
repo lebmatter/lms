@@ -32,11 +32,12 @@ function updateTimer() {
         // Calculate hours, minutes, and seconds
         var hours = Math.floor(remainingTime / (1000 * 60 * 60));
         // Display the countdown timer
-        document.getElementById("timer").innerHTML = hours + ":" + minutes + ":" + seconds;
+        $("#timer").text(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+
 
     } else {
         // Display the countdown timer
-        document.getElementById("timer").innerHTML = minutes + ":" + seconds;
+        $("#timer").text(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
 
     }
     // Update the timer every second
