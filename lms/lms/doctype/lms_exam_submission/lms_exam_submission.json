@@ -23,6 +23,7 @@
   "messages",
   "result_tab",
   "total_marks",
+  "result_status",
   "column_break_whlx",
   "evaluation_pending",
   "section_break_rxvo",
@@ -107,13 +108,24 @@
    "description": "Total marks after evaluation",
    "fieldname": "total_marks",
    "fieldtype": "Float",
-   "label": "Total marks"
+   "label": "Total marks",
+   "read_only": 1
   },
   {
    "description": "No. of questions pending to be evaluated",
    "fieldname": "evaluation_pending",
    "fieldtype": "Int",
-   "label": "Evaluation pending"
+   "label": "Evaluation pending",
+   "read_only": 1
+  },
+  {
+   "default": "NA",
+   "fieldname": "result_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Result Status",
+   "options": "NA\nPassed\nFailed",
+   "read_only": 1
   },
   {
    "fieldname": "result_tab",
@@ -150,7 +162,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-14 14:39:40.384433",
+ "modified": "2023-09-20 14:39:40.384433",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",
