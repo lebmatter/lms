@@ -19,29 +19,33 @@ function clearKeyFromLocalStorage(key) {
 
 // Function to update the countdown timer
 function updateTimer() {
-    var remainingTime = new Date(exam.end_time) - new Date().getTime();
-    if (remainingTime <= 0) {
-        // Display "0m 0s" when time is up
-        document.getElementById("timer").innerHTML = "00:00";
-        return; // Stop the timer from updating further
+    if (!examEnded) {
+        var remainingTime = new Date(exam.end_time) - new Date().getTime();
+        if (remainingTime <= 0) {
+            // Display "0m 0s" when time is up
+            document.getElementById("timer").innerHTML = "00:00";
+            endExam();
+            return; // Stop the timer from updating further
+        }
+        // Calculate minutes and seconds
+        var minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+        if (remainingTime > (1000 * 60 * 60)) { // 1000 milliseconds * 60 seconds * 60 minutes = 1 hour
+            // Calculate hours, minutes, and seconds
+            var hours = Math.floor(remainingTime / (1000 * 60 * 60));
+            // Display the countdown timer
+            $("#timer").text(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+
+
+        } else {
+            // Display the countdown timer
+            $("#timer").text(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+
+        }
+        // Update the timer every second
+        setTimeout(updateTimer, 1000);
     }
-    // Calculate minutes and seconds
-    var minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
-    var seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
-    if (remainingTime > (1000 * 60 * 60)) { // 1000 milliseconds * 60 seconds * 60 minutes = 1 hour
-        // Calculate hours, minutes, and seconds
-        var hours = Math.floor(remainingTime / (1000 * 60 * 60));
-        // Display the countdown timer
-        $("#timer").text(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
 
-
-    } else {
-        // Display the countdown timer
-        $("#timer").text(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
-
-    }
-    // Update the timer every second
-    setTimeout(updateTimer, 1000);
 }
 
 
@@ -65,6 +69,7 @@ const answrLater = `
   <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
 </svg>
 `;
+var examEnded = false;
 
 frappe.ready(() => {
     clearKeyFromLocalStorage(examOverviewKey);
@@ -337,20 +342,23 @@ function displayQuestion(current_qs) {
 };
 
 function endExam() {
-    frappe.call({
-        method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.end_exam",
-        type: "POST",
-        args: {
-            "exam_submission": exam["exam_submission"],
-        },
-        callback: (data) => {
-            $("#quiz-message").text(
-                "Exam submitted."
-            );
-            $("#quiz-btn").hide();
-            examAlert("Exam submitted!", "Your exam is submitted.");
-        }
-    });
+    if (!examEnded) {
+        frappe.call({
+            method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.end_exam",
+            type: "POST",
+            args: {
+                "exam_submission": exam["exam_submission"],
+            },
+            callback: (data) => {
+                $("#quiz-message").text(
+                    "Exam submitted."
+                );
+                $("#quiz-btn").hide();
+                examAlert("Exam submitted!", "Your exam is submitted.");
+                examEnded = true;
+            }
+        });
+    }
 };
 
 function startExam() {
