@@ -9,7 +9,7 @@ function getObjectFromLocalStorage(key) {
         return JSON.parse(objectString);
     }
     else {
-        examAlert("Invalid data in browser local storage.")
+        return {}
     }
 }
 
@@ -97,6 +97,7 @@ frappe.ready(() => {
         e.preventDefault();
         // submit the current answer, then load next one
         submitAnswer();
+
         var currentQuestion = getObjectFromLocalStorage(currentQuestionKey);
         var examOverview = getObjectFromLocalStorage(examOverviewKey);
         // if the question is already loaded, get it or get new

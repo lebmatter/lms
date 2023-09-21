@@ -4,11 +4,13 @@ frappe.ready(() => {
 
     if (exam["submission_status"] === "Started") {
         $(window).blur(function () {
-            awayStartTime = new Date();
-            examAlert(
-                "Tab change detected",
-                "Multiple tab changes will result in exam termination!",
-            );
+            if (exam.restrict_tab_changes === 1) {
+                awayStartTime = new Date();
+                examAlert(
+                    "Tab change detected",
+                    "Multiple tab changes will result in exam termination!",
+                );
+            }
         });
     }
 
