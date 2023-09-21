@@ -75,7 +75,7 @@ def can_process_question(doc, member=None):
 			doc.save(ignore_permissions=True)
 			frappe.throw("This exam has ended at {}".format(end_time))
 	else:
-		frappe.throw("Invalid exam.")
+		frappe.throw("Exam is not started yet.")
 	if doc.candidate != (member or frappe.session.user):
 		frappe.throw("Invalid exam requested.")
 
