@@ -271,7 +271,8 @@ def get_live_exam(member=None):
 			"submission_status": submission["status"],
 			"duration": schedule.duration,
 			"enable_calculator": exam.enable_calculator,
-			"allowed_tab_change": exam.allowed_tab_change,
+			"restrict_tab_changes": exam.restrict_tab_changes,
+			"allowed_tab_change": exam.allowed_tab_changes,
 			"live_status": ""
 		}
 
