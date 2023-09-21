@@ -15,7 +15,7 @@ class ExamResult(Document):
 		"""
 		# evaluate
 		question_type, mark = frappe.db.get_value(
-			"LMS Exam Question", self.exam_question, ["question_type", "mark"]
+			"LMS Exam Question", self.exam_question, ["type", "mark"]
 		)
 		if question_type == "Choices" and self.answer:
 			answered_options = [ans for ans in self.answer.split(",")]
@@ -29,8 +29,14 @@ class ExamResult(Document):
 				],
 				as_dict=True
 			)
-			correct_options = [cans.aplit("is_correct_")[1] for cans in correct_options]
+			correct_options = [
+				ckey[-1:] for ckey, val in correct_options.items() if val
+			]
 			if sorted(answered_options) == sorted(correct_options):
 				self.is_correct = 1
 				self.evaluation_status = "Auto"
 				self.mark = mark
+			else:
+				self.is_correct = 0
+				self.evaluation_status = "Auto"
+				self.mark = 0
