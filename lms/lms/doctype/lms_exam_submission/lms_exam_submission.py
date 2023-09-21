@@ -2,8 +2,6 @@
 # For license information, please see license.txt
 
 import random
-import json
-import random
 from datetime import datetime, timedelta
 
 import frappe
@@ -79,13 +77,12 @@ def can_process_question(doc, member=None):
 	if doc.candidate != (member or frappe.session.user):
 		frappe.throw("Invalid exam requested.")
 
-
 def get_submitted_questions(exam_submission, fields=["exam_question"]):
 	all_submitted = frappe.db.get_all(
 		"Exam Result",
 		filters={"parent": exam_submission},
 		fields=fields,
-		order_by="creation asc"
+		order_by="seq_no asc"
 	)
 
 	return all_submitted
@@ -93,7 +90,7 @@ def get_submitted_questions(exam_submission, fields=["exam_question"]):
 @frappe.whitelist()
 def start_exam(exam_submission=None):
 	"""
-	Get questions and store order in cache
+	start exam, Get questions and store in order
 	"""
 	assert exam_submission
 	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
@@ -105,6 +102,24 @@ def start_exam(exam_submission=None):
 
 	start_time = doc.can_start_exam()
 	doc.exam_started_time = start_time
+	# get questions
+	questions = frappe.get_all(
+		"Schedule Exam Question", filters={"parent": doc.exam}, fields=["exam_question"]
+	)
+	random_questions = frappe.db.get_value("LMS Exam", doc.exam, "randomize_questions")
+	if random_questions:
+		random.shuffle(questions)
+
+	doc.submitted_answers = []
+	for idx, qs in enumerate(questions):
+		seq_no = idx + 1
+		doc.append(
+			'submitted_answers',{
+				"seq_no": seq_no,
+				"exam_question": qs["exam_question"],
+				"evaluation_status": "Not Attempted"
+		})
+
 	doc.status = "Started"
 	doc.save(ignore_permissions=True)
 
@@ -126,91 +141,6 @@ def end_exam(exam_submission=None):
 	doc.status = "Submitted"
 	doc.save(ignore_permissions=True)
 
-def pick_new_question(exam, exclude=[], get_random=False):
-	"""
-	Get question list,
-	check if to get random qs or not
-	exclude is the list of questions that is 
-	"""
-	all_qs = frappe.get_all(
-		"Schedule Exam Question",
-		filters={"parent": exam},
-		fields=["exam_question"],
-		order_by="creation desc"
-	)
-	all_qs_list = [q["exam_question"] for q in all_qs]
-	if get_random:
-		random.shuffle(all_qs_list)
-	
-	assigned_qs = None
-	for qs in all_qs_list:
-		if qs in exclude:
-			continue
-		else:
-			assigned_qs = qs
-			break
-	
-	assert assigned_qs
-	return assigned_qs
-
-
-def validate_and_get_question(exam_submission, question=None, member=None):
-	"""
-	validations:
-	> check exam belongs to signed in user
-	"""
-	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
-	can_process_question(doc, member=member)
-
-	exam_doc = frappe.get_doc(
-		"LMS Exam", doc.exam, ignore_permissions=True
-	)
-	submitted = get_submitted_questions(exam_submission)
-	submitted_questions = [s["exam_question"] for s in submitted]
-
-	question_number = 0
-	question_doc = None
-	answer_doc = None
-	picked_qs = None
-	if not question:
-		# check if the user reached max no. of questions
-		if len(submitted_questions) >= exam_doc.total_questions:
-			frappe.throw("No more questions in the exam.")
-		# new qs no
-		question_number = len(submitted_questions) + 1
-		picked_qs = pick_new_question(
-			doc.exam,
-			exclude=submitted_questions,
-			get_random=exam_doc.randomize_questions
-		)
-		# create a new answer doc
-		doc.append('submitted_answers',{
-			"exam_question": picked_qs,
-			"question": frappe.db.get_value("LMS Exam Question", picked_qs, "question")
-		})
-		doc.save(ignore_permissions=True)
-		frappe.db.commit()
-
-	else:
-		picked_qs = question
-		# make sure that question belongs to the exam submission
-		try:
-			question_number = submitted_questions.index(question) + 1
-		except ValueError:
-			frappe.throw("Invalid question requested.")
-		else:
-			answer_doc = frappe.get_doc(
-				"Exam Result", "{}-{}".format(exam_submission, question)
-			)
-
-	try:
-		question_doc = frappe.get_doc("LMS Exam Question", picked_qs)
-	except frappe.DoesNotExistError:
-		frappe.throw("Invalid question requested.")
-
-
-	return question_number, question_doc, answer_doc
-
 @frappe.whitelist()
 def get_question(exam_submission=None, question=None):
 	"""
@@ -218,8 +148,44 @@ def get_question(exam_submission=None, question=None):
 	if question param is not passed, the function will assign a new question
 	"""
 	assert exam_submission
-	question_number, question_doc, answer_doc = validate_and_get_question(
-		exam_submission, question=question
+	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
+	can_process_question(doc)
+
+	question_number = 0
+	picked_qs = None
+	if not question:
+		allqs = frappe.get_all(
+			"Exam Result",
+			filters={"parent": doc.name},
+			fields=["name", "exam_question", "seq_no", "evaluation_status"],
+			order_by="seq_no asc"
+		)
+		for qs in allqs:
+			if qs["evaluation_status"] == "Not Attempted":
+				question_number = qs["seq_no"]
+				picked_qs = qs["exam_question"]
+				break
+	else:
+		picked_qs = question
+
+	try:
+		question_number = frappe.db.get_value(
+			"Exam Result", "{}-{}".format(exam_submission, question), "seq_no"
+		)
+	except ValueError:
+		frappe.throw("Invalid question requested.")
+	else:
+		picked_qs = question
+
+	try:
+		question_doc = frappe.get_doc("LMS Exam Question", picked_qs)
+	except frappe.DoesNotExistError:
+		frappe.throw("Invalid question requested.")
+
+
+	answer_doc = frappe.db.get_value(
+		"Exam Result", "{}-{}".format(exam_submission, picked_qs),
+		["marked_for_later", "answer"], as_dict=True
 	)
 
 	res = {
@@ -238,8 +204,8 @@ def get_question(exam_submission=None, question=None):
 		"option_4_image": question_doc.option_4_image,
 		"multiple": question_doc.multiple,
 		# submitted answer
-		"marked_for_later": answer_doc.marked_for_later,
-		"answer": answer_doc.answer
+		"marked_for_later": answer_doc["marked_for_later"],
+		"answer": answer_doc["answer"]
 	}
 
 	return res
@@ -260,11 +226,6 @@ def submit_question_response(exam_submission=None, qs_name=None, answer="", mark
 	can_process_question(submission)
 
 	try:
-		frappe.get_doc("LMS Exam Question", qs_name)
-	except frappe.DoesNotExistError:
-		frappe.throw("Question does not exist.")
-
-	try:
 		result_doc = frappe.get_doc(
 			"Exam Result", "{}-{}".format(exam_submission, qs_name)
 		)
@@ -277,6 +238,7 @@ def submit_question_response(exam_submission=None, qs_name=None, answer="", mark
 			result_doc.marked_for_later != markdflater:
 			result_doc.answer = answer
 			result_doc.marked_for_later = markdflater
+			result_doc.evaluation_status = "Pending"
 			result_doc.save(ignore_permissions=True)
 		
 	return {"qs_name": qs_name}
@@ -353,7 +315,7 @@ def exam_overview(exam_submission=None):
 	"""
 	assert exam_submission
 	all_submitted = get_submitted_questions(
-		exam_submission, fields=["marked_for_later", "exam_question", "answer"]
+		exam_submission, fields=["marked_for_later", "exam_question", "answer", "seq_no"]
 	)
 	exam_schedule = frappe.db.get_value(
 		"LMS Exam Submission", exam_submission, "exam_schedule"
@@ -370,7 +332,7 @@ def exam_overview(exam_submission=None):
 	}
 
 	for idx, resitem in enumerate(all_submitted):
-		res["submitted"][idx + 1] = {
+		res["submitted"][resitem["seq_no"]] = {
 			"name": resitem["exam_question"],
 			"marked_for_later": resitem["marked_for_later"],
 			"answer": resitem["answer"]
