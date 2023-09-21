@@ -125,8 +125,9 @@ frappe.ready(() => {
             e.preventDefault();
             endExam();
         });
-        $("#quiz-message").text(
-            "You have remaining time in the exam. You can review and revise your answers until the allocated time expires."
+        $("#quiz-btn").show();
+        $("#quiz-message").html(
+            "<p class='text-muted'>You have remaining time in the exam.</p><p class='text-muted'>You can review and revise your answers until the allocated time expires.</p>"
         );
         $("#quiz-message").show();
     });

@@ -66,7 +66,7 @@ def can_process_question(doc, member=None):
 	validatior function to run before getting or updating a question
 	"""
 	if doc.status == "Submitted":
-		frappe.throw("Exam is already submitted!")
+		frappe.throw("Exam submitted!")
 	elif doc.status == "Started":
 		# check if the exam is ended, if so, submit the exam
 		exam_ended, end_time = doc.exam_ended()
@@ -295,7 +295,7 @@ def submit_exam(exam_submission=None):
 		raise PermissionError("You don't have access to this exam.")
 
 	if doc.status == "Submitted":
-		frappe.throw("Exam is already submitted!")
+		frappe.throw("Exam submitted!")
 	elif doc.status == "Started":
 		# check if the exam is ended, if so, submit the exam
 		exam_ended, end_time = doc.exam_ended()
