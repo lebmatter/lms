@@ -142,7 +142,8 @@ def end_exam(exam_submission=None):
 	total_marks = 0
 	eval_pending = 0
 	for ans in doc.submitted_answers:
-		total_marks += ans.mark
+		if ans.is_correct:
+			total_marks += ans.mark
 		if ans.evaluation_status == "Pending":
 			eval_pending += 1
 
