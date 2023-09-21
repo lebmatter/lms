@@ -171,6 +171,7 @@ def validate_and_get_question(exam_submission, question=None, member=None):
 	question_number = 0
 	question_doc = None
 	answer_doc = None
+	picked_qs = None
 	if not question:
 		# check if the user reached max no. of questions
 		if len(submitted_questions) >= exam_doc.total_questions:
@@ -191,6 +192,7 @@ def validate_and_get_question(exam_submission, question=None, member=None):
 		frappe.db.commit()
 
 	else:
+		picked_qs = question
 		# make sure that question belongs to the exam submission
 		try:
 			question_number = submitted_questions.index(question) + 1
@@ -202,7 +204,7 @@ def validate_and_get_question(exam_submission, question=None, member=None):
 			)
 
 	try:
-		question_doc = frappe.get_doc("LMS Exam Question", question)
+		question_doc = frappe.get_doc("LMS Exam Question", picked_qs)
 	except frappe.DoesNotExistError:
 		frappe.throw("Invalid question requested.")
 
