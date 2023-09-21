@@ -27,6 +27,14 @@ def get_context(context):
 			"title": "No exams scheduled.",
 			"text": "You do not have any live or upcoming exams."
 		}
+	elif exam_details["submission_status"] == "Submitted":
+		context.exam = {}
+		context.alert = {
+			"title": "Exam submitted!",
+			"text": "You have already submitted your previous exam: {}.".format(
+				exam_details["exam"]
+			)
+		}
 	elif exam_details["live_status"] == "Live":
 		context.alert = {}
 		exam = frappe.db.get_value(
