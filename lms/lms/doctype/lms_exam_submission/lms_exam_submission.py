@@ -160,11 +160,8 @@ def validate_and_get_question(exam_submission, question=None, member=None):
 	> check exam belongs to signed in user
 	"""
 	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
-	can_process_question(doc)
+	can_process_question(doc, member=member)
 
-	schedule_doc = frappe.get_doc(
-		"LMS Exam Schedule", doc.exam_schedule, ignore_permissions=True
-	)
 	exam_doc = frappe.get_doc(
 		"LMS Exam", doc.exam, ignore_permissions=True
 	)
@@ -180,18 +177,18 @@ def validate_and_get_question(exam_submission, question=None, member=None):
 			frappe.throw("No more questions in the exam.")
 		# new qs no
 		question_number = len(submitted_questions) + 1
-		question = pick_new_question(
+		picked_qs = pick_new_question(
 			doc.exam,
 			exclude=submitted_questions,
 			get_random=exam_doc.randomize_questions
 		)
 		# create a new answer doc
 		doc.append('submitted_answers',{
-			"exam_submission": exam_submission,
-			"exam_question": question,
-			"question": frappe.db.get_value("LMS Exam Question", question, "question")
+			"exam_question": picked_qs,
+			"question": frappe.db.get_value("LMS Exam Question", picked_qs, "question")
 		})
 		doc.save(ignore_permissions=True)
+		frappe.db.commit()
 
 	else:
 		# make sure that question belongs to the exam submission

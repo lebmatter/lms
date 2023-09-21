@@ -10,8 +10,10 @@
  "field_order": [
   "exam",
   "visibility",
-  "column_break_3",
   "start_date_time",
+  "column_break_3",
+  "question_type",
+  "duration",
   "exam_settings_section",
   "column_break_5bke",
   "examiners"
@@ -19,8 +21,7 @@
  "fields": [
   {
    "fieldname": "column_break_3",
-   "fieldtype": "Column Break",
-   "label": "Schedule Settings"
+   "fieldtype": "Column Break"
   },
   {
    "default": "Public",
@@ -59,6 +60,20 @@
    "in_list_view": 1,
    "label": "Start Date Time",
    "reqd": 1
+  },
+  {
+   "fetch_from": "exam.question_type",
+   "fieldname": "question_type",
+   "fieldtype": "Data",
+   "label": "Question Type",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "exam.duration",
+   "fieldname": "duration",
+   "fieldtype": "Int",
+   "label": "Duration",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -69,7 +84,7 @@
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-09-15 17:08:39.009900",
+ "modified": "2023-09-18 15:32:09.489624",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",
@@ -89,7 +104,6 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

@@ -13,12 +13,15 @@
   "image",
   "column_break_3",
   "tags",
+  "candidates_per_exam",
+  "duration",
   "section_break_7",
   "published",
   "upcoming",
   "column_break_10",
-  "candidates_per_exam",
-  "duration",
+  "enable_calculator",
+  "restrict_tab_changes",
+  "allowed_tab_changes",
   "column_break_12",
   "show_result",
   "show_result_after_date",
@@ -282,6 +285,27 @@
    "fieldtype": "Int",
    "label": "Duration",
    "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "restrict_tab_changes",
+   "fieldtype": "Check",
+   "label": "Restrict tab changes"
+  },
+  {
+   "default": "3",
+   "depends_on": "restrict_tab_changes",
+   "description": "Exam will terminate after max number",
+   "fieldname": "allowed_tab_changes",
+   "fieldtype": "Int",
+   "label": "Allowed tab changes",
+   "non_negative": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_calculator",
+   "fieldtype": "Check",
+   "label": "Enable Calculator"
   }
  ],
  "is_published_field": "published",
@@ -293,7 +317,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2023-09-15 17:50:15.535729",
+ "modified": "2023-09-18 16:01:43.552409",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam",

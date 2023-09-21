@@ -135,6 +135,6 @@ def get_random_questions(category, mark_per_qs, no_of_qs, question_type):
 		return random.sample(cat_qs, no_of_qs)
 	except ValueError:
 			frappe.throw(
-				"Insufficient no. of {} mark questions in {} category. Available: {}".format(
-				mark_per_qs, category, len(cat_qs)
+				"Insufficient no. of {} mark '{}' questions in {} category. Available: {}".format(
+				mark_per_qs, question_type, category, len(cat_qs)
 			))
