@@ -7,4 +7,4 @@ from frappe.model.document import Document
 class ExamResult(Document):
 	
 	def autoname(self):
-		self.name = "{}-{}".format(self.exam_submission, self.exam_question)
+		self.name = "{}-{}".format(self.parent, self.exam_question)
