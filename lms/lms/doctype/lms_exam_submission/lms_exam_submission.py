@@ -137,7 +137,24 @@ def end_exam(exam_submission=None):
 		frappe.throw("Exam is sbumitted already.")
 	if doc.status != "Started":
 		frappe.throw("Exam is not in started state.")
-	
+
+	# add marks and evalualtion oending count is applicable
+	total_marks = 0
+	eval_pending = 0
+	for ans in doc.submitted_answers:
+		total_marks += ans.mark
+		if ans.evaluation_status == "Pending":
+			eval_pending += 1
+
+	doc.total_marks = total_marks
+	doc.evaluation_pending = eval_pending
+	# check result status
+	exam_total_mark, pass_perc = frappe.db.get_value(
+		"LMS Exam", doc.exam, ["total_marks", "pass_percentage"]
+	)
+	pass_mark = (exam_total_mark * pass_perc)/100
+	if total_marks >= pass_mark:
+		doc.result_status = "Passed"
 	doc.status = "Submitted"
 	doc.save(ignore_permissions=True)
 
