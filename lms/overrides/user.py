@@ -262,7 +262,7 @@ def get_live_exam(member=None):
 			timedelta(minutes=submission["additional_time_given"])
 
 		exam_details = {
-			"candidate_exam": submission["name"],
+			"exam_submission": submission["name"],
 			"exam": schedule.exam,
 			"exam_schedule": submission["exam_schedule"],
 			"start_time": schedule.start_date_time,

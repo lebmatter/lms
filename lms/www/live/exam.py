@@ -38,7 +38,7 @@ def get_context(context):
 		exam["instructions"] = markdown(exam["instructions"])
 		exam["last_question"] = ""
 
-		attempted = get_submitted_questions(exam_details["candidate_exam"])
+		attempted = get_submitted_questions(exam_details["exam_submission"])
 		# return the last question requested in this exam, if applicable
 		if attempted:
 			exam["last_question"] = attempted[-1]["exam_question"]

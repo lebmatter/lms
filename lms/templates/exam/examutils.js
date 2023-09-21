@@ -30,7 +30,7 @@ frappe.ready(() => {
                 method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.post_exam_message",
                 type: "POST",
                 args: {
-                    'exam_submission': exam["candidate_exam"],
+                    'exam_submission': exam["exam_submission"],
                     'message': tabChangeStr,
                     'type_of_message': 'Warning',
                 },
@@ -94,7 +94,7 @@ const updateMessages = () => {
     frappe.call({
         method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.exam_messages",
         args: {
-            'exam_submission': exam["candidate_exam"],
+            'exam_submission': exam["exam_submission"],
         },
         callback: (data) => {
             msgData = data.message["messages"];

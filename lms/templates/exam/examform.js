@@ -138,7 +138,7 @@ function updateOverviewMap() {
     frappe.call({
         method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.exam_overview",
         args: {
-            "exam_submission": exam.candidate_exam,
+            "exam_submission": exam.exam_submission,
         },
         success: (data) => {
             storeObjectInLocalStorage(examOverviewKey, data.message);
@@ -341,7 +341,7 @@ function endExam() {
         method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.end_exam",
         type: "POST",
         args: {
-            "exam_submission": exam["candidate_exam"],
+            "exam_submission": exam["exam_submission"],
         },
         callback: (data) => {
             $("#quiz-message").text(
@@ -358,7 +358,7 @@ function startExam() {
         method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.start_exam",
         type: "POST",
         args: {
-            "exam_submission": exam["candidate_exam"],
+            "exam_submission": exam["exam_submission"],
         },
         callback: (data) => {
             $("#start-banner").addClass("hide");
@@ -374,7 +374,7 @@ function getQuestion(question) {
         method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.get_question",
         type: "POST",
         args: {
-            "exam_submission": exam["candidate_exam"],
+            "exam_submission": exam["exam_submission"],
             "question": question,
         },
         callback: (data) => {
@@ -410,7 +410,7 @@ function submitAnswer() {
             method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.submit_question_response",
             type: "POST",
             args: {
-                'exam_submission': exam["candidate_exam"],
+                'exam_submission': exam["exam_submission"],
                 'qs_name': currentQuestion["name"],
                 'answer': answer,
                 'markdflater': mrkForLtr,
