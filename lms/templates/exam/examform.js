@@ -291,7 +291,7 @@ function displayQuestion(current_qs) {
                 previousValue = currentValue;
                 hasChanged = false;
             }
-        }, 3000); // 3 seconds
+        }, 5000); // 5 seconds
 
     }
     // if this is the lastQs, change button
