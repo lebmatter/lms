@@ -70,6 +70,7 @@ const answrLater = `
 </svg>
 `;
 var examEnded = false;
+var currentQsNo = 1;
 
 frappe.ready(() => {
     clearKeyFromLocalStorage(examOverviewKey);
@@ -78,7 +79,7 @@ frappe.ready(() => {
     updateOverviewMap();
 
     // check if exam is already started
-    if (!exam["last_question"]) {
+    if (exam["submission_status"] === "Registered") {
         $("#quiz-btn").text("Start exam");
         $("#quiz-btn").show();
         $("#quiz-message").hide();
@@ -90,7 +91,7 @@ frappe.ready(() => {
         $("#start-banner").addClass("hide");
         $("#quiz-form").removeClass("hide");
         // on first load, show the last question loaded
-        getQuestion(exam["last_question"]);
+        getQuestion(exam["current_qs"]);
     }
 
     if (exam.submission_status === "Started") {
@@ -103,38 +104,12 @@ frappe.ready(() => {
         // submit the current answer, then load next one
         submitAnswer();
 
-        var currentQuestion = getObjectFromLocalStorage(currentQuestionKey);
-        var examOverview = getObjectFromLocalStorage(examOverviewKey);
-        // if the question is already loaded, get it or get new
-        var nextQs = currentQuestion["no"] + 1;
-        if (examOverview.submitted[nextQs] === undefined) {
-            getQuestion("");
-        } else {
-            getQuestion(examOverview.submitted[nextQs].name);
-        }
-        updateOverviewMap();
-
     });
 
     $("#finish").click((e) => {
         e.preventDefault();
         // submit the current answer
         submitAnswer();
-        updateOverviewMap();
-        $("#start-banner").removeClass("hide");
-        $("#quiz-form").addClass("hide");
-
-        $("#quiz-title").html();
-        $("#quiz-btn").text("Submit exam");
-        $("#quiz-btn").click((e) => {
-            e.preventDefault();
-            endExam();
-        });
-        $("#quiz-btn").show();
-        $("#quiz-message").html(
-            "<p class='text-muted'>You have remaining time in the exam.</p><p class='text-muted'>You can review and revise your answers until the allocated time expires.</p>"
-        );
-        $("#quiz-message").show();
     });
 
 });
@@ -174,7 +149,7 @@ function updateOverviewMap() {
                 // buttonRow.append(button, label);
                 $("#button-grid").append(button);
                 button.click((e) => {
-                    getQuestion(data.message.submitted[i].name);
+                    getQuestion(i);
                 });
             }
         },
@@ -371,22 +346,23 @@ function startExam() {
         callback: (data) => {
             $("#start-banner").addClass("hide");
             $("#quiz-form").removeClass("hide");
-            getQuestion("");
+            getQuestion(1);
             updateTimer();
         }
     });
 };
 
-function getQuestion(question) {
+function getQuestion(qsno) {
     frappe.call({
         method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.get_question",
         type: "POST",
         args: {
             "exam_submission": exam["exam_submission"],
-            "question": question,
+            "qsno": qsno,
         },
         callback: (data) => {
             displayQuestion(data.message);
+            currentQsNo = data.message.qs_no;
             updateOverviewMap();
         }
     });
@@ -417,6 +393,7 @@ function submitAnswer() {
         frappe.call({
             method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.submit_question_response",
             type: "POST",
+            async: false,
             args: {
                 'exam_submission': exam["exam_submission"],
                 'qs_name': currentQuestion["name"],
@@ -428,6 +405,31 @@ function submitAnswer() {
                 if (currentQuestion["type"] != "Choices") {
                     $('#savingStatus').text('Status: Saved');
                 }
+                // check if this is the last question
+                if (data.message.qs_no < examOverview["total_questions"]) {
+                    let nextQs = data.message.qs_no + 1
+                    getQuestion(nextQs);
+                    updateOverviewMap();
+                } else {
+                    // exam is ended
+                    updateOverviewMap();
+                    $("#start-banner").removeClass("hide");
+                    $("#quiz-form").addClass("hide");
+
+                    $("#quiz-title").html();
+                    $("#quiz-btn").text("Submit exam");
+                    $("#quiz-btn").click((e) => {
+                        e.preventDefault();
+                        endExam();
+                    });
+                    $("#quiz-btn").show();
+                    $("#quiz-message").html(
+                        "<p class='text-muted'>You have remaining time in the exam.</p><p class='text-muted'>You can review and revise your answers until the allocated time expires.</p>"
+                    );
+                    $("#quiz-message").show();
+                }
+
+
             },
         });
     }

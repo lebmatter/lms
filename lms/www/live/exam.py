@@ -4,7 +4,7 @@ from frappe import _
 from frappe.utils.data import markdown
 
 from lms.lms.doctype.lms_exam_submission.lms_exam_submission import \
-	get_submitted_questions
+	get_current_qs
 from lms.lms.utils import (
 	redirect_to_exams_list
 )
@@ -44,12 +44,11 @@ def get_context(context):
 			exam[key] = value
 
 		exam["instructions"] = markdown(exam["instructions"])
-		exam["last_question"] = ""
-
-		attempted = get_submitted_questions(exam_details["exam_submission"])
+		exam["current_qs"] = 1
 		# return the last question requested in this exam, if applicable
-		if attempted:
-			exam["last_question"] = attempted[-1]["exam_question"]
+		if exam["submission_status"] == "Started":
+			_, current_qs_no = get_current_qs(exam_details["exam_submission"]) 
+			exam["current_qs"] = current_qs_no
 		context.exam = exam
 
 		context.metatags = {

@@ -87,6 +87,26 @@ def get_submitted_questions(exam_submission, fields=["exam_question"]):
 
 	return all_submitted
 
+def get_current_qs(exam_submission):
+	"""
+	Current qs: last qs attempted
+	Next qs: next valid qs
+	"""
+	all_attempted = frappe.db.get_all(
+		"Exam Result",
+		filters={"parent": exam_submission, "evaluation_status": ("!=", "Not Attempted")},
+		fields=["exam_question", "seq_no"],
+		order_by="seq_no asc"
+	)
+	if all_attempted:
+		attempted_qs = all_attempted[-1]["exam_question"]
+		qs_no = all_attempted[-1]["seq_no"]
+		
+		return attempted_qs, qs_no
+	else:
+		return None, None
+
+
 @frappe.whitelist()
 def start_exam(exam_submission=None):
 	"""
@@ -160,34 +180,42 @@ def end_exam(exam_submission=None):
 	doc.save(ignore_permissions=True)
 
 @frappe.whitelist()
-def get_question(exam_submission=None, question=None):
+def get_question(exam_submission=None, qsno=1):
 	"""
 	Single function to fetch a new question or a submitted one.
-	if question param is not passed, the function will assign a new question
 	"""
 	assert exam_submission
+	qs_no = int(qsno)
 	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
-	can_process_question(doc, member="labeeb@zerodha.com")
-
-	picked_qs = question
-	if not question:
-		# get the first question
-		allqs = frappe.get_all(
+	can_process_question(doc)
+	# check if the requested question is valid
+	if qs_no > frappe.db.get_value("LMS Exam", doc.exam, "total_questions"):
+		frappe.throw("Invalid question no. {} requested.".format(qs_no))
+	# check if the previous question is answered. else throw err
+	if qs_no > 1:
+		previous_qs_status = frappe.db.get_value(
 			"Exam Result",
-			filters={"parent": doc.name, "seq_no": 1},
-			fields=["exam_question"],
+			{"parent": exam_submission, "seq_no": qs_no-1 },
+			"evaluation_status"
 		)
-		question_number = 1
-		picked_qs = allqs[0]["exam_question"]
+		if previous_qs_status == "Not Attempted":
+			frappe.throw("Previous question not attempted.")
 
 	try:
-		question_doc = frappe.get_doc("LMS Exam Question", picked_qs)
+		# get the qs with seq no
+		qs_name = frappe.db.get_value(
+				"Exam Result",
+				{"parent": exam_submission, "seq_no": qs_no },
+				"exam_question"
+		)
 	except frappe.DoesNotExistError:
 		frappe.throw("Invalid question requested.")
+	else:
+		question_doc = frappe.get_doc("LMS Exam Question", qs_name)
 
 
 	answer_doc = frappe.db.get_value(
-		"Exam Result", "{}-{}".format(exam_submission, picked_qs),
+		"Exam Result", "{}-{}".format(exam_submission, qs_name),
 		["marked_for_later", "answer", "seq_no"], as_dict=True
 	)
 
@@ -244,7 +272,7 @@ def submit_question_response(exam_submission=None, qs_name=None, answer="", mark
 			result_doc.evaluation_status = "Pending"
 			result_doc.save(ignore_permissions=True)
 		
-	return {"qs_name": qs_name}
+	return {"qs_name": qs_name, "qs_no": result_doc.seq_no}
 
 
 @frappe.whitelist()
