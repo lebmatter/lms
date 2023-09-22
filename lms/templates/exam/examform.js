@@ -102,14 +102,14 @@ frappe.ready(() => {
     $("#nextQs").click((e) => {
         e.preventDefault();
         // submit the current answer, then load next one
-        submitAnswer();
+        submitAnswer(true);
 
     });
 
     $("#finish").click((e) => {
         e.preventDefault();
         // submit the current answer
-        submitAnswer();
+        submitAnswer(true);
     });
 
 });
@@ -157,7 +157,7 @@ function updateOverviewMap() {
 };
 
 function displayQuestion(current_qs) {
-    $("#quiz-form").fadeOut(300);
+    // $("#quiz-form").fadeOut(300);
     let currentQuestion = {
         "exam": exam.name,
         "no": current_qs.qs_no,
@@ -260,7 +260,6 @@ function displayQuestion(current_qs) {
             $('#markedForLater').prop("checked", true);
         }
         $('#examTextInput').hide();
-        $('#savingStatus').hide();
         $('#choices').html('');
         $('#choices').append(choicesHtml);
 
@@ -271,7 +270,6 @@ function displayQuestion(current_qs) {
     } else {
         $('#choices').hide();
         $('#examTextInput').show();
-        $('#savingStatus').show();
         var inputTextArea = $("#examTextInput").find("textarea");
         inputTextArea.val(currentQuestion["answer"]);
         var previousValue = inputTextArea.val(); // initial value of the textarea
@@ -287,7 +285,6 @@ function displayQuestion(current_qs) {
 
             // Only trigger the API call if content has changed
             if (hasChanged && currentValue !== previousValue) {
-                $('#savingStatus').text('Status: Saving...');
                 submitAnswer();
 
                 // Update the previous value and reset the changed flag
@@ -312,7 +309,7 @@ function displayQuestion(current_qs) {
     } else {
         $('#exam-timer').hide();
     }
-    $("#quiz-form").fadeIn(300);
+    // $("#quiz-form").fadeIn(300);
 
 };
 
@@ -369,7 +366,7 @@ function getQuestion(qsno) {
 };
 
 
-function submitAnswer() {
+function submitAnswer(loadNext) {
     var currentQuestion = getObjectFromLocalStorage(currentQuestionKey);
     let answer;
     var mrkForLtr = $("#markedForLater").prop('checked') ? 1 : 0;
@@ -402,34 +399,31 @@ function submitAnswer() {
             },
             callback: (data) => {
                 console.log("submitted answer.");
-                if (currentQuestion["type"] != "Choices") {
-                    $('#savingStatus').text('Status: Saved');
-                }
                 // check if this is the last question
-                if (data.message.qs_no < examOverview["total_questions"]) {
-                    let nextQs = data.message.qs_no + 1
-                    getQuestion(nextQs);
-                    updateOverviewMap();
-                } else {
-                    // exam is ended
-                    updateOverviewMap();
-                    $("#start-banner").removeClass("hide");
-                    $("#quiz-form").addClass("hide");
+                if (loadNext) {
+                    if (data.message.qs_no < examOverview["total_questions"]) {
+                        let nextQs = data.message.qs_no + 1
+                        getQuestion(nextQs);
+                        updateOverviewMap();
+                    } else {
+                        // exam is ended
+                        updateOverviewMap();
+                        $("#start-banner").removeClass("hide");
+                        $("#quiz-form").addClass("hide");
 
-                    $("#quiz-title").html();
-                    $("#quiz-btn").text("Submit exam");
-                    $("#quiz-btn").click((e) => {
-                        e.preventDefault();
-                        endExam();
-                    });
-                    $("#quiz-btn").show();
-                    $("#quiz-message").html(
-                        "<p class='text-muted'>You have remaining time in the exam.</p><p class='text-muted'>You can review and revise your answers until the allocated time expires.</p>"
-                    );
-                    $("#quiz-message").show();
+                        $("#quiz-title").html();
+                        $("#quiz-btn").text("Submit exam");
+                        $("#quiz-btn").click((e) => {
+                            e.preventDefault();
+                            endExam();
+                        });
+                        $("#quiz-btn").show();
+                        $("#quiz-message").html(
+                            "<p class='text-muted'>You have remaining time in the exam.</p><p class='text-muted'>You can review and revise your answers until the allocated time expires.</p>"
+                        );
+                        $("#quiz-message").show();
+                    }
                 }
-
-
             },
         });
     }
