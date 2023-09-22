@@ -167,10 +167,9 @@ def get_question(exam_submission=None, question=None):
 	"""
 	assert exam_submission
 	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
-	can_process_question(doc)
+	can_process_question(doc, member="labeeb@zerodha.com")
 
-	question_number = 0
-	picked_qs = None
+	picked_qs = question
 	if not question:
 		# get the first question
 		allqs = frappe.get_all(
@@ -180,17 +179,6 @@ def get_question(exam_submission=None, question=None):
 		)
 		question_number = 1
 		picked_qs = allqs[0]["exam_question"]
-	else:
-		picked_qs = question
-
-	try:
-		question_number = frappe.db.get_value(
-			"Exam Result", "{}-{}".format(exam_submission, question), "seq_no"
-		)
-	except ValueError:
-		frappe.throw("Invalid question requested.")
-	else:
-		picked_qs = question
 
 	try:
 		question_doc = frappe.get_doc("LMS Exam Question", picked_qs)
@@ -200,12 +188,12 @@ def get_question(exam_submission=None, question=None):
 
 	answer_doc = frappe.db.get_value(
 		"Exam Result", "{}-{}".format(exam_submission, picked_qs),
-		["marked_for_later", "answer"], as_dict=True
+		["marked_for_later", "answer", "seq_no"], as_dict=True
 	)
 
 	res = {
 		"question": question_doc.question,
-		"qs_no": question_number,
+		"qs_no": answer_doc["seq_no"],
 		"name": question_doc.name,
 		"type": question_doc.type,
 		"description_image": question_doc.description_image,
