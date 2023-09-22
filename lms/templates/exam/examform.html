@@ -32,35 +32,26 @@
         </div>
 
         <div class="quiz-footer">
-            <div class="row mt-2">
-                <div class="col-md-2">
-                    Question
-                    <span class="current-question" id="current-question">-</span>
-                    of
-                    <span id="question-length"></span>
+            <span>
+                Question
+                <span class="current-question" id="current-question">-</span>
+                of
+                <span id="question-length"></span>
+                <span id="savingStatus" class="ml-5 text-muted" style="display: none;">Status: Not saved yet.</span>
+            </span>
+
+            <div class="d-flex justify-content-end">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="markedForLater">
+                    <label class="form-check-label" for="markedForLater">Answer later</label>
                 </div>
-                <div class="col-md-3">
-                </div>
-                <div class="col-md-3">
-                </div>
-                <div class="col-md-2 text-right">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="markedForLater">
-                        <label class="form-check-label" for="markedForLater">Answer later</label>
-                    </div>
-                </div>
-                <div class="col-md-2 text-right">
-                    <button class="btn btn-secondary btn-sm" id="nextQs" style="display: none;">
-                        Next Question
-                    </button>
-                    <button class="btn btn-secondary btn-sm" id="finish" style="display: none;">
-                        Next
-                    </button>
-                </div>
+                <button class="btn btn-secondary btn-sm ml-5" id="nextQs" style="display: none;">
+                    Next Question
+                </button>
+                <button class="btn btn-secondary btn-sm ml-5" id="finish" style="display: none;">
+                    Next
+                </button>
             </div>
-            <!-- <button class="btn btn-secondary btn-sm" id="summary">
-                Submit
-            </button> -->
         </div>
     </form>
 
