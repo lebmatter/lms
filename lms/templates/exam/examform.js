@@ -424,7 +424,10 @@ function submitAnswer() {
                 'markdflater': mrkForLtr,
             },
             callback: (data) => {
-                console.log("submitted answer.")
+                console.log("submitted answer.");
+                if (currentQuestion["type"] != "Choices") {
+                    $('#savingStatus').text('Status: Saved');
+                }
             },
         });
     }
