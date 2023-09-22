@@ -172,17 +172,14 @@ def get_question(exam_submission=None, question=None):
 	question_number = 0
 	picked_qs = None
 	if not question:
+		# get the first question
 		allqs = frappe.get_all(
 			"Exam Result",
-			filters={"parent": doc.name},
-			fields=["name", "exam_question", "seq_no", "evaluation_status"],
-			order_by="seq_no asc"
+			filters={"parent": doc.name, "seq_no": 1},
+			fields=["exam_question"],
 		)
-		for qs in allqs:
-			if qs["evaluation_status"] == "Not Attempted":
-				question_number = qs["seq_no"]
-				picked_qs = qs["exam_question"]
-				break
+		question_number = 1
+		picked_qs = allqs[0]["exam_question"]
 	else:
 		picked_qs = question
 
