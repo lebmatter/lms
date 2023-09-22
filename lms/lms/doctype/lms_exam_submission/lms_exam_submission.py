@@ -80,7 +80,7 @@ def can_process_question(doc, member=None):
 def get_submitted_questions(exam_submission, fields=["exam_question"]):
 	all_submitted = frappe.db.get_all(
 		"Exam Result",
-		filters={"parent": exam_submission},
+		filters={"parent": exam_submission, "evaluation_status": ("!=", "Not Attempted")},
 		fields=fields,
 		order_by="seq_no asc"
 	)
