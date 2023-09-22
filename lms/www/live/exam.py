@@ -48,7 +48,7 @@ def get_context(context):
 		# return the last question requested in this exam, if applicable
 		if exam["submission_status"] == "Started":
 			_, current_qs_no = get_current_qs(exam_details["exam_submission"]) 
-			exam["current_qs"] = current_qs_no
+			exam["current_qs"] = current_qs_no or 1
 		context.exam = exam
 
 		context.metatags = {
