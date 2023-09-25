@@ -5,8 +5,7 @@ from lms.lms.utils import (
 	can_create_courses,
 	check_profile_restriction,
 	get_restriction_details,
-	has_course_moderator_role,
-	get_exams_under_review,
+	has_course_moderator_role
 )
 from lms.overrides.user import get_registered_exams, get_authored_exams
 
@@ -18,7 +17,6 @@ def get_context(context):
 		get_registered_exams()["in_progress"] + get_registered_exams()["completed"]
 	)
 	context.created_courses = get_authored_exams(None, False)
-	context.review_courses = get_exams_under_review()
 	context.restriction = check_profile_restriction()
 	context.show_creators_section = can_create_courses()
 	context.show_review_section = (

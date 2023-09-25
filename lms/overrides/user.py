@@ -128,7 +128,7 @@ def get_exam_registation(candidate=None):
 	"""Returns all exam registrations of the user."""
 
 	filters = {"candidate": candidate or frappe.session.user}
-	return frappe.get_all("LMS Exam Submission", filters, ["name", "exam", "progress"])
+	return frappe.get_all("LMS Exam Submission", filters, ["name", "exam", "status"])
 
 def get_registered_exams():
 	in_progress = []
@@ -154,11 +154,11 @@ def get_registered_exams():
 		)
 		if not exam.published:
 			continue
-		progress = membership.progress
-		if progress == "Scheduled":
-			in_progress.append(exam)
-		else:
+		progress = membership.status
+		if progress == "Submitted":
 			completed.append(exam)
+		else:
+			in_progress.append(exam)
 
 	return {"in_progress": in_progress, "completed": completed}
 
