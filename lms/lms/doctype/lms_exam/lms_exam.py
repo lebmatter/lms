@@ -24,6 +24,10 @@ class LMSExam(Document):
 		
 		if self.pass_percentage > 100.0:
 			frappe.throw("Pass percentage should not be more than 100")
+		
+		if self.show_result == "After Specific Date":
+			if not self.show_result_after_date:
+				frappe.throw("Specify date for showing result.")
 
 
 	def validate_video_link(self):

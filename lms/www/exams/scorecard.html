@@ -1,0 +1,38 @@
+{% extends "lms/templates/lms_base.html" %}
+<!-- {% from "www/macros/livecode.html" import LiveCodeEditorJS, LiveCodeEditor with context %} -->
+
+
+{% block title %}
+Score Card
+{% endblock %}
+
+
+{% block head_include %}
+{% for ext in page_extensions %}
+{{ ext.render_header() }}
+{% endfor %}
+{% endblock %}
+
+{% block page_content %}
+<div class="container mt-4"></div>
+<div class="container mt-4">
+    <div class="card text-center">
+        <div class="card-header">
+            Score card: {{ exam_submission.exam }}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Result status: {{ exam_submission.result_status }}</h5>
+            <p class="card-text">You score: {{ exam_submission.total_marks }}/{{ exam_submission.exam_total_marks }}</p>
+            <a href="/exams" class="btn btn-primary">View all exams</a>
+        </div>
+        <div class="card-footer text-muted">
+        </div>
+    </div>
+</div>
+<div class="container mt-4"></div>
+{% endblock %}
+
+<!-- Scripts -->
+{%- block script %}
+{{ super() }}
+{% endblock %}

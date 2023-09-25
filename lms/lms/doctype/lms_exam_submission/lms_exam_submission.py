@@ -59,6 +59,12 @@ class LMSExamSubmission(Document):
 		
 		return res
 
+	def before_save(self):
+		self.total_marks, self.evaluation_pending, self.result_status = evaluation_values(
+			self.exam, self.submitted_answers
+		)
+
+
 def can_process_question(doc, member=None):
 	"""
 	validatior function to run before getting or updating a question
@@ -107,6 +113,29 @@ def get_current_qs(exam_submission):
 		return None, None
 
 
+def evaluation_values(exam, submitted_answers):
+	# add marks and evalualtion oending count is applicable
+	total_marks = 0
+	eval_pending = 0
+	for ans in submitted_answers:
+		if ans.is_correct:
+			total_marks += ans.mark
+		if ans.evaluation_status == "Pending":
+			eval_pending += 1
+	# check result status
+	exam_total_mark, pass_perc = frappe.db.get_value(
+		"LMS Exam", exam, ["total_marks", "pass_percentage"]
+	)
+	pass_mark = (exam_total_mark * pass_perc)/100
+	if total_marks >= pass_mark:
+		result_status = "Passed"
+	elif eval_pending == 0:
+		result_status = "Failed"
+	else:
+		result_status = "NA"
+	
+	return total_marks, eval_pending, result_status
+
 @frappe.whitelist()
 def start_exam(exam_submission=None):
 	"""
@@ -145,7 +174,6 @@ def start_exam(exam_submission=None):
 
 	return True
 
-
 @frappe.whitelist()
 def end_exam(exam_submission=None):
 	"""
@@ -158,24 +186,6 @@ def end_exam(exam_submission=None):
 	if doc.status != "Started":
 		frappe.throw("Exam is not in started state.")
 
-	# add marks and evalualtion oending count is applicable
-	total_marks = 0
-	eval_pending = 0
-	for ans in doc.submitted_answers:
-		if ans.is_correct:
-			total_marks += ans.mark
-		if ans.evaluation_status == "Pending":
-			eval_pending += 1
-
-	doc.total_marks = total_marks
-	doc.evaluation_pending = eval_pending
-	# check result status
-	exam_total_mark, pass_perc = frappe.db.get_value(
-		"LMS Exam", doc.exam, ["total_marks", "pass_percentage"]
-	)
-	pass_mark = (exam_total_mark * pass_perc)/100
-	if total_marks >= pass_mark:
-		doc.result_status = "Passed"
 	doc.status = "Submitted"
 	doc.save(ignore_permissions=True)
 
