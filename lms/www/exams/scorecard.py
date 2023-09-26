@@ -42,8 +42,8 @@ def set_exam_context(context, exam_submission):
 			["total_marks", "show_result", "show_result_after_date"],
 			as_dict=True
 		)
-		if exam_submission["show_result"] == "After Specific Date":
-			if datetime.now() > exam_submission["show_result_after_date"]:
+		if exam_data["show_result"] == "After Specific Date":
+			if datetime.now() > exam_data["show_result_after_date"]:
 				frappe.throw("Result is not published yet.")
 
 		exam_submission["exam_total_marks"] = exam_data["total_marks"]
