@@ -325,8 +325,13 @@ function endExam() {
                 $("#quiz-message").text(
                     "Exam submitted."
                 );
-                $("#quiz-btn").hide();
-                examAlert("Exam submitted!", "Your exam is submitted.");
+                if (data.message.show_result === 1) {
+                    $("#quiz-btn").text("View result");
+                    $("#quiz-btn").click((e) => {
+                        e.preventDefault();
+                        window.location.href = "/exams/scorecard/" + exam.exam_submission;
+                    });
+                }
                 examEnded = true;
             }
         });

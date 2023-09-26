@@ -189,6 +189,18 @@ def end_exam(exam_submission=None):
 	doc.status = "Submitted"
 	doc.save(ignore_permissions=True)
 
+	# return result details
+	exam = frappe.db.get_value(
+		"LMS Exam", doc.exam,
+		["show_result", "question_type"],
+		as_dict=True
+	)
+	if exam["question_type"] == "Choices" \
+		and exam["show_result"] == "After Exam Submission":
+		return {"show_result": 1}
+	
+	return {"show_result": 0}
+
 @frappe.whitelist()
 def get_question(exam_submission=None, qsno=1):
 	"""
