@@ -40,3 +40,6 @@ class ExamResult(Document):
 				self.is_correct = 0
 				self.evaluation_status = "Auto"
 				self.mark = 0
+		elif question_type == "Choices" and not self.answer:
+			self.mark = 0
+			self.evaluation_status = "Auto"
