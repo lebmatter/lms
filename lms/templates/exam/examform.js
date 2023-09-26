@@ -322,15 +322,10 @@ function endExam() {
                 "exam_submission": exam["exam_submission"],
             },
             callback: (data) => {
-                $("#quiz-message").text(
-                    "Exam submitted."
-                );
                 if (data.message.show_result === 1) {
-                    $("#quiz-btn").text("View result");
-                    $("#quiz-btn").click((e) => {
-                        e.preventDefault();
-                        window.location.href = "/exams/scorecard/" + exam.exam_submission;
-                    });
+                    window.location.href = "/exams/scorecard/" + exam.exam_submission;
+                } else {
+                    window.location.reload();
                 }
                 examEnded = true;
             }
