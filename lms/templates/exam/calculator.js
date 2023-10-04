@@ -42,7 +42,11 @@ const appendSymbol = symbol => {
 
 const appendNumber = number => {
     let currentResult = getCurrentResult();
-    newResult = currentResult + number;
+    if (currentResult === "0") {
+        newResult = number;
+    } else {
+        newResult = currentResult + number;
+    }
     updateResult(newResult);
 };
 
