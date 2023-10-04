@@ -2,19 +2,6 @@ const existingMessages = [];
 frappe.ready(() => {
     let awayStartTime;
 
-    if (exam["submission_status"] === "Started") {
-        $(window).blur(function () {
-            if (exam.restrict_tab_changes === 1) {
-                awayStartTime = new Date();
-                examAlert(
-                    "Tab change detected",
-                    "Multiple tab changes will result in exam termination!",
-                );
-            }
-        });
-    }
-
-
     $("#examAlert").on("hidden.bs.modal", function () {
         if (awayStartTime) {
             const currentTime = new Date();

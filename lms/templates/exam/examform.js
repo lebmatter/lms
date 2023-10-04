@@ -310,6 +310,15 @@ function displayQuestion(current_qs) {
         $('#exam-timer').hide();
     }
     // $("#quiz-form").fadeIn(300);
+    $(window).blur(function () {
+        if (exam.restrict_tab_changes === 1) {
+            awayStartTime = new Date();
+            examAlert(
+                "Tab change detected",
+                "Multiple tab changes will result in exam termination!",
+            );
+        }
+    });
 
 };
 
