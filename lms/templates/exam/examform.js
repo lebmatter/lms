@@ -157,6 +157,7 @@ function updateOverviewMap() {
 };
 
 function displayQuestion(current_qs) {
+    let awayStartTime;
     // $("#quiz-form").fadeOut(300);
     let currentQuestion = {
         "exam": exam.name,
@@ -318,6 +319,30 @@ function displayQuestion(current_qs) {
                 "Multiple tab changes will result in exam termination!",
             );
         }
+    });
+
+    $("#examAlert").on("hidden.bs.modal", function () {
+        let currentTime = new Date();
+        let timeAwayInMilliseconds = currentTime - awayStartTime;
+        let timeAwayInMinutes = Math.floor(timeAwayInMilliseconds / (1000 * 60));
+        let timeAwayInSeconds = Math.floor((timeAwayInMilliseconds % (1000 * 60)) / 1000);
+
+        console.log(currentTime, awayStartTime);
+        console.log(timeAwayInMinutes, timeAwayInSeconds);
+        tabChangeStr = `Tab changed for ${timeAwayInMinutes}:${timeAwayInSeconds}s`;
+        awayStartTime = null;
+        frappe.call({
+            method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.post_exam_message",
+            type: "POST",
+            args: {
+                'exam_submission': exam["exam_submission"],
+                'message': tabChangeStr,
+                'type_of_message': 'Warning',
+            },
+            callback: (data) => {
+                console.log(data);
+            },
+        });
     });
 
 };

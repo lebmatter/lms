@@ -1,33 +1,5 @@
 const existingMessages = [];
 frappe.ready(() => {
-    let awayStartTime;
-
-    $("#examAlert").on("hidden.bs.modal", function () {
-        if (awayStartTime) {
-            const currentTime = new Date();
-            const timeAwayInMilliseconds = currentTime - awayStartTime;
-            const timeAwayInMinutes = Math.floor(timeAwayInMilliseconds / (1000 * 60));
-            const timeAwayInSeconds = Math.floor((timeAwayInMilliseconds % (1000 * 60)) / 1000);
-
-            console.log(currentTime, awayStartTime);
-            console.log(timeAwayInMinutes, timeAwayInSeconds);
-            tabChangeStr = `Tab changed for ${timeAwayInMinutes}:${timeAwayInSeconds}s`;
-            awayStartTime = null;
-            frappe.call({
-                method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.post_exam_message",
-                type: "POST",
-                args: {
-                    'exam_submission': exam["exam_submission"],
-                    'message': tabChangeStr,
-                    'type_of_message': 'Warning',
-                },
-                callback: (data) => {
-                    console.log(data);
-                },
-            });
-        }
-    });
-
     setInterval(updateMessages, 2000);
 });
 
