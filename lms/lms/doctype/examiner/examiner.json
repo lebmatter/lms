@@ -9,7 +9,8 @@
  "field_order": [
   "examiner",
   "can_proctor",
-  "can_evaluate"
+  "can_evaluate",
+  "assigned_candidates"
  ],
  "fields": [
   {
@@ -29,18 +30,26 @@
    "label": "Can Proctor"
   },
   {
-   "default": "0",
+   "default": "1",
    "description": "Can evaluate candidate's response.",
    "fieldname": "can_evaluate",
    "fieldtype": "Check",
    "in_list_view": 1,
    "label": "Can Evaluate"
+  },
+  {
+   "fieldname": "assigned_candidates",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Assigned Candidates",
+   "non_negative": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-07-06 16:42:13.510290",
+ "modified": "2023-09-26 14:06:10.192648",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "Examiner",

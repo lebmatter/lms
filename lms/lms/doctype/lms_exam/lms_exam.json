@@ -11,10 +11,12 @@
   "title",
   "video_link",
   "image",
-  "column_break_3",
   "tags",
+  "column_break_3",
   "candidates_per_exam",
   "duration",
+  "start_time_type",
+  "flexible_time_ends_in",
   "section_break_7",
   "published",
   "upcoming",
@@ -284,6 +286,7 @@
    "fieldname": "duration",
    "fieldtype": "Int",
    "label": "Duration",
+   "non_negative": 1,
    "reqd": 1
   },
   {
@@ -306,6 +309,22 @@
    "fieldname": "enable_calculator",
    "fieldtype": "Check",
    "label": "Enable Calculator"
+  },
+  {
+   "default": "Fixed",
+   "description": "Fixed = start exam at specific time only. ",
+   "fieldname": "start_time_type",
+   "fieldtype": "Select",
+   "label": "Start Time Type",
+   "options": "Fixed\nFlexible"
+  },
+  {
+   "depends_on": "eval: doc.start_time_type=='Flexible'",
+   "description": "Buffer time in minutes",
+   "fieldname": "flexible_time_ends_in",
+   "fieldtype": "Int",
+   "label": "Flexible Time Ends In",
+   "non_negative": 1
   }
  ],
  "is_published_field": "published",
@@ -317,7 +336,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2023-09-18 16:01:43.552409",
+ "modified": "2023-09-28 14:17:27.327727",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam",
