@@ -63,6 +63,21 @@ class LMSExamSubmission(Document):
 		self.total_marks, self.evaluation_pending, self.result_status = evaluation_values(
 			self.exam, self.submitted_answers
 		)
+		self.assign_proctor()
+
+	def assign_proctor(self):
+		"""
+		Assign a proctor keeping round robin
+		"""
+		sched = frappe.get_doc("LMS Exam Schedule")
+		pcount = {
+			ex.examiner: ex.proctor_count for ex in sched.examiners if ex.can_proctor
+		}
+		
+		# Determine the examiner with the least number of assignments
+		next_examiner = min(pcount, key=pcount.get)
+		self.assigned_proctor = next_examiner
+	
 
 
 def can_process_question(doc, member=None):

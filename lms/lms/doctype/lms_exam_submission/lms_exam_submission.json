@@ -27,6 +27,7 @@
   "column_break_whlx",
   "evaluation_pending",
   "assigned_evaluator",
+  "assigned_proctor",
   "section_break_rxvo",
   "submitted_answers"
  ],
@@ -162,14 +163,22 @@
   },
   {
    "fieldname": "assigned_evaluator",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Assigned Evaluator",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "assigned_proctor",
+   "fieldtype": "Link",
+   "label": "Assigned Proctor",
+   "options": "User",
    "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-26 14:24:56.717535",
+ "modified": "2023-11-15 14:17:24.530139",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",

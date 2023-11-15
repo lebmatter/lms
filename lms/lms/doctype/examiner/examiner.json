@@ -10,7 +10,8 @@
   "examiner",
   "can_proctor",
   "can_evaluate",
-  "assigned_candidates"
+  "proctoring_count",
+  "evaluation_count"
  ],
  "fields": [
   {
@@ -38,18 +39,26 @@
    "label": "Can Evaluate"
   },
   {
-   "fieldname": "assigned_candidates",
+   "fieldname": "proctoring_count",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Assigned Candidates",
+   "label": "Proctoring",
    "non_negative": 1,
    "read_only": 1
+  },
+  {
+    "fieldname": "evaluation_count",
+    "fieldtype": "Int",
+    "in_list_view": 1,
+    "label": "Evaluating",
+    "non_negative": 1,
+    "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-09-26 14:06:10.192648",
+ "modified": "2023-11-15 14:06:10.192648",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "Examiner",
