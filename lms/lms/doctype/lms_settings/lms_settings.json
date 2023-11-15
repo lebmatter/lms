@@ -30,7 +30,14 @@
   "mentor_request_tab",
   "mentor_request_section",
   "mentor_request_creation",
-  "mentor_request_status_update"
+  "mentor_request_status_update",
+  "proctor_settings_tab",
+  "aws_column",
+  "aws_key",
+  "aws_secret",
+  "video_settings_column",
+  "bitrate",
+  "framerate"
  ],
  "fields": [
   {
@@ -180,12 +187,50 @@
    "fieldname": "allow_student_progress",
    "fieldtype": "Check",
    "label": "Allow students to see each others progress in class"
+  },
+  {
+   "fieldname": "proctor_settings_tab",
+   "fieldtype": "Tab Break",
+   "label": "Proctor Settings"
+  },
+  {
+   "fieldname": "aws_column",
+   "fieldtype": "Column Break",
+   "label": "AWS"
+  },
+  {
+   "fieldname": "aws_key",
+   "fieldtype": "Autocomplete",
+   "label": "AWS Key"
+  },
+  {
+   "fieldname": "aws_secret",
+   "fieldtype": "Autocomplete",
+   "label": "AWS Secret"
+  },
+  {
+   "fieldname": "video_settings_column",
+   "fieldtype": "Column Break",
+   "label": "Video settings"
+  },
+  {
+   "default": "1 KB/s",
+   "fieldname": "bitrate",
+   "fieldtype": "Select",
+   "label": "Bitrate",
+   "options": "1 KB/s\n100 KB/s\n1 MB/s"
+  },
+  {
+   "fieldname": "framerate",
+   "fieldtype": "Select",
+   "label": "Framerate",
+   "options": "30"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-04-17 12:54:44.706101",
+ "modified": "2023-11-15 12:22:42.830466",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Settings",
