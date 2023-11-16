@@ -5,8 +5,12 @@ import random
 from datetime import datetime, timedelta
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
 from frappe.utils import now
+from werkzeug.utils import secure_filename
+
+import boto3
 
 
 class LMSExamSubmission(Document):
@@ -151,6 +155,7 @@ def evaluation_values(exam, submitted_answers):
 	
 	return total_marks, eval_pending, result_status
 
+
 @frappe.whitelist()
 def start_exam(exam_submission=None):
 	"""
@@ -186,6 +191,26 @@ def start_exam(exam_submission=None):
 
 	doc.status = "Started"
 	doc.save(ignore_permissions=True)
+
+	# cache submission details
+	start_date_time, duration = frappe.db.get_value(
+		"LMS Exam Sschedule", doc.exam_schedule, ["start_date_time", "duration"]
+	)
+	# end time is schedule start time + duration + additional time given
+	end_time = start_date_time + timedelta(minutes=duration) + \
+			timedelta(minutes=doc.additional_time_given)
+	data = {
+		"candidate": doc.candidate,
+		"exam_schedule": doc.exam_schedule,
+		"exam": doc.exam,
+		"status": doc.status,
+		"exam_started_time": start_time,
+		"exam_end_time": end_time,
+		"additional_time_given": doc.additional_time_given,
+		"assigned_evaluator": doc.assigned_evaluator,
+		"assigned_proctor": doc.assigned_proctor,
+	}
+	frappe.cache().hset(doc.name, data)
 
 	return True
 
@@ -416,6 +441,135 @@ def exam_overview(exam_submission=None):
 
 	return res
 	
+#########################
+### Examiner APIs ########
+#########################
+def proctor_list():
+	"""
+	Get logged in users' current proctoring exam submissions
+	"""
+	if frappe.session.user == "Guest":
+		raise frappe.PermissionError(_("Please login to access this page."))
+
+	live_submissions = frappe.db.sql('''
+		SELECT s.name
+		FROM `tabLMS Exam Submission` s
+		JOIN `tabLMS Exam Schedule` s ON c.exam_schedule = s.name
+		WHERE NOW() BETWEEN s.start_time AND 
+			ADDTIME(s.start_time, SEC_TO_TIME(s.duration));
+	''',as_dict=True)
+	
+	return {"submissions": [sch["name"] for sch in live_submissions]}
 
 
+def exam_ended(exam_submission):
+	# check if the exam is live
+	live_sched = frappe.db.sql('''
+		SELECT c.name
+		FROM `tabLMS Exam Submission` s
+		JOIN `tabLMS Exam Schedule` s ON c.exam_schedule = s.name
+		WHERE NOW() BETWEEN s.start_time AND 
+			ADDTIME(s.start_time, SEC_TO_TIME(s.duration)) AND
+			c.name = %(submission)s;
+	''', values={"submission": exam_submission},as_dict=True)
 
+	if not live_sched:
+		raise frappe.PermissionError(_("Exam has ended."))
+
+	return live_sched
+
+@frappe.whitelist()
+def proctor_video_list(exam_submission=None):
+	"""
+	Get the list of videos from s3
+	TODO Add a caching layer to stop generating duplicate urls
+	"""
+	assert exam_submission
+	if frappe.session.user == "Guest":
+		raise frappe.PermissionError(_("Please login to access this page."))
+
+	exam_ended(exam_submission)
+
+	# make sure that logged in user is valid proctor
+	if frappe.session.user != frappe.db.get_value(
+		"LMS Exam Submission", exam_submission, "assigned_proctor"
+	):
+		raise frappe.PermissionError(_("No proctor access to the exam."))
+
+	# list from s3
+	lms_settings = frappe.get_single("LMS Settings")
+	s3_client = boto3.client(
+		's3', 
+		aws_access_key_id=lms_settings.aws_key, 
+		aws_secret_access_key=lms_settings.get_password("aws_secret")
+	)
+	res = {"videos": []}
+
+	# Paginator to handle buckets with many objects
+	paginator = s3_client.get_paginator('list_objects_v2')
+	for page in paginator.paginate(Bucket=lms_settings.s3_bucket, Prefix=exam_submission):
+		if 'Contents' in page:
+			for obj in page['Contents']:
+				if not obj['Key'].endswith('.webm'):
+					continue
+
+				# check cache for presigned url
+				cached_url = frappe.cache().hget(exam_submission, obj['Key'])
+				if not cached_url:
+					presigned_url = s3_client.generate_presigned_url(
+						'get_object', Params={
+							'Bucket': lms_settings.s3_bucket,
+							'Key': obj['Key']},
+							ExpiresIn=3600 # 1 hr expiry
+					)
+					res["videos"].append(presigned_url)
+					frappe.cache().hset(exam_submission, obj['Key'], presigned_url)
+				else:
+					res["videos"].append(cached_url)
+
+	return res
+
+@frappe.whitelist()
+def upload_video(exam_submission=None):
+	"""
+	Get the list of videos from s3
+	TODO Add a caching layer to avoid creating boto3 connections/req
+	"""
+	assert exam_submission
+	if frappe.session.user == "Guest":
+		raise frappe.PermissionError(_("Please login to access this page."))
+
+	exam_ended(exam_submission)
+	# check if the exam is of logged in user
+	if not frappe.session.user != \
+		frappe.db.get_value("LMS Exam Submission", exam_submission, "candidate"):
+		raise frappe.PermissionError(_("Exam does not belongs to the user."))
+	
+	lms_settings = frappe.get_single("LMS Settings")
+	s3_client = boto3.client(
+		's3', 
+		aws_access_key_id=lms_settings.aws_key, 
+		aws_secret_access_key=lms_settings.get_password("aws_secret")
+	)
+	if 'file' not in frappe.request.files:
+		return {"status": False}
+
+	file = frappe.request.files['file']
+	if file.filename == '':
+		return {"status": False}
+
+	# Secure the filename
+	filename = secure_filename(file.filename)
+
+	# Specify your S3 bucket and folder
+	bucket_name = lms_settings.s3_bucket
+	folder_name = exam_submission
+	object_name = f'{folder_name}{filename}'
+
+	try:
+		# Stream the file directly to S3
+		s3_client.upload_fileobj(file, bucket_name, object_name)
+		return {"status": True}
+	except Exception as e:
+		# return str(e), 500
+		return {"status": False}
