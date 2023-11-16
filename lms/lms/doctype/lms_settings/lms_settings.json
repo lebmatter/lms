@@ -35,6 +35,7 @@
   "aws_column",
   "aws_key",
   "aws_secret",
+  "s3_bucket",
   "video_settings_column",
   "bitrate",
   "framerate"
@@ -200,12 +201,12 @@
   },
   {
    "fieldname": "aws_key",
-   "fieldtype": "Autocomplete",
+   "fieldtype": "Data",
    "label": "AWS Key"
   },
   {
    "fieldname": "aws_secret",
-   "fieldtype": "Autocomplete",
+   "fieldtype": "Password",
    "label": "AWS Secret"
   },
   {
@@ -226,12 +227,17 @@
    "fieldtype": "Select",
    "label": "Frame rate",
    "options": "5\n15\n24\n30\n60"
+  },
+  {
+   "fieldname": "s3_bucket",
+   "fieldtype": "Data",
+   "label": "S3 Bucket"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-11-15 12:28:31.188522",
+ "modified": "2023-11-16 16:18:00.197400",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Settings",
