@@ -188,7 +188,6 @@ website_route_rules = [
 		"from_route": "/quiz-submission/<quiz>/<submission>",
 		"to_route": "quiz_submission/quiz_submission",
 	},
-    {"from_route": "/live/proctor", "to_route": "exams/proctor"},
     {"from_route": "/exams/evaluate", "to_route": "exams/evaluate"},
     {"from_route": "/exams/<exam>", "to_route": "exams/exam"},
     {"from_route": "/exams/scorecard/<exam_submission>", "to_route": "exams/scorecard"},
