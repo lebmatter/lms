@@ -71,6 +71,93 @@ const answrLater = `
 `;
 var examEnded = false;
 var currentQsNo = 1;
+// Initialize variables
+let recorder;
+let stream;
+let recordingInterval;
+
+function sendVideoBlob(blob) {
+    let xhr = new XMLHttpRequest();
+    const unixTimestamp = Math.floor(Date.now() / 1000);
+    xhr.open('POST', '/api/method/lms.lms.doctype.lms_exam_submission.lms_exam_submission.upload_video', true);
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.setRequestHeader('X-Frappe-CSRF-Token', frappe.csrf_token);
+
+    let form_data = new FormData();
+    form_data.append('file', blob, unixTimestamp + ".webm");
+    form_data.append('exam_submission', exam["exam_submission"])
+    xhr.send(form_data);
+}
+
+// Function to start recording
+function startRecording() {
+    // Get the webcam stream
+    const constraints = {
+        audio: false,
+        video: true
+    };
+
+    navigator.mediaDevices.getUserMedia(constraints)
+        .then(function (mediaStream) {
+            stream = mediaStream;
+            // Add track event listeners
+            stream.getTracks().forEach(track => {
+                track.addEventListener('ended', function () {
+                    examAlert(
+                        'Webcam was disabled or stopped',
+                        'Exam will be terminated. Refresh the page or fix the issue.'
+                    );
+                    sendMessage('Webcam was disabled or stopped', 'Warning');
+                });
+            });
+
+            // Attach the stream to the video element
+            document.getElementById('webcam-stream').srcObject = stream;
+
+            // Create a recorder instance
+            recorder = RecordRTC(stream, {
+                type: 'video',
+                mimeType: 'video/webm',
+                videoBitsPerSecond: 8000
+
+            });
+
+            // Start recording
+            recorder.startRecording();
+
+            // Start sending recorded blobs to the server every 10 seconds
+            recordingInterval = setInterval(function () {
+                recorder.stopRecording(function () {
+                    // Get the recorded blob
+                    let blob = recorder.getBlob();
+
+                    sendVideoBlob(blob);
+                    // Reset the recorder
+                    recorder = RecordRTC(stream, { type: 'video' });
+                    recorder.startRecording();
+                });
+            }, 10000);
+        })
+        .catch(function (error) {
+            examAlert(
+                'No webcam detected',
+                'Exam will be terminated. Refresh the page or fix the issue.'
+            );
+            sendMessage('Webcam was not detected', 'Warning');
+        });
+}
+
+// Function to stop recording
+function stopRecording() {
+    // Stop recording and clear the recording interval
+    clearInterval(recordingInterval);
+    recorder.stopRecording(function () {
+        // Release the stream
+        stream.getTracks().forEach(function (track) {
+            track.stop();
+        });
+    });
+}
 
 frappe.ready(() => {
     clearKeyFromLocalStorage(examOverviewKey);
@@ -97,6 +184,9 @@ frappe.ready(() => {
     if (exam.submission_status === "Started") {
         // Start the countdown timer
         updateTimer();
+        if (exam.enable_video_proctoring) {
+            startRecording();
+        }
     }
 
     $("#nextQs").click((e) => {
@@ -112,7 +202,17 @@ frappe.ready(() => {
         submitAnswer(true);
     });
 
+    var collapseElement = $('#videoCollapse');
+    collapseElement.on('shown.bs.collapse', function () {
+        $('#toggleButton').text('Hide Video');
+    });
+    collapseElement.on('hidden.bs.collapse', function () {
+        $('#toggleButton').text('Show Video');
+    });
+
 });
+
+
 
 function updateOverviewMap() {
     frappe.call({
@@ -331,21 +431,26 @@ function displayQuestion(current_qs) {
         console.log(timeAwayInMinutes, timeAwayInSeconds);
         tabChangeStr = `Tab changed for ${timeAwayInMinutes}:${timeAwayInSeconds}s`;
         awayStartTime = null;
-        frappe.call({
-            method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.post_exam_message",
-            type: "POST",
-            args: {
-                'exam_submission': exam["exam_submission"],
-                'message': tabChangeStr,
-                'type_of_message': 'Warning',
-            },
-            callback: (data) => {
-                console.log(data);
-            },
-        });
+        sendMessage(tabChangeStr, "Warning");
+
     });
 
 };
+
+function sendMessage(message, messageType) {
+    frappe.call({
+        method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.post_exam_message",
+        type: "POST",
+        args: {
+            'exam_submission': exam["exam_submission"],
+            'message': message,
+            'type_of_message': messageType,
+        },
+        callback: (data) => {
+            console.log(data);
+        },
+    });
+}
 
 function endExam() {
     if (!examEnded) {
@@ -362,6 +467,7 @@ function endExam() {
                     window.location.reload();
                 }
                 examEnded = true;
+                stopRecording();
             }
         });
     }

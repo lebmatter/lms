@@ -274,7 +274,8 @@ def get_live_exam(member=None):
 			"restrict_tab_changes": exam.restrict_tab_changes,
 			"allowed_tab_change": exam.allowed_tab_changes,
 			"live_status": "",
-			"submission_status": submission["status"]
+			"submission_status": submission["status"],
+			"enable_video_proctoring": exam.enable_video_proctoring
 		}
 
 		# make datetime in isoformat

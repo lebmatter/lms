@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import frappe
 from frappe import _
 from frappe.model.document import Document
+from frappe.utils.file_manager import get_uploaded_content
 from frappe.utils import now
 from werkzeug.utils import secure_filename
 
@@ -64,24 +65,26 @@ class LMSExamSubmission(Document):
 		return res
 
 	def before_save(self):
-		self.total_marks, self.evaluation_pending, self.result_status = evaluation_values(
-			self.exam, self.submitted_answers
-		)
+		if self.exam_started_time:
+			self.total_marks, self.evaluation_pending, self.result_status = evaluation_values(
+				self.exam, self.submitted_answers
+			)
 		self.assign_proctor()
 
 	def assign_proctor(self):
 		"""
 		Assign a proctor keeping round robin
 		"""
-		sched = frappe.get_doc("LMS Exam Schedule")
+		sched = frappe.get_doc("LMS Exam Schedule", self.exam_schedule)
 		pcount = {
 			ex.examiner: ex.proctor_count for ex in sched.examiners if ex.can_proctor
 		}
 		
-		# Determine the examiner with the least number of assignments
-		next_examiner = min(pcount, key=pcount.get)
-		self.assigned_proctor = next_examiner
-	
+		if pcount:
+			# Determine the examiner with the least number of assignments
+			next_examiner = min(pcount, key=pcount.get)
+			self.assigned_proctor = next_examiner
+		
 
 
 def can_process_question(doc, member=None):
@@ -194,7 +197,7 @@ def start_exam(exam_submission=None):
 
 	# cache submission details
 	start_date_time, duration = frappe.db.get_value(
-		"LMS Exam Sschedule", doc.exam_schedule, ["start_date_time", "duration"]
+		"LMS Exam Schedule", doc.exam_schedule, ["start_date_time", "duration"]
 	)
 	# end time is schedule start time + duration + additional time given
 	end_time = start_date_time + timedelta(minutes=duration) + \
@@ -204,13 +207,13 @@ def start_exam(exam_submission=None):
 		"exam_schedule": doc.exam_schedule,
 		"exam": doc.exam,
 		"status": doc.status,
-		"exam_started_time": start_time,
-		"exam_end_time": end_time,
+		"exam_started_time": start_time.isoformat(),
+		"exam_end_time": end_time.isoformat(),
 		"additional_time_given": doc.additional_time_given,
-		"assigned_evaluator": doc.assigned_evaluator,
-		"assigned_proctor": doc.assigned_proctor,
+		"assigned_evaluator": doc.assigned_evaluator or "",
+		"assigned_proctor": doc.assigned_proctor or "",
 	}
-	frappe.cache().hset(doc.name, data)
+	frappe.cache().hmset(doc.name, data)
 
 	return True
 
@@ -465,12 +468,12 @@ def proctor_list():
 def exam_ended(exam_submission):
 	# check if the exam is live
 	live_sched = frappe.db.sql('''
-		SELECT c.name
-		FROM `tabLMS Exam Submission` s
-		JOIN `tabLMS Exam Schedule` s ON c.exam_schedule = s.name
-		WHERE NOW() BETWEEN s.start_time AND 
-			ADDTIME(s.start_time, SEC_TO_TIME(s.duration)) AND
-			c.name = %(submission)s;
+		SELECT sub.name
+		FROM `tabLMS Exam Submission` sub
+		JOIN `tabLMS Exam Schedule` sched ON sub.exam_schedule = sched.name
+		WHERE NOW() BETWEEN sched.start_date_time AND 
+			ADDTIME(sched.start_date_time, SEC_TO_TIME(sched.duration)) AND
+			sub.name = %(submission)s;
 	''', values={"submission": exam_submission},as_dict=True)
 
 	if not live_sched:
@@ -488,7 +491,8 @@ def proctor_video_list(exam_submission=None):
 	if frappe.session.user == "Guest":
 		raise frappe.PermissionError(_("Please login to access this page."))
 
-	exam_ended(exam_submission)
+	if not exam_ended(exam_submission):
+		raise frappe.PermissionError(_("Exam is invalid/ended."))
 
 	# make sure that logged in user is valid proctor
 	if frappe.session.user != frappe.db.get_value(
@@ -539,9 +543,10 @@ def upload_video(exam_submission=None):
 	if frappe.session.user == "Guest":
 		raise frappe.PermissionError(_("Please login to access this page."))
 
-	exam_ended(exam_submission)
+	if not exam_ended(exam_submission):
+		raise frappe.PermissionError(_("Exam is invalid/ended."))
 	# check if the exam is of logged in user
-	if not frappe.session.user != \
+	if frappe.session.user != \
 		frappe.db.get_value("LMS Exam Submission", exam_submission, "candidate"):
 		raise frappe.PermissionError(_("Exam does not belongs to the user."))
 	
@@ -564,11 +569,12 @@ def upload_video(exam_submission=None):
 	# Specify your S3 bucket and folder
 	bucket_name = lms_settings.s3_bucket
 	folder_name = exam_submission
-	object_name = f'{folder_name}{filename}'
+	object_name = "{}/{}".format(exam_submission, filename)
 
 	try:
 		# Stream the file directly to S3
 		s3_client.upload_fileobj(file, bucket_name, object_name)
+		print("###############","Uploaded to s3")
 		return {"status": True}
 	except Exception as e:
 		# return str(e), 500
