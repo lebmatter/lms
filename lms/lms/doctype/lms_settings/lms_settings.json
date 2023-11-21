@@ -38,7 +38,8 @@
   "s3_bucket",
   "video_settings_column",
   "bitrate",
-  "framerate"
+  "framerate",
+  "video_chunk_length"
  ],
  "fields": [
   {
@@ -232,12 +233,19 @@
    "fieldname": "s3_bucket",
    "fieldtype": "Data",
    "label": "S3 Bucket"
+  },
+  {
+   "default": "15",
+   "description": "Length of each recorded video chunks in seconds.",
+   "fieldname": "video_chunk_length",
+   "fieldtype": "Int",
+   "label": "Video chunk length"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-11-16 16:18:00.197400",
+ "modified": "2023-11-17 16:15:37.871675",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Settings",
