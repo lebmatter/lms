@@ -13,5 +13,8 @@ def get_context(context):
 		raise frappe.PermissionError(_("Please login to access this page."))
 
 	context.page_context = {}
-	context.submissions = proctor_list()["submissions"]
+	context.submissions = proctor_list()
+	context.video_chunk_length = frappe.db.get_single_value(
+		"LMS Settings", "video_chunk_length"
+	)
 

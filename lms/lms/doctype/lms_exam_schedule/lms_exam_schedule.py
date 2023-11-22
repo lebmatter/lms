@@ -1,11 +1,12 @@
 # Copyright (c) 2023, Frappe and contributors
 # For license information, please see license.txt
-
+from datetime import timedelta, datetime
+from dateutil.parser import parse
 import frappe
 
 from frappe.utils import now
 from frappe.model.document import Document
-from datetime import timedelta, datetime
+
 
 
 class LMSExamSchedule(Document):
@@ -32,24 +33,24 @@ class LMSExamSchedule(Document):
 		if not self.examiners:
 			return
 		
-		exam_start = self.start_date_time
-		end_time = exam_start + timedelta(minutes=exam_start)
+		exam_start = parse(self.start_date_time)
+		end_time = exam_start + timedelta(minutes=self.duration)
 		other_exams = frappe.get_all(
 			"LMS Exam Schedule",
-			filters=["start_date_time", ">=", exam_start],
+			filters=[["start_date_time", ">=", exam_start]],
 			fields=["name", "duration", "start_date_time"], 
 		)
 
 		for exam2 in other_exams:
-			examiners1 = [ex["examiner"] for ex in self.examiners]
-			exam2_end = exam2["start_date_time"] + exam2["duration"]
+			examiners1 = [ex.examiner for ex in self.examiners]
+			exam2_end = exam2["start_date_time"] + timedelta(minutes=exam2["duration"])
 			if check_overlap(exam_start, end_time, exam2["start_date_time"], exam2_end):
 				examiners2 = frappe.db.get_all(
 					"Examiner",
 					filters={"parent": "resulttest", "can_proctor": 1},
 					fields=["examiner"]
 				)
-				examiners2 = [ex["examiner"] for ex in examiners2]
+				examiners2 = [ex.examiner for ex in examiners2]
 				# check if any examiner in the 2nd list
 				overlap = set(examiners1).intersection(set(examiners2))
 				if overlap:
@@ -113,9 +114,9 @@ class LMSExamSchedule(Document):
 		# update current schedule
 		for doc in self.examiners:
 			if doc.examiner in assignments_proctor:
-				doc.proctor_count = len(assignments_proctor[doc.examiner])
+				doc.proctoring_count = len(assignments_proctor[doc.examiner])
 			if doc.examiner in assignments_evaluator:
-				doc.evaluator_count = len(assignments_evaluator[doc.examiner])
+				doc.evaluation_count = len(assignments_evaluator[doc.examiner])
 
 
 def check_overlap(start_time1, end_time1, start_time2, end_time2):

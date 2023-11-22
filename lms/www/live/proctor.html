@@ -1,0 +1,280 @@
+{% extends "lms/templates/lms_base.html" %}
+<!-- {% from "www/macros/livecode.html" import LiveCodeEditorJS, LiveCodeEditor with context %} -->
+
+
+{% block title %}
+Proctor
+{% endblock %}
+
+
+{% block head_include %}
+{% for ext in page_extensions %}
+{{ ext.render_header() }}
+{% endfor %}
+<style>
+    .container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .video-container {
+        margin: 0 auto;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .video {
+        width: 100%;
+    }
+
+    .controls__button {
+        background: none;
+        border: 0;
+        line-height: 1;
+        color: white;
+        text-align: center;
+        outline: 0;
+        padding: 0;
+        cursor: pointer;
+        max-width: 50px;
+    }
+
+    .progress_slider {
+        width: 10px;
+        height: 30px;
+    }
+
+    .controls {
+        display: flex;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        flex-wrap: wrap;
+        background: rgba(0, 0, 0, 0.1);
+        transform: translateY(0);
+    }
+
+    .controls>* {
+        flex: 1;
+    }
+
+    .progress {
+        flex: 10;
+        position: relative;
+        display: flex;
+        flex-basis: 100%;
+        height: 5px;
+        /* background: rgba(0,0,0,0.5); */
+        background: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        height: 15px;
+    }
+
+    .progress__filled {
+        width: 50%;
+        background: #0D4646;
+        flex: 0;
+        flex-basis: 0%;
+    }
+
+    input[type=range] {
+        -webkit-appearance: none;
+        background: transparent;
+        width: 100%;
+        margin: 0 5px;
+    }
+
+    input[type=range]:focus {
+        outline: none;
+    }
+
+    input[type=range]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 8.4px;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 4px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+        height: 0.9rem;
+        width: 0.9rem;
+        border-radius: 50px;
+        background: #0D4646;
+        cursor: pointer;
+        -webkit-appearance: none;
+        margin-top: -3.5px;
+    }
+
+    input[type=range]::-moz-range-track {
+        width: 100%;
+        height: 8.4px;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 4px;
+    }
+
+    input[type=range]::-moz-range-thumb {
+        height: 0.9rem;
+        width: 0.9rem;
+        border-radius: 50px;
+        background: #0D4646;
+        cursor: pointer;
+        -webkit-appearance: none;
+        margin-top: -3.5px;
+    }
+</style>
+{% endblock %}
+
+{% block page_content %}
+
+<div class="row mt-5">
+    {% for submission in submissions %}
+    <div class="video-container" data-videoid="{{ submission }}">
+        <video class="video" id="{{ submission }}" data-videoid="{{ submission }}" preload="metadata" autoplay>
+            <p>Your browser doesn't support HTML5 video.</p>
+        </video>
+        <div class="controls">
+            <!-- <div class="progress">
+                        <div class="progress__filled"></div>
+                    </div> -->
+            <button class="controls__button toggleButton" title="Toggle Play">
+                ►
+            </button>
+            <input type="range" id="progress" class="progress_slider" min="0" max="10" step="1" value="1" />
+            <button class="controls__button">⚙</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+<!-- Scripts -->
+{%- block script %}
+{{ super() }}
+<script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
+<script type="text/javascript">
+
+    var videoStore = {};
+    var currentVideoIndex = {};
+    const videos = document.getElementsByClassName('video');
+    const toggleButton = document.getElementsByClassName("toggleButton");
+    const progress = document.getElementsByClassName("progress");
+
+    function addEventListenerToClass(className, eventType, handlerFunction) {
+        var elements = document.getElementsByClassName(className);
+
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].addEventListener(eventType, handlerFunction);
+        }
+    }
+    function togglePlay() {
+        // Find the closest '.video-container' ancestor
+        const videoContainer = this.closest('.video-container');
+
+        // Within that container, find the video element
+        const video = videoContainer.querySelector('video');
+        if (video.paused || video.ended) {
+            video.play();
+        } else {
+            video.pause();
+        }
+    }
+
+    function updateToggleButton() {
+        // Find the closest '.video-container' ancestor from the video
+        const videoContainer = this.closest('.video-container');
+
+        // Within that container, find the toggleButton
+        const toggleButton = videoContainer.querySelector('.toggleButton');
+        toggleButton.innerHTML = this.paused ? "►" : "❚ ❚";
+    }
+
+    function handleProgress() {
+        // TODO shift slider
+        //const progressPercentage = (video.currentTime / video.duration) * 100;
+    }
+
+    function scrub(e) {
+        const scrubTime = (e.offsetX / progress.offsetWidth) * video.duration;
+        video.currentTime = scrubTime;
+    }
+
+    function playVideoAtIndex(exam_submission, index) {
+        currentVideoIndex[exam_submission] = index;
+        var vid = document.getElementById(exam_submission);
+        if (currentVideoIndex[exam_submission] < videoStore[exam_submission].length) {
+            vid.src = videoStore[exam_submission][currentVideoIndex[exam_submission]];
+            vid.load();
+            console.log('Playing ' + currentVideoIndex[exam_submission] + '/' + videoStore[exam_submission].length);
+            vid.play();
+        } else {
+            console.log('End of playlist');
+        }
+    }
+
+    function handleSliderUpdate() {
+        // Find the closest '.video-container' ancestor
+        const videoContainer = this.closest('.video-container');
+        let exam_submission = videoContainer.getAttribute("data-videoid");
+        playVideoAtIndex(exam_submission, this.value);
+    }
+
+    function playNextVideo() {
+        var exam_submission = this.id;
+        playVideoAtIndex(exam_submission, currentVideoIndex[exam_submission] + 1)
+
+    }
+
+    addEventListenerToClass("toggleButton", "click", togglePlay);
+    addEventListenerToClass("video", "click", togglePlay);
+    addEventListenerToClass("video", "play", updateToggleButton);
+    addEventListenerToClass("video", "pause", updateToggleButton);
+    addEventListenerToClass("video", "timeupdate", handleProgress);
+    addEventListenerToClass("video", "ended", playNextVideo);
+    addEventListenerToClass("progress", "click", scrub);
+    addEventListenerToClass("progress_slider", "change", handleSliderUpdate);
+
+
+    frappe.ready(() => {
+        for (var i = 0; i < videos.length; i++) {
+            // Check if the element is an HTML5 video
+            if (videos[i].nodeName !== 'VIDEO') {
+                continue; // Skip to the next iteration of the loop
+            }
+            let exam_submission = videos[i].getAttribute('data-videoid');
+            frappe.call({
+                method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.proctor_video_list",
+                args: {
+                    "exam_submission": exam_submission,
+                },
+                success: (data) => {
+                    // convert api response to an array of objects
+                    let videoList = Object.entries(data.message.videos).map(([unixtimestamp, videourl]) => {
+                        return { unixtimestamp: parseInt(unixtimestamp, 10), videourl };
+                    });
+                    // sort them
+                    videoList.sort((a, b) => a.unixtimestamp - b.unixtimestamp);
+
+
+                    videoStore[exam_submission] = videoList.map(video => video.videourl);;
+                    currentVideoIndex[exam_submission] = -1;
+                    // play first video
+                    currentVideoIndex[exam_submission]++;
+                    var vid = document.getElementById(exam_submission);
+                    var videoContainer = vid.closest('.video-container');
+                    var input = videoContainer.querySelector('input[type="range"]');
+                    input.max = videoStore[exam_submission].length - 1;
+
+                    playVideoAtIndex(exam_submission, 0);
+                },
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -77,7 +77,7 @@ class LMSExamSubmission(Document):
 		"""
 		sched = frappe.get_doc("LMS Exam Schedule", self.exam_schedule)
 		pcount = {
-			ex.examiner: ex.proctor_count for ex in sched.examiners if ex.can_proctor
+			ex.examiner: ex.proctoring_count for ex in sched.examiners if ex.can_proctor
 		}
 		
 		if pcount:
@@ -447,25 +447,29 @@ def exam_overview(exam_submission=None):
 #########################
 ### Examiner APIs ########
 #########################
-def proctor_list():
+def proctor_list(examiner=None):
 	"""
 	Get logged in users' current proctoring exam submissions
 	"""
-	if frappe.session.user == "Guest":
+	user = examiner or frappe.session.user
+	if user == "Guest":
 		raise frappe.PermissionError(_("Please login to access this page."))
 
 	live_submissions = frappe.db.sql('''
-		SELECT s.name
-		FROM `tabLMS Exam Submission` s
-		JOIN `tabLMS Exam Schedule` s ON c.exam_schedule = s.name
-		WHERE NOW() BETWEEN s.start_time AND 
-			ADDTIME(s.start_time, SEC_TO_TIME(s.duration));
-	''',as_dict=True)
+		SELECT sub.name AS name
+				FROM `tabLMS Exam Submission` sub
+		JOIN `tabLMS Exam Schedule` sched ON sub.exam_schedule = sched.name
+		JOIN `tabExaminer` exa ON exa.parent = sched.name 
+		WHERE NOW() BETWEEN sched.start_date_time AND 
+					ADDTIME(sched.start_date_time, SEC_TO_TIME(sched.duration)) AND
+					exa.can_proctor AND exa.examiner = %(user)s
+					AND sub.assigned_proctor= %(user)s;
+	''', values={"user": user},as_dict=True)
 	
-	return {"submissions": [sch["name"] for sch in live_submissions]}
+	return [sch["name"] for sch in live_submissions]
 
 
-def exam_ended(exam_submission):
+def is_live(exam_submission):
 	# check if the exam is live
 	live_sched = frappe.db.sql('''
 		SELECT sub.name
@@ -476,10 +480,10 @@ def exam_ended(exam_submission):
 			sub.name = %(submission)s;
 	''', values={"submission": exam_submission},as_dict=True)
 
-	if not live_sched:
-		raise frappe.PermissionError(_("Exam has ended."))
+	if live_sched:
+		return True
 
-	return live_sched
+	return False
 
 @frappe.whitelist()
 def proctor_video_list(exam_submission=None):
@@ -491,7 +495,7 @@ def proctor_video_list(exam_submission=None):
 	if frappe.session.user == "Guest":
 		raise frappe.PermissionError(_("Please login to access this page."))
 
-	if not exam_ended(exam_submission):
+	if not is_live(exam_submission):
 		raise frappe.PermissionError(_("Exam is invalid/ended."))
 
 	# make sure that logged in user is valid proctor
@@ -505,9 +509,10 @@ def proctor_video_list(exam_submission=None):
 	s3_client = boto3.client(
 		's3', 
 		aws_access_key_id=lms_settings.aws_key, 
-		aws_secret_access_key=lms_settings.get_password("aws_secret")
+		aws_secret_access_key=lms_settings.get_password("aws_secret"),
+		region_name="ap-south-1"
 	)
-	res = {"videos": []}
+	res = {"videos": {}}
 
 	# Paginator to handle buckets with many objects
 	paginator = s3_client.get_paginator('list_objects_v2')
@@ -518,18 +523,20 @@ def proctor_video_list(exam_submission=None):
 					continue
 
 				# check cache for presigned url
-				cached_url = frappe.cache().hget(exam_submission, obj['Key'])
+				filetimestamp = obj['Key'].split("/")[-1][:-4]
+				cached_url = frappe.cache().get(obj['Key'])
+				expiration = 3600 # 1 hr expiry
 				if not cached_url:
 					presigned_url = s3_client.generate_presigned_url(
 						'get_object', Params={
 							'Bucket': lms_settings.s3_bucket,
 							'Key': obj['Key']},
-							ExpiresIn=3600 # 1 hr expiry
+							ExpiresIn=expiration
 					)
-					res["videos"].append(presigned_url)
-					frappe.cache().hset(exam_submission, obj['Key'], presigned_url)
+					res["videos"][filetimestamp] = presigned_url
+					frappe.cache().setex(obj['Key'], expiration,presigned_url)
 				else:
-					res["videos"].append(cached_url)
+					res["videos"][filetimestamp] = cached_url.decode()
 
 	return res
 
@@ -543,7 +550,7 @@ def upload_video(exam_submission=None):
 	if frappe.session.user == "Guest":
 		raise frappe.PermissionError(_("Please login to access this page."))
 
-	if not exam_ended(exam_submission):
+	if not is_live(exam_submission):
 		raise frappe.PermissionError(_("Exam is invalid/ended."))
 	# check if the exam is of logged in user
 	if frappe.session.user != \
