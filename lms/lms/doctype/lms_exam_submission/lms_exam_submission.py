@@ -157,12 +157,17 @@ def evaluation_values(exam, submitted_answers):
 		result_status = "NA"
 	
 	return total_marks, eval_pending, result_status
-
+	
 
 @frappe.whitelist()
 def start_exam(exam_submission=None):
 	"""
 	start exam, Get questions and store in order
+	Caching flow:
+	> cache exam submission on exam_start
+	> SUBMISSION TOTAL_QS, EXPIRY, QS:1, QS:2...
+	> SUBMISSION:EXPIRY_TRACKER single key with cache expiry
+	> check EXPIRY_TRACKER, if not there, validate with db
 	"""
 	assert exam_submission
 	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
@@ -183,14 +188,17 @@ def start_exam(exam_submission=None):
 		random.shuffle(questions)
 
 	doc.submitted_answers = []
+	qs_data = {}
 	for idx, qs in enumerate(questions):
 		seq_no = idx + 1
-		doc.append(
-			'submitted_answers',{
+		qs_ = {
 				"seq_no": seq_no,
 				"exam_question": qs["exam_question"],
 				"evaluation_status": "Not Attempted"
-		})
+		}
+		doc.append('submitted_answers', qs_)
+		qs_data["qs:{}".format(seq_no)] = "{}:{}".format(qs["exam_question"], "Not Attempted")
+	
 
 	doc.status = "Started"
 	doc.save(ignore_permissions=True)
@@ -206,6 +214,9 @@ def start_exam(exam_submission=None):
 		"candidate": doc.candidate,
 		"exam_schedule": doc.exam_schedule,
 		"exam": doc.exam,
+		"total_questions": frappe.get_cached_value(
+			"LMS Exam", doc.exam, "total_questions"
+		),
 		"status": doc.status,
 		"exam_started_time": start_time.isoformat(),
 		"exam_end_time": end_time.isoformat(),
@@ -213,7 +224,12 @@ def start_exam(exam_submission=None):
 		"assigned_evaluator": doc.assigned_evaluator or "",
 		"assigned_proctor": doc.assigned_proctor or "",
 	}
+	for k, v in qs_data.items():
+		data[k] = v
+
 	frappe.cache().hmset(doc.name, data)
+	expiration = (end_time - start_date_time).seconds
+	frappe.cache().setex("{}:tracker".format(doc.name), expiration, 1)
 
 	return True
 
@@ -248,22 +264,25 @@ def end_exam(exam_submission=None):
 def get_question(exam_submission=None, qsno=1):
 	"""
 	Single function to fetch a new question or a submitted one.
+	> get qs from cache, if not there, get from db
 	"""
 	assert exam_submission
 	qs_no = int(qsno)
-	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
-	can_process_question(doc)
+	exam = frappe.cache().hget(exam_submission, "exam")
+	if not exam:
+		frappe.throw("Invalid exam.")
+
+	if not frappe.cache().get("{}:tracker".format(exam_submission)):
+		doc = frappe.get_doc("LMS Exam Submission", exam_submission)
+		can_process_question(doc)
+
 	# check if the requested question is valid
-	if qs_no > frappe.db.get_value("LMS Exam", doc.exam, "total_questions"):
+	if qs_no > frappe.cache().hget(exam_submission, "total_questions"):
 		frappe.throw("Invalid question no. {} requested.".format(qs_no))
 	# check if the previous question is answered. else throw err
 	if qs_no > 1:
-		previous_qs_status = frappe.db.get_value(
-			"Exam Result",
-			{"parent": exam_submission, "seq_no": qs_no-1 },
-			"evaluation_status"
-		)
-		if previous_qs_status == "Not Attempted":
+		prev = frappe.cache().hget(exam_submission, "qs:{}".format(qs_no-1))
+		if prev.split(":")[-1] == "Not Attempted":
 			frappe.throw("Previous question not attempted.")
 
 	try:
@@ -276,10 +295,10 @@ def get_question(exam_submission=None, qsno=1):
 	except frappe.DoesNotExistError:
 		frappe.throw("Invalid question requested.")
 	else:
-		question_doc = frappe.get_doc("LMS Exam Question", qs_name)
+		question_doc = frappe.get_cached_doc("LMS Exam Question", qs_name)
 
 
-	answer_doc = frappe.db.get_value(
+	answer_doc = frappe.get_value(
 		"Exam Result", "{}-{}".format(exam_submission, qs_name),
 		["marked_for_later", "answer", "seq_no"], as_dict=True
 	)
