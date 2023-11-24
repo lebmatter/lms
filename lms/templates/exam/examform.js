@@ -483,8 +483,9 @@ function startExam() {
         callback: (data) => {
             $("#start-banner").addClass("hide");
             $("#quiz-form").removeClass("hide");
-            getQuestion(1);
-            updateTimer();
+            // getQuestion(1);
+            // updateTimer();
+            location.reload();
         }
     });
 };
