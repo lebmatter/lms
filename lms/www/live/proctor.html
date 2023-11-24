@@ -288,6 +288,19 @@ Proctor
                 },
             });
         }
+        frappe.realtime.on('newproctorvideo', (data) => {
+            videoStore[data.exam_submission].push(data.url);
+            var vid = document.getElementById(data.exam_submission);
+            var videoContainer = vid.closest('.video-container');
+            var input = videoContainer.querySelector('input[type="range"]');
+            videoStore[data.exam_submission].length - 1;
+
+            // Within that container, find the toggleButton
+            var idxTxt = videoContainer.querySelector('.currentIdx');
+            idxTxt.innerText = idxTxt.innerText.split("/")[0] + "/" +
+                videoStore[data.exam_submission].length;
+
+        })
     });
 </script>
 {% endblock %}

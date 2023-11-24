@@ -559,11 +559,31 @@ def upload_video(exam_submission=None):
 	# Specify your S3 bucket and folder
 	bucket_name = lms_settings.s3_bucket
 	object_name = "{}/{}".format(exam_submission, filename)
+	ttl = frappe.cache().ttl("{}:tracker".format(exam_submission))
 
 	try:
 		# Stream the file directly to S3
 		s3_client.upload_fileobj(file, bucket_name, object_name)
-		return {"status": True}
 	except Exception as e:
 		# return str(e), 500
 		return {"status": False}
+	else:
+		presigned_url = s3_client.generate_presigned_url(
+			'get_object', Params={
+				'Bucket': lms_settings.s3_bucket,
+				'Key': object_name},
+				ExpiresIn=ttl
+			)
+		frappe.cache().setex(object_name, ttl, presigned_url)
+
+		# trigger webocket msg to proctor
+		frappe.publish_realtime(
+			event='newproctorvideo',
+			message={
+				"exam_submission": exam_submission,
+				"ts": filename[:-5],
+				"url": presigned_url
+			},
+			user=frappe.cache().hget(exam_submission, "assigned_proctor")
+		)
+		return {"status": True}
