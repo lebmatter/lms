@@ -544,7 +544,8 @@ def upload_video(exam_submission=None):
 	s3_client = boto3.client(
 		's3', 
 		aws_access_key_id=lms_settings.aws_key, 
-		aws_secret_access_key=lms_settings.get_password("aws_secret")
+		aws_secret_access_key=lms_settings.get_password("aws_secret"),
+		region_name="ap-south-1"
 	)
 	if 'file' not in frappe.request.files:
 		return {"status": False}
