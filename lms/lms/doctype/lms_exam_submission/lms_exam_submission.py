@@ -214,20 +214,20 @@ def start_exam(exam_submission=None):
 		"candidate": doc.candidate,
 		"exam_schedule": doc.exam_schedule,
 		"exam": doc.exam,
-		"total_questions": frappe.get_cached_value(
+		"total_questions": str(frappe.get_cached_value(
 			"LMS Exam", doc.exam, "total_questions"
-		),
+		)),
 		"status": doc.status,
 		"exam_started_time": start_time.isoformat(),
 		"exam_end_time": end_time.isoformat(),
-		"additional_time_given": doc.additional_time_given,
+		"additional_time_given": str(doc.additional_time_given),
 		"assigned_evaluator": doc.assigned_evaluator or "",
 		"assigned_proctor": doc.assigned_proctor or "",
 	}
 	for k, v in qs_data.items():
 		data[k] = v
-
-	frappe.cache().hmset(doc.name, data)
+	for k,v in data.items():
+		frappe.cache().hset(exam_submission, k, v)
 	expiration = (end_time - start_date_time).seconds
 	frappe.cache().setex("{}:tracker".format(doc.name), expiration, 1)
 
@@ -277,7 +277,7 @@ def get_question(exam_submission=None, qsno=1):
 		can_process_question(doc)
 
 	# check if the requested question is valid
-	if qs_no > frappe.cache().hget(exam_submission, "total_questions"):
+	if qs_no > int(frappe.cache().hget(exam_submission, "total_questions")):
 		frappe.throw("Invalid question no. {} requested.".format(qs_no))
 	# check if the previous question is answered. else throw err
 	if qs_no > 1:
@@ -355,6 +355,11 @@ def submit_question_response(exam_submission=None, qs_name=None, answer="", mark
 			result_doc.marked_for_later = markdflater
 			result_doc.evaluation_status = "Pending"
 			result_doc.save(ignore_permissions=True)
+		frappe.cache().hset(
+			exam_submission,
+			"qs:{}".format(result_doc.seq_no),
+			"{}:{}".format(qs_name, "Pending"
+			))
 		
 	return {"qs_name": qs_name, "qs_no": result_doc.seq_no}
 
@@ -466,44 +471,6 @@ def exam_overview(exam_submission=None):
 #########################
 ### Examiner APIs ########
 #########################
-def proctor_list(examiner=None):
-	"""
-	Get logged in users' current proctoring exam submissions
-	"""
-	user = examiner or frappe.session.user
-	if user == "Guest":
-		raise frappe.PermissionError(_("Please login to access this page."))
-
-	live_submissions = frappe.db.sql('''
-		SELECT sub.name AS name
-				FROM `tabLMS Exam Submission` sub
-		JOIN `tabLMS Exam Schedule` sched ON sub.exam_schedule = sched.name
-		JOIN `tabExaminer` exa ON exa.parent = sched.name 
-		WHERE NOW() BETWEEN sched.start_date_time AND 
-					ADDTIME(sched.start_date_time, SEC_TO_TIME(sched.duration)) AND
-					exa.can_proctor AND exa.examiner = %(user)s
-					AND sub.assigned_proctor= %(user)s;
-	''', values={"user": user},as_dict=True)
-	
-	return [sch["name"] for sch in live_submissions]
-
-
-def is_live(exam_submission):
-	# check if the exam is live
-	live_sched = frappe.db.sql('''
-		SELECT sub.name
-		FROM `tabLMS Exam Submission` sub
-		JOIN `tabLMS Exam Schedule` sched ON sub.exam_schedule = sched.name
-		WHERE NOW() BETWEEN sched.start_date_time AND 
-			ADDTIME(sched.start_date_time, SEC_TO_TIME(sched.duration)) AND
-			sub.name = %(submission)s;
-	''', values={"submission": exam_submission},as_dict=True)
-
-	if live_sched:
-		return True
-
-	return False
-
 @frappe.whitelist()
 def proctor_video_list(exam_submission=None):
 	"""
@@ -514,13 +481,11 @@ def proctor_video_list(exam_submission=None):
 	if frappe.session.user == "Guest":
 		raise frappe.PermissionError(_("Please login to access this page."))
 
-	if not is_live(exam_submission):
+	if not frappe.cache().get("{}:tracker".format(exam_submission)):
 		raise frappe.PermissionError(_("Exam is invalid/ended."))
 
 	# make sure that logged in user is valid proctor
-	if frappe.session.user != frappe.db.get_value(
-		"LMS Exam Submission", exam_submission, "assigned_proctor"
-	):
+	if frappe.session.user != frappe.cache().hget(exam_submission, "assigned_proctor"):
 		raise frappe.PermissionError(_("No proctor access to the exam."))
 
 	# list from s3
@@ -532,7 +497,7 @@ def proctor_video_list(exam_submission=None):
 		region_name="ap-south-1"
 	)
 	res = {"videos": {}}
-
+	ttl = frappe.cache().ttl("{}:tracker".format(exam_submission))
 	# Paginator to handle buckets with many objects
 	paginator = s3_client.get_paginator('list_objects_v2')
 	for page in paginator.paginate(Bucket=lms_settings.s3_bucket, Prefix=exam_submission):
@@ -544,16 +509,15 @@ def proctor_video_list(exam_submission=None):
 				# check cache for presigned url
 				filetimestamp = obj['Key'].split("/")[-1][:-4]
 				cached_url = frappe.cache().get(obj['Key'])
-				expiration = 3600 # 1 hr expiry
 				if not cached_url:
 					presigned_url = s3_client.generate_presigned_url(
 						'get_object', Params={
 							'Bucket': lms_settings.s3_bucket,
 							'Key': obj['Key']},
-							ExpiresIn=expiration
+							ExpiresIn=ttl
 					)
 					res["videos"][filetimestamp] = presigned_url
-					frappe.cache().setex(obj['Key'], expiration,presigned_url)
+					frappe.cache().setex(obj['Key'], ttl, presigned_url)
 				else:
 					res["videos"][filetimestamp] = cached_url.decode()
 
@@ -569,11 +533,11 @@ def upload_video(exam_submission=None):
 	if frappe.session.user == "Guest":
 		raise frappe.PermissionError(_("Please login to access this page."))
 
-	if not is_live(exam_submission):
+	if not frappe.cache().get("{}:tracker".format(exam_submission)):
 		raise frappe.PermissionError(_("Exam is invalid/ended."))
 	# check if the exam is of logged in user
 	if frappe.session.user != \
-		frappe.db.get_value("LMS Exam Submission", exam_submission, "candidate"):
+		frappe.get_cached_value("LMS Exam Submission", exam_submission, "candidate"):
 		raise frappe.PermissionError(_("Exam does not belongs to the user."))
 	
 	lms_settings = frappe.get_single("LMS Settings")
@@ -594,13 +558,11 @@ def upload_video(exam_submission=None):
 
 	# Specify your S3 bucket and folder
 	bucket_name = lms_settings.s3_bucket
-	folder_name = exam_submission
 	object_name = "{}/{}".format(exam_submission, filename)
 
 	try:
 		# Stream the file directly to S3
 		s3_client.upload_fileobj(file, bucket_name, object_name)
-		print("###############","Uploaded to s3")
 		return {"status": True}
 	except Exception as e:
 		# return str(e), 500

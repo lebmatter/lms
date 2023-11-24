@@ -1,7 +1,6 @@
 from datetime import datetime
 import frappe
 from frappe import _
-from lms.lms.doctype.lms_exam_submission.lms_exam_submission import proctor_list
 
 def get_context(context):
 	"""
@@ -13,7 +12,16 @@ def get_context(context):
 		raise frappe.PermissionError(_("Please login to access this page."))
 
 	context.page_context = {}
-	context.submissions = proctor_list()
+	proctor_list = frappe.get_all("LMS Exam Submission", filters={
+		"assigned_proctor": frappe.session.user,
+		"status": "Started"
+	})
+	tracker = "{}:tracker"
+	live_submissions = [
+		p["name"] for p in proctor_list if frappe.cache().get(tracker.format(p["name"]))
+	]
+
+	context.submissions = live_submissions
 	context.video_chunk_length = frappe.db.get_single_value(
 		"LMS Settings", "video_chunk_length"
 	)

@@ -134,9 +134,14 @@ Proctor
 {% block page_content %}
 
 <div class="row mt-5">
+    {% if submissions|length == 0 %}
+    <div class="container">
+        <h5>No live videos to proctor.</h5>
+    </div>
+    {% endif %}
     {% for submission in submissions %}
-    <div class="video-container" data-videoid="{{ submission }}">
-        <video class="video" id="{{ submission }}" data-videoid="{{ submission }}" preload="metadata" autoplay>
+    <div class="video-container hidden" data-videoid="{{ submission }}">
+        <video class="video" id="{{ submission }}" data-videoid="{{ submission }}" preload="metadata">
             <p>Your browser doesn't support HTML5 video.</p>
         </video>
         <div class="controls">
@@ -147,6 +152,7 @@ Proctor
                 ►
             </button>
             <input type="range" id="progress" class="progress_slider" min="0" max="10" step="1" value="1" />
+            <button class="controls__button currentIdx" disabled>-/-</button>
             <button class="controls__button">⚙</button>
         </div>
     </div>
@@ -208,10 +214,15 @@ Proctor
     function playVideoAtIndex(exam_submission, index) {
         currentVideoIndex[exam_submission] = index;
         var vid = document.getElementById(exam_submission);
+        const videoContainer = vid.closest('.video-container');
+
+        // Within that container, find the toggleButton
+        const idxTxt = videoContainer.querySelector('.currentIdx');
+
         if (currentVideoIndex[exam_submission] < videoStore[exam_submission].length) {
             vid.src = videoStore[exam_submission][currentVideoIndex[exam_submission]];
             vid.load();
-            console.log('Playing ' + currentVideoIndex[exam_submission] + '/' + videoStore[exam_submission].length);
+            idxTxt.innerText = +index + 1 + '/' + videoStore[exam_submission].length;
             vid.play();
         } else {
             console.log('End of playlist');
@@ -254,6 +265,9 @@ Proctor
                     "exam_submission": exam_submission,
                 },
                 success: (data) => {
+                    var vid = document.getElementById(exam_submission);
+                    let container = vid.closest(".video-container");
+                    container.classList.remove("hidden");
                     // convert api response to an array of objects
                     let videoList = Object.entries(data.message.videos).map(([unixtimestamp, videourl]) => {
                         return { unixtimestamp: parseInt(unixtimestamp, 10), videourl };
@@ -266,7 +280,6 @@ Proctor
                     currentVideoIndex[exam_submission] = -1;
                     // play first video
                     currentVideoIndex[exam_submission]++;
-                    var vid = document.getElementById(exam_submission);
                     var videoContainer = vid.closest('.video-container');
                     var input = videoContainer.querySelector('input[type="range"]');
                     input.max = videoStore[exam_submission].length - 1;
