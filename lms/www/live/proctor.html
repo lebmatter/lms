@@ -39,9 +39,7 @@ Proctor
         color: white;
         text-align: center;
         outline: 0;
-        padding: 0;
-        cursor: pointer;
-        max-width: 50px;
+        padding: 5px;
     }
 
     .progress_slider {
@@ -50,13 +48,14 @@ Proctor
     }
 
     .controls {
-        display: flex;
         position: absolute;
-        bottom: 0;
         width: 100%;
         flex-wrap: wrap;
-        background: rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.206);
         transform: translateY(0);
+        bottom: 5px;
+        color: white;
+        text-align: center;
     }
 
     .controls>* {
@@ -80,6 +79,10 @@ Proctor
         background: #0D4646;
         flex: 0;
         flex-basis: 0%;
+    }
+
+    .svg-white {
+        fill: white;
     }
 
     input[type=range] {
@@ -145,15 +148,48 @@ Proctor
             <p>Your browser doesn't support HTML5 video.</p>
         </video>
         <div class="controls">
-            <!-- <div class="progress">
-                        <div class="progress__filled"></div>
-                    </div> -->
             <button class="controls__button toggleButton" title="Toggle Play">
-                ►
+                <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-play">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
             </button>
-            <input type="range" id="progress" class="progress_slider" min="0" max="10" step="1" value="1" />
-            <button class="controls__button currentIdx" disabled>-/-</button>
-            <button class="controls__button">⚙</button>
+            <button class="controls__button volToggle" title="Toggle Volume" disabled>
+                <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-volume-x">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <line x1="23" y1="9" x2="17" y2="15"></line>
+                    <line x1="17" y1="9" x2="23" y2="15"></line>
+                </svg>
+            </button>
+            <button class="controls__button skipBack" title="Skip back">
+                <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-rewind">
+                    <polygon points="11 19 2 12 11 5 11 19"></polygon>
+                    <polygon points="22 19 13 12 22 5 22 19"></polygon>
+                </svg>
+            </button>
+            <button class="controls__button skipFwd" title="Skip forward">
+                <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-fast-forward">
+                    <polygon points="13 19 22 12 13 5 13 19"></polygon>
+                    <polygon points="2 19 11 12 2 5 2 19"></polygon>
+                </svg>
+            </button>
+            <button class="controls__button goLive" title="Go Live">
+                Go Live
+            </button>
+            <button class="controls__button menu" title="Chat">
+                <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-message-square">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </button>
         </div>
     </div>
     {% endfor %}
@@ -170,7 +206,6 @@ Proctor
     var currentVideoIndex = {};
     const videos = document.getElementsByClassName('video');
     const toggleButton = document.getElementsByClassName("toggleButton");
-    const progress = document.getElementsByClassName("progress");
 
     function addEventListenerToClass(className, eventType, handlerFunction) {
         var elements = document.getElementsByClassName(className);
@@ -215,18 +250,27 @@ Proctor
         currentVideoIndex[exam_submission] = index;
         var vid = document.getElementById(exam_submission);
         const videoContainer = vid.closest('.video-container');
-
-        // Within that container, find the toggleButton
-        const idxTxt = videoContainer.querySelector('.currentIdx');
+        let liveBtn = videoContainer.querySelector(".goLive");
+        let skipfwd = videoContainer.querySelector(".skipFwd");
 
         if (currentVideoIndex[exam_submission] < videoStore[exam_submission].length) {
             vid.src = videoStore[exam_submission][currentVideoIndex[exam_submission]];
             vid.load();
-            idxTxt.innerText = +index + 1 + '/' + videoStore[exam_submission].length;
             vid.play();
         } else {
             console.log('End of playlist');
         }
+
+        if (currentVideoIndex[exam_submission] == videoStore[exam_submission].length - 1) {
+            skipfwd.disabled = true;
+            liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
+                '<circle cx="5" cy="5" r="5" fill="red" />' +
+                '</svg> Live';
+        } else {
+            skipfwd.disabled = false;
+            liveBtn.innerText = "Go Live";
+        }
+
     }
 
     function handleSliderUpdate() {
@@ -237,9 +281,23 @@ Proctor
     }
 
     function playNextVideo() {
-        var exam_submission = this.id;
-        playVideoAtIndex(exam_submission, currentVideoIndex[exam_submission] + 1)
+        const videoContainer = this.closest('.video-container');
+        let exam_submission = videoContainer.getAttribute("data-videoid");
+        playVideoAtIndex(exam_submission, currentVideoIndex[exam_submission] + 1);
 
+    }
+
+    function playLastVideo() {
+        const videoContainer = this.closest('.video-container');
+        let exam_submission = videoContainer.getAttribute("data-videoid");
+        playVideoAtIndex(exam_submission, videoStore[exam_submission].length - 1);
+
+    }
+
+    function playPreviousVideo() {
+        const videoContainer = this.closest('.video-container');
+        let exam_submission = videoContainer.getAttribute("data-videoid");
+        playVideoAtIndex(exam_submission, currentVideoIndex[exam_submission] - 1);
     }
 
     addEventListenerToClass("toggleButton", "click", togglePlay);
@@ -248,8 +306,10 @@ Proctor
     addEventListenerToClass("video", "pause", updateToggleButton);
     addEventListenerToClass("video", "timeupdate", handleProgress);
     addEventListenerToClass("video", "ended", playNextVideo);
-    addEventListenerToClass("progress", "click", scrub);
-    addEventListenerToClass("progress_slider", "change", handleSliderUpdate);
+    addEventListenerToClass("goLive", "click", playLastVideo);
+    addEventListenerToClass("skipBack", "click", playPreviousVideo);
+    addEventListenerToClass("skipFwd", "click", playNextVideo);
+
 
 
     frappe.ready(() => {
@@ -277,29 +337,12 @@ Proctor
 
 
                     videoStore[exam_submission] = videoList.map(video => video.videourl);;
-                    currentVideoIndex[exam_submission] = -1;
-                    // play first video
-                    currentVideoIndex[exam_submission]++;
-                    var videoContainer = vid.closest('.video-container');
-                    var input = videoContainer.querySelector('input[type="range"]');
-                    input.max = videoStore[exam_submission].length - 1;
-
-                    playVideoAtIndex(exam_submission, 0);
+                    playVideoAtIndex(exam_submission, videoStore[exam_submission].length - 1);
                 },
             });
         }
         frappe.realtime.on('newproctorvideo', (data) => {
             videoStore[data.exam_submission].push(data.url);
-            var vid = document.getElementById(data.exam_submission);
-            var videoContainer = vid.closest('.video-container');
-            var input = videoContainer.querySelector('input[type="range"]');
-            videoStore[data.exam_submission].length - 1;
-
-            // Within that container, find the toggleButton
-            var idxTxt = videoContainer.querySelector('.currentIdx');
-            idxTxt.innerText = idxTxt.innerText.split("/")[0] + "/" +
-                videoStore[data.exam_submission].length;
-
         })
     });
 </script>
