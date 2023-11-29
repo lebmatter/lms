@@ -73,7 +73,8 @@
    "fieldname": "messages",
    "fieldtype": "Table",
    "label": "Messages",
-   "options": "Exam Messages"
+   "options": "Exam Messages",
+   "read_only": 1
   },
   {
    "default": "Registered",
@@ -178,7 +179,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-11-15 14:17:24.530139",
+ "modified": "2023-11-29 14:15:52.291841",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",
