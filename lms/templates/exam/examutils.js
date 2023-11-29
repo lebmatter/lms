@@ -1,6 +1,6 @@
 const existingMessages = [];
 frappe.ready(() => {
-    setInterval(updateMessages, 2000);
+    updateMessages();
 });
 
 const examAlert = (alertTitle, alertText) => {

@@ -210,6 +210,11 @@ frappe.ready(() => {
         $('#toggleButton').text('Show Video');
     });
 
+    frappe.realtime.on('newproctormsg', (data) => {
+        convertedTime = timeAgo(data.creation);
+        addChatBubble(convertedTime, data.message_text, data.message_type)
+    });
+
 });
 
 

@@ -396,9 +396,7 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 	assert message
 
 	# check of the logged in user is same as exam submission candidate
-	if frappe.session.user != frappe.db.get_value(
-		"LMS Exam Submission", exam_submission, "candidate"
-	):
+	if frappe.session.user != frappe.cache().hget(exam_submission, "candidate"):
 		raise PermissionError("You don't have access to post messages.")
 
 	submission = frappe.get_doc("LMS Exam Submission", exam_submission)
@@ -409,6 +407,22 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 		"type_of_message": type_of_message
 	})
 	submission.save(ignore_permissions=True)
+	# trigger webocket msg to proctor and candidate
+	chat_message = {
+			"exam_submission": exam_submission,
+			"message": message,
+			"type_of_message": type_of_message
+	}
+	frappe.publish_realtime(
+		event='newproctormsg',
+		message=chat_message,
+		user=frappe.cache().hget(exam_submission, "candidate")
+	)
+	frappe.publish_realtime(
+		event='newproctormsg',
+		message=chat_message,
+		user=frappe.cache().hget(exam_submission, "assigne_proctor")
+	)
 
 	return {"status": 1}
 
