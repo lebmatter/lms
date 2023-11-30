@@ -212,8 +212,10 @@ frappe.ready(() => {
 
     frappe.realtime.on('newproctormsg', (data) => {
         convertedTime = timeAgo(data.creation);
-        addChatBubble(convertedTime, data.message_text, data.message_type)
+        addChatBubble(convertedTime, data.message, data.type_of_message)
     });
+
+    updateMessages(exam["exam_submission"]);
 
 });
 

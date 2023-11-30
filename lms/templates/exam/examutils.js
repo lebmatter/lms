@@ -1,7 +1,4 @@
 const existingMessages = [];
-frappe.ready(() => {
-    updateMessages();
-});
 
 const examAlert = (alertTitle, alertText) => {
     $('#alertTitle').text(alertTitle);
@@ -49,11 +46,11 @@ const addChatBubble = (timestamp, message, messageType) => {
     chatContainer.prepend(chatWrapper);
 }
 
-const updateMessages = () => {
+const updateMessages = (exam_submission) => {
     frappe.call({
         method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.exam_messages",
         args: {
-            'exam_submission': exam["exam_submission"],
+            'exam_submission': exam_submission,
         },
         callback: (data) => {
             msgData = data.message["messages"];

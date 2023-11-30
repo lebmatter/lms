@@ -409,6 +409,7 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 	submission.save(ignore_permissions=True)
 	# trigger webocket msg to proctor and candidate
 	chat_message = {
+			"creation": datetime.now().isoformat(),
 			"exam_submission": exam_submission,
 			"message": message,
 			"type_of_message": type_of_message
@@ -435,8 +436,8 @@ def exam_messages(exam_submission=None):
 	assert exam_submission
 	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
 
-	# check of the logged in user is same as exam submission candidate
-	if frappe.session.user != doc.candidate:
+	# check of the logged in user is same as exam submission candidate or proctor
+	if frappe.session.user not in [doc.candidate, doc.assigned_proctor]:
 		raise PermissionError("You don't have access to view messages.")
 
 	return {"messages": doc.get_messages()}

@@ -213,8 +213,8 @@ Alert!
     <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
     <script type="text/javascript">
         var exam = {{ exam | tojson }};
-        {% include "lms/templates/exam/examform.js" %}
         {% include "lms/templates/exam/examutils.js" %}
+        {% include "lms/templates/exam/examform.js" %}
         {% include "lms/templates/exam/calculator.js" %}
     </script>
     {% endif %}
