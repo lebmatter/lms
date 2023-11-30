@@ -12,6 +12,50 @@ Proctor
 {{ ext.render_header() }}
 {% endfor %}
 <style>
+    #timer {
+        font-size: 16px;
+    }
+
+    #messages {
+        max-height: 350px;
+        /* Set the maximum height for the container */
+        overflow-y: auto;
+        /* Enable vertical scrolling when content exceeds the max height */
+    }
+
+    /* Custom styles for the chat bubble container */
+    .chat-container {
+        position: relative;
+        margin-bottom: 20px;
+        /* Add some spacing between chat containers */
+    }
+
+    /* Custom styles for the chat bubble */
+    .chat-bubble {
+        display: inline-block;
+        /* Set the display to inline-block */
+        background-color: #f0f0f0;
+        border-radius: 10px;
+        padding: 10px;
+        max-width: calc(100% - 20px);
+        /* Adjust the max-width relative to the text content */
+    }
+
+    /* Custom styles for the timestamp */
+    .chat-timestamp {
+        top: -25px;
+        /* Adjust the vertical position as per your design */
+        left: 10px;
+        /* Adjust the horizontal position as per your design */
+        font-size: 12px;
+        color: #999;
+    }
+
+    /* To make the chat bubble align to the left */
+    .chat-left {
+        text-align: left;
+    }
+
     .container {
         width: 100%;
         height: 100%;
@@ -183,7 +227,8 @@ Proctor
             <button class="controls__button goLive" title="Go Live">
                 Go Live
             </button>
-            <button class="controls__button menu" title="Chat">
+            <button type="button" class="controls__button menu" title="Chat" data-toggle="modal"
+                data-target="#chatModal" data-videoid="{{ submission }}">
                 <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     class="feather feather-message-square">
@@ -194,11 +239,42 @@ Proctor
     </div>
     {% endfor %}
 </div>
+<!-- The Modal -->
+<div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="chatModalLabel">Chat with candidate</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row mb-5"><button type="button" class="btn btn-danger" data-dismiss="modal">Terminate
+                            Exam</button></div>
+                    <div class="row">
+                        <div id="messages" class="tab-pane fade show active">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 {% endblock %}
 
 <!-- Scripts -->
 {%- block script %}
 {{ super() }}
+<script type="text/javascript">
+    {% include "lms/templates/exam/examutils.js" %}
+</script>
 <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
 <script type="text/javascript">
 
@@ -343,7 +419,19 @@ Proctor
         }
         frappe.realtime.on('newproctorvideo', (data) => {
             videoStore[data.exam_submission].push(data.url);
-        })
+        });
+        $('#chatModal').on('show.bs.modal', function (e) {
+            var button = $(e.relatedTarget);
+            var videoId = button.data('videoid');
+            console.log("VIDEOID", videoId, button);
+            updateMessages(videoId);
+        });
+
+        frappe.realtime.on('newproctormsg', (data) => {
+            convertedTime = timeAgo(data.creation);
+            addChatBubble(convertedTime, data.message_text, data.message_type)
+        });
+
     });
 </script>
 {% endblock %}
