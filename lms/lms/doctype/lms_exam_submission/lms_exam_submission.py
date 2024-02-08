@@ -594,7 +594,8 @@ def upload_video(exam_submission=None):
 			'get_object', Params={
 				'Bucket': lms_settings.s3_bucket,
 				'Key': object_name},
-				ExpiresIn=ttl
+				ExpiresIn=ttl,
+				HttpMethod='GET'
 			)
 		frappe.cache().setex(object_name, ttl, presigned_url)
 
