@@ -505,11 +505,14 @@ def proctor_video_list(exam_submission=None):
 
 	# list from s3
 	lms_settings = frappe.get_single("LMS Settings")
+	cfdomain = 'https://{}.r2.cloudflarestorage.com'.format(
+		lms_settings.cloudflare_account_id
+	)
 	s3_client = boto3.client(
 		's3', 
+		endpoint_url = cfdomain,
 		aws_access_key_id=lms_settings.aws_key, 
-		aws_secret_access_key=lms_settings.get_password("aws_secret"),
-		region_name="ap-south-1"
+		aws_secret_access_key=lms_settings.get_password("aws_secret")
 	)
 	res = {"videos": {}}
 	ttl = frappe.cache().ttl("{}:tracker".format(exam_submission))
@@ -556,11 +559,14 @@ def upload_video(exam_submission=None):
 		raise frappe.PermissionError(_("Exam does not belongs to the user."))
 	
 	lms_settings = frappe.get_single("LMS Settings")
+	cfdomain = 'https://{}.r2.cloudflarestorage.com'.format(
+		lms_settings.cloudflare_account_id
+	)
 	s3_client = boto3.client(
-		's3', 
+		's3',
+		endpoint_url = cfdomain,
 		aws_access_key_id=lms_settings.aws_key, 
-		aws_secret_access_key=lms_settings.get_password("aws_secret"),
-		region_name="ap-south-1"
+		aws_secret_access_key=lms_settings.get_password("aws_secret")
 	)
 	if 'file' not in frappe.request.files:
 		return {"status": False}

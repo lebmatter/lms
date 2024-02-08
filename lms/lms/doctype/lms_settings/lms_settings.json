@@ -33,6 +33,7 @@
   "mentor_request_status_update",
   "proctor_settings_tab",
   "aws_column",
+  "cloudflare_account_id",
   "aws_key",
   "aws_secret",
   "s3_bucket",
@@ -198,17 +199,17 @@
   {
    "fieldname": "aws_column",
    "fieldtype": "Column Break",
-   "label": "AWS"
+   "label": "Cloudflate R2"
   },
   {
    "fieldname": "aws_key",
    "fieldtype": "Data",
-   "label": "AWS Key"
+   "label": "AWS Compatible Key"
   },
   {
    "fieldname": "aws_secret",
    "fieldtype": "Password",
-   "label": "AWS Secret"
+   "label": "AWS Compatible Secret"
   },
   {
    "fieldname": "video_settings_column",
@@ -232,7 +233,7 @@
   {
    "fieldname": "s3_bucket",
    "fieldtype": "Data",
-   "label": "S3 Bucket"
+   "label": "Bucket"
   },
   {
    "default": "15",
@@ -240,12 +241,17 @@
    "fieldname": "video_chunk_length",
    "fieldtype": "Int",
    "label": "Video chunk length"
+  },
+  {
+   "fieldname": "cloudflare_account_id",
+   "fieldtype": "Data",
+   "label": "Account ID"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-11-17 16:15:37.871675",
+ "modified": "2024-02-08 14:44:41.899627",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Settings",
