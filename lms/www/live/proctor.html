@@ -314,8 +314,13 @@ Proctor
     }
 
     function handleProgress() {
-        // TODO shift slider
-        //const progressPercentage = (video.currentTime / video.duration) * 100;
+        const videoContainer = this.closest('.video-container');
+        let fTS = videoContainer.querySelector(".fileTimeStamp");
+        let exam_submission = videoContainer.getAttribute("data-videoid");
+
+        // Within that container, find the video element
+        const video = videoContainer.querySelector('video');
+        fTS.innerText = parseUnitTime(videoStore[exam_submission][currentVideoIndex[exam_submission]], video.currentTime);
     }
 
     function scrub(e) {
@@ -329,22 +334,24 @@ Proctor
         const videoContainer = vid.closest('.video-container');
         let liveBtn = videoContainer.querySelector(".goLive");
         let skipfwd = videoContainer.querySelector(".skipFwd");
-        let fTS = videoContainer.querySelector(".fileTimeStamp");
 
         if (currentVideoIndex[exam_submission] < videoStore[exam_submission].length) {
             vid.src = videoStore[exam_submission][currentVideoIndex[exam_submission]];
-            fTS.innerText = parseUnitTime(videoStore[exam_submission][currentVideoIndex[exam_submission]]);
             vid.load();
             vid.play();
         } else {
             console.log('End of playlist');
         }
 
+        const video = videoContainer.querySelector('video');
         if (currentVideoIndex[exam_submission] == videoStore[exam_submission].length - 1) {
             skipfwd.disabled = true;
-            liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
-                '<circle cx="5" cy="5" r="5" fill="red" />' +
-                '</svg> Live';
+
+            if (!video.paused) {
+                liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
+                    '<circle cx="5" cy="5" r="5" fill="green" />' +
+                    '</svg> Live';
+            }
         } else {
             skipfwd.disabled = false;
             liveBtn.innerText = "Go Live";

@@ -29,7 +29,7 @@ function timeAgo(timestamp) {
     }
 }
 
-function parseUnitTime(videoURL) {
+function parseUnitTime(videoURL, addSeconds) {
     var url = new URL(videoURL);
     var filenameWithExtension = url.pathname.split("/").pop();
     var filename = filenameWithExtension.split(".")[0];
@@ -41,7 +41,7 @@ function parseUnitTime(videoURL) {
     var day = String(date.getDate()).padStart(2, '0');
     var hours = String(date.getHours()).padStart(2, '0');
     var minutes = String(date.getMinutes()).padStart(2, '0');
-    var seconds = String(date.getSeconds()).padStart(2, '0');
+    var seconds = String(date.getSeconds() + Math.floor(addSeconds)).padStart(2, '0');
 
     var dt = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
 
