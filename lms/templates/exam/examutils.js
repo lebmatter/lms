@@ -49,6 +49,22 @@ function parseUnitTime(videoURL, addSeconds) {
 
 }
 
+// check if the last video is before 60 seconds
+function videoDisconnected(lastVideoURL) {
+    var url = new URL(lastVideoURL);
+    var filenameWithExtension = url.pathname.split("/").pop();
+    var filename = filenameWithExtension.split(".")[0];
+
+    var currentTimestamp = Math.floor(Date.now() / 1000);
+    var differenceInSeconds = Math.floor(currentTimestamp - filename);
+    if (differenceInSeconds >= 60) {
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
 const addChatBubble = (timestamp, message, messageType) => {
     var chatContainer = $('#messages');
     var chatTimestamp = $('<div class="chat-timestamp">' + timestamp + '</div>');

@@ -344,13 +344,22 @@ Proctor
         }
 
         const video = videoContainer.querySelector('video');
+        // if currentidx is length-1, then we are playing last video
         if (currentVideoIndex[exam_submission] == videoStore[exam_submission].length - 1) {
             skipfwd.disabled = true;
-
+            // check if the last video is 60 sec old
+            let disconnected = videoDisconnected(videoStore[exam_submission][currentVideoIndex[exam_submission]]);
             if (!video.paused) {
-                liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
-                    '<circle cx="5" cy="5" r="5" fill="green" />' +
-                    '</svg> Live';
+                if (!disconnected) {
+                    liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
+                        '<circle cx="5" cy="5" r="5" fill="green" />' +
+                        '</svg> Live';
+                } else {
+                    liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
+                        '<circle cx="5" cy="5" r="5" fill="red" />' +
+                        '</svg> Disconnected';
+                }
+
             }
         } else {
             skipfwd.disabled = false;
