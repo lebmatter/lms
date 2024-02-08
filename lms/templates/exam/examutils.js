@@ -49,7 +49,7 @@ function parseUnitTime(videoURL, addSeconds) {
 
 }
 
-// check if the last video is before 60 seconds
+// check if the last video is before 30 seconds
 function videoDisconnected(lastVideoURL) {
     var url = new URL(lastVideoURL);
     var filenameWithExtension = url.pathname.split("/").pop();
@@ -57,7 +57,7 @@ function videoDisconnected(lastVideoURL) {
 
     var currentTimestamp = Math.floor(Date.now() / 1000);
     var differenceInSeconds = Math.floor(currentTimestamp - filename);
-    if (differenceInSeconds >= 60) {
+    if (differenceInSeconds >= 30) {
         return true;
     } else {
         return false;

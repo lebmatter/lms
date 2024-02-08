@@ -349,10 +349,10 @@ Proctor
 
         const video = videoContainer.querySelector('video');
         // if currentidx is length-1, then we are playing last video
+        let disconnected = videoDisconnected(videoStore[exam_submission][currentVideoIndex[exam_submission]]);
         if (currentVideoIndex[exam_submission] == videoStore[exam_submission].length - 1) {
             skipfwd.disabled = true;
-            // check if the last video is 60 sec old
-            let disconnected = videoDisconnected(videoStore[exam_submission][currentVideoIndex[exam_submission]]);
+            // check if the last video is 30 sec old
             if (!video.paused) {
                 if (!disconnected) {
                     liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
@@ -367,7 +367,13 @@ Proctor
             }
         } else {
             skipfwd.disabled = false;
-            liveBtn.innerText = "Go Live";
+            if (!disconnected) {
+                liveBtn.innerText = "Go Live";
+            } else {
+                liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
+                    '<circle cx="5" cy="5" r="5" fill="red" />' +
+                    '</svg> Disconnected';
+            }
         }
 
     }
