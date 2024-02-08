@@ -29,6 +29,26 @@ function timeAgo(timestamp) {
     }
 }
 
+function parseUnitTime(videoURL) {
+    var url = new URL(videoURL);
+    var filenameWithExtension = url.pathname.split("/").pop();
+    var filename = filenameWithExtension.split(".")[0];
+
+    var date = new Date(filename * 1000);
+
+    var year = date.getFullYear();
+    var month = String(date.getMonth() + 1).padStart(2, '0');
+    var day = String(date.getDate()).padStart(2, '0');
+    var hours = String(date.getHours()).padStart(2, '0');
+    var minutes = String(date.getMinutes()).padStart(2, '0');
+    var seconds = String(date.getSeconds()).padStart(2, '0');
+
+    var dt = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+
+    return dt;
+
+}
+
 const addChatBubble = (timestamp, message, messageType) => {
     var chatContainer = $('#messages');
     var chatTimestamp = $('<div class="chat-timestamp">' + timestamp + '</div>');

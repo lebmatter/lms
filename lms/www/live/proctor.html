@@ -192,6 +192,7 @@ Proctor
             <p>Your browser doesn't support HTML5 video.</p>
         </video>
         <div class="controls">
+            <small class="fileTimeStamp"></small>
             <button class="controls__button toggleButton" title="Toggle Play">
                 <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -328,9 +329,11 @@ Proctor
         const videoContainer = vid.closest('.video-container');
         let liveBtn = videoContainer.querySelector(".goLive");
         let skipfwd = videoContainer.querySelector(".skipFwd");
+        let fTS = videoContainer.querySelector(".fileTimeStamp");
 
         if (currentVideoIndex[exam_submission] < videoStore[exam_submission].length) {
             vid.src = videoStore[exam_submission][currentVideoIndex[exam_submission]];
+            fTS.innerText = parseUnitTime(videoStore[exam_submission][currentVideoIndex[exam_submission]]);
             vid.load();
             vid.play();
         } else {
