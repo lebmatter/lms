@@ -78,18 +78,19 @@ class LMSExamSchedule(Document):
 		candidate_list = [c_["name"] for c_ in candidates]
 
 		# Iterate over candidates and assign each to an examiner
-		for i, candidate in enumerate(candidate_list):
-			# Cycle through procots
-			proctor = proctors[i % len(proctors)]
-			if proctor not in assignments_proctor:
-				assignments_proctor[proctor] = []
-			assignments_proctor[proctor].append(candidate)
+		if proctors:
+			for i, candidate in enumerate(candidate_list):
+				# Cycle through procots
+				proctor = proctors[i % len(proctors)]
+				if proctor not in assignments_proctor:
+					assignments_proctor[proctor] = []
+				assignments_proctor[proctor].append(candidate)
 
-			# Cycle through evaluators
-			evaluator = evaluators[i % len(evaluators)]
-			if evaluator not in assignments_evaluator:
-				assignments_evaluator[evaluator] = []
-			assignments_evaluator[evaluator].append(candidate)
+				# Cycle through evaluators
+				evaluator = evaluators[i % len(evaluators)]
+				if evaluator not in assignments_evaluator:
+					assignments_evaluator[evaluator] = []
+				assignments_evaluator[evaluator].append(candidate)
 
 		for examiner_, submissions_ in assignments_proctor.items():
 			# update submission
