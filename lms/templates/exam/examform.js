@@ -419,7 +419,7 @@ function displayQuestion(current_qs) {
     }
     // $("#quiz-form").fadeIn(300);
     $(window).blur(function () {
-        if (exam.restrict_tab_changes === 1) {
+        if (exam.restrict_tab_changes === 1 && currentQsNo >= 2) {
             awayStartTime = new Date();
             examAlert(
                 "Tab change detected",
