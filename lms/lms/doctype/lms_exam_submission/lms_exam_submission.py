@@ -12,6 +12,7 @@ from frappe.utils import now
 from werkzeug.utils import secure_filename
 
 import boto3
+from botocore.client import Config
 
 
 class LMSExamSubmission(Document):
@@ -512,7 +513,8 @@ def proctor_video_list(exam_submission=None):
 		's3', 
 		endpoint_url = cfdomain,
 		aws_access_key_id=lms_settings.aws_key, 
-		aws_secret_access_key=lms_settings.get_password("aws_secret")
+		aws_secret_access_key=lms_settings.get_password("aws_secret"),
+		config=Config(signature_version='s3v4')
 	)
 	res = {"videos": {}}
 	ttl = frappe.cache().ttl("{}:tracker".format(exam_submission))
@@ -566,7 +568,8 @@ def upload_video(exam_submission=None):
 		's3',
 		endpoint_url = cfdomain,
 		aws_access_key_id=lms_settings.aws_key, 
-		aws_secret_access_key=lms_settings.get_password("aws_secret")
+		aws_secret_access_key=lms_settings.get_password("aws_secret"),
+		config=Config(signature_version='s3v4')
 	)
 	if 'file' not in frappe.request.files:
 		return {"status": False}
