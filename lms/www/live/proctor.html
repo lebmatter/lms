@@ -349,7 +349,7 @@ Proctor
 
         const video = videoContainer.querySelector('video');
         // if currentidx is length-1, then we are playing last video
-        let disconnected = videoDisconnected(videoStore[exam_submission][currentVideoIndex[exam_submission]]);
+        let disconnected = videoDisconnected(videoStore[exam_submission][videoStore[exam_submission].length - 1]);
         if (currentVideoIndex[exam_submission] == videoStore[exam_submission].length - 1) {
             skipfwd.disabled = true;
             // check if the last video is 30 sec old
