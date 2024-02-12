@@ -29,22 +29,6 @@ function timeAgo(timestamp) {
     }
 }
 
-function parseUnitTime(videoURL, addSeconds) {
-    var url = new URL(videoURL);
-    var filenameWithExtension = url.pathname.split("/").pop();
-    var filename = filenameWithExtension.split(".")[0];
-
-    var date = new Date(filename * 1000);
-    var hours = String(date.getHours()).padStart(2, '0');
-    var minutes = String(date.getMinutes()).padStart(2, '0');
-    var seconds = String(date.getSeconds() + Math.floor(addSeconds)).padStart(2, '0');
-
-    var dt = hours + ':' + minutes + ':' + seconds;
-
-    return dt;
-
-}
-
 // check if the last video is before 30 seconds
 function videoDisconnected(lastVideoURL) {
     var url = new URL(lastVideoURL);

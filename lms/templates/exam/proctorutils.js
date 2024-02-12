@@ -32,14 +32,31 @@ function updateToggleButton() {
     toggleButton.innerHTML = this.paused ? "►" : "❚ ❚";
 }
 
+function parseUnitTime(videoURL, addSeconds) {
+    var url = new URL(videoURL);
+    var filenameWithExtension = url.pathname.split("/").pop();
+    var filename = filenameWithExtension.split(".")[0];
+
+    var date = new Date(filename * 1000);
+    var hours = String(date.getHours()).padStart(2, '0');
+    var minutes = String(date.getMinutes()).padStart(2, '0');
+    var seconds = String(date.getSeconds() + Math.floor(addSeconds)).padStart(2, '0');
+
+    return hours + ':' + minutes + ':' + seconds;;
+
+}
+
+
 function handleProgress() {
     const videoContainer = this.closest('.video-container');
     let fTS = videoContainer.querySelector(".fileTimeStamp");
     let exam_submission = videoContainer.getAttribute("data-videoid");
+    let islive = videoContainer.getAttribute("data-islive");
 
     // Within that container, find the video element
     const video = videoContainer.querySelector('video');
-    if (currentVideoIndex[exam_submission] != videoStore[exam_submission].length - 1) {
+    // show timestamp only if current video is not live
+    if (islive === "0") {
         fTS.innerText = parseUnitTime(videoStore[exam_submission][currentVideoIndex[exam_submission]], video.currentTime);
     } else {
         fTS.innerText = "";
@@ -77,10 +94,12 @@ function playVideoAtIndex(exam_submission, index) {
                 liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
                     '<circle cx="5" cy="5" r="5" fill="green" />' +
                     '</svg> Live';
+                videoContainer.setAttribute("data-islive", "1");
             } else {
                 liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
                     '<circle cx="5" cy="5" r="5" fill="red" />' +
-                    '</svg> Disconnected';
+                    '</svg> Offline';
+                videoContainer.setAttribute("data-islive", "0");
             }
 
         }
@@ -88,10 +107,12 @@ function playVideoAtIndex(exam_submission, index) {
         skipfwd.disabled = false;
         if (!disconnected) {
             liveBtn.innerText = "Go Live";
+            videoContainer.setAttribute("data-islive", "0");
         } else {
             liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
                 '<circle cx="5" cy="5" r="5" fill="red" />' +
                 '</svg> Disconnected';
+            videoContainer.setAttribute("data-islive", "0");
         }
     }
 
@@ -114,6 +135,9 @@ function playNextVideo() {
 function playLastVideo() {
     const videoContainer = this.closest('.video-container');
     let exam_submission = videoContainer.getAttribute("data-videoid");
+    let fTS = videoContainer.querySelector(".fileTimeStamp");
+    fTS.innerText = "";
+
     playVideoAtIndex(exam_submission, videoStore[exam_submission].length - 1);
 
 }
