@@ -423,7 +423,7 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 	frappe.publish_realtime(
 		event='newproctormsg',
 		message=chat_message,
-		user=frappe.cache().hget(exam_submission, "assigne_proctor")
+		user=frappe.cache().hget(exam_submission, "assigned_proctor")
 	)
 
 	return {"status": 1}
