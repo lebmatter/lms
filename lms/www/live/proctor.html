@@ -184,65 +184,72 @@ Proctor
 
 {% block page_content %}
 
-<div class="row mt-5">
-    {% if submissions|length == 0 %}
-    <div class="container">
-        <h5>No live videos to proctor.</h5>
+<div class="justify-content-center">
+    <div class="alert alert-info" role="alert">
+        {% if submissions|length == 0 %}
+        No live videos to proctor.
+        {% else %}
+        Live exams: {{ submissions|length }}
+        {% endif %}
     </div>
-    {% endif %}
-    {% for submission in submissions %}
-    <div class="video-container hidden" data-videoid="{{ submission }}">
-        <video class="video" id="{{ submission }}" data-videoid="{{ submission }}" preload="metadata">
-            <p>Your browser doesn't support HTML5 video.</p>
-        </video>
-        <div class="controls">
-            <small class="fileTimeStamp"></small>
-            <button class="controls__button toggleButton" title="Toggle Play">
-                <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="feather feather-play">
-                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-            </button>
-            <button class="controls__button volToggle" title="Toggle Volume" disabled>
-                <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="feather feather-volume-x">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <line x1="23" y1="9" x2="17" y2="15"></line>
-                    <line x1="17" y1="9" x2="23" y2="15"></line>
-                </svg>
-            </button>
-            <button class="controls__button skipBack" title="Skip back">
-                <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="feather feather-rewind">
-                    <polygon points="11 19 2 12 11 5 11 19"></polygon>
-                    <polygon points="22 19 13 12 22 5 22 19"></polygon>
-                </svg>
-            </button>
-            <button class="controls__button skipFwd" title="Skip forward">
-                <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="feather feather-fast-forward">
-                    <polygon points="13 19 22 12 13 5 13 19"></polygon>
-                    <polygon points="2 19 11 12 2 5 2 19"></polygon>
-                </svg>
-            </button>
-            <button class="controls__button goLive" title="Go Live">
-                Go Live
-            </button>
-            <button type="button" class="controls__button menu" title="Chat" data-toggle="modal"
-                data-target="#chatModal" data-videoid="{{ submission }}">
-                <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="feather feather-message-square">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-            </button>
+</div>
+<div class="container">
+    <div class=" row">
+
+        {% for submission in submissions %}
+        <div class="video-container hidden" data-videoid="{{ submission }}">
+            <video class="video" id="{{ submission }}" data-videoid="{{ submission }}" preload="metadata">
+                <p>Your browser doesn't support HTML5 video.</p>
+            </video>
+            <div class="controls">
+                <small class="fileTimeStamp"></small>
+                <button class="controls__button toggleButton" title="Toggle Play">
+                    <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="feather feather-play">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                </button>
+                <button class="controls__button volToggle" title="Toggle Volume" disabled>
+                    <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="feather feather-volume-x">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <line x1="23" y1="9" x2="17" y2="15"></line>
+                        <line x1="17" y1="9" x2="23" y2="15"></line>
+                    </svg>
+                </button>
+                <button class="controls__button skipBack" title="Skip back">
+                    <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="feather feather-rewind">
+                        <polygon points="11 19 2 12 11 5 11 19"></polygon>
+                        <polygon points="22 19 13 12 22 5 22 19"></polygon>
+                    </svg>
+                </button>
+                <button class="controls__button skipFwd" title="Skip forward">
+                    <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="feather feather-fast-forward">
+                        <polygon points="13 19 22 12 13 5 13 19"></polygon>
+                        <polygon points="2 19 11 12 2 5 2 19"></polygon>
+                    </svg>
+                </button>
+                <button class="controls__button goLive" title="Go Live">
+                    Go Live
+                </button>
+                <button type="button" class="controls__button menu" title="Chat" data-toggle="modal"
+                    data-target="#chatModal" data-videoid="{{ submission }}">
+                    <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="feather feather-message-square">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 <!-- The Modal -->
 <div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel" aria-hidden="true">
