@@ -1,0 +1,183 @@
+var videoStore = {};
+var currentVideoIndex = {};
+const videos = document.getElementsByClassName('video');
+const toggleButton = document.getElementsByClassName("toggleButton");
+
+function addEventListenerToClass(className, eventType, handlerFunction) {
+    var elements = document.getElementsByClassName(className);
+
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].addEventListener(eventType, handlerFunction);
+    }
+}
+function togglePlay() {
+    // Find the closest '.video-container' ancestor
+    const videoContainer = this.closest('.video-container');
+
+    // Within that container, find the video element
+    const video = videoContainer.querySelector('video');
+    if (video.paused || video.ended) {
+        video.play();
+    } else {
+        video.pause();
+    }
+}
+
+function updateToggleButton() {
+    // Find the closest '.video-container' ancestor from the video
+    const videoContainer = this.closest('.video-container');
+
+    // Within that container, find the toggleButton
+    const toggleButton = videoContainer.querySelector('.toggleButton');
+    toggleButton.innerHTML = this.paused ? "►" : "❚ ❚";
+}
+
+function handleProgress() {
+    const videoContainer = this.closest('.video-container');
+    let fTS = videoContainer.querySelector(".fileTimeStamp");
+    let exam_submission = videoContainer.getAttribute("data-videoid");
+
+    // Within that container, find the video element
+    const video = videoContainer.querySelector('video');
+    if (currentVideoIndex[exam_submission] != videoStore[exam_submission].length - 1) {
+        fTS.innerText = parseUnitTime(videoStore[exam_submission][currentVideoIndex[exam_submission]], video.currentTime);
+    } else {
+        fTS.innerText = "";
+    }
+}
+
+function scrub(e) {
+    const scrubTime = (e.offsetX / progress.offsetWidth) * video.duration;
+    video.currentTime = scrubTime;
+}
+
+function playVideoAtIndex(exam_submission, index) {
+    currentVideoIndex[exam_submission] = index;
+    var vid = document.getElementById(exam_submission);
+    const videoContainer = vid.closest('.video-container');
+    let liveBtn = videoContainer.querySelector(".goLive");
+    let skipfwd = videoContainer.querySelector(".skipFwd");
+
+    if (currentVideoIndex[exam_submission] < videoStore[exam_submission].length) {
+        vid.src = videoStore[exam_submission][currentVideoIndex[exam_submission]];
+        vid.load();
+        vid.play();
+    } else {
+        console.log('End of playlist');
+    }
+
+    const video = videoContainer.querySelector('video');
+    // if currentidx is length-1, then we are playing last video
+    let disconnected = videoDisconnected(videoStore[exam_submission][videoStore[exam_submission].length - 1]);
+    if (currentVideoIndex[exam_submission] == videoStore[exam_submission].length - 1) {
+        skipfwd.disabled = true;
+        // check if the last video is 30 sec old
+        if (!video.paused) {
+            if (!disconnected) {
+                liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
+                    '<circle cx="5" cy="5" r="5" fill="green" />' +
+                    '</svg> Live';
+            } else {
+                liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
+                    '<circle cx="5" cy="5" r="5" fill="red" />' +
+                    '</svg> Disconnected';
+            }
+
+        }
+    } else {
+        skipfwd.disabled = false;
+        if (!disconnected) {
+            liveBtn.innerText = "Go Live";
+        } else {
+            liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
+                '<circle cx="5" cy="5" r="5" fill="red" />' +
+                '</svg> Disconnected';
+        }
+    }
+
+}
+
+function handleSliderUpdate() {
+    // Find the closest '.video-container' ancestor
+    const videoContainer = this.closest('.video-container');
+    let exam_submission = videoContainer.getAttribute("data-videoid");
+    playVideoAtIndex(exam_submission, this.value);
+}
+
+function playNextVideo() {
+    const videoContainer = this.closest('.video-container');
+    let exam_submission = videoContainer.getAttribute("data-videoid");
+    playVideoAtIndex(exam_submission, currentVideoIndex[exam_submission] + 1);
+
+}
+
+function playLastVideo() {
+    const videoContainer = this.closest('.video-container');
+    let exam_submission = videoContainer.getAttribute("data-videoid");
+    playVideoAtIndex(exam_submission, videoStore[exam_submission].length - 1);
+
+}
+
+function playPreviousVideo() {
+    const videoContainer = this.closest('.video-container');
+    let exam_submission = videoContainer.getAttribute("data-videoid");
+    playVideoAtIndex(exam_submission, currentVideoIndex[exam_submission] - 1);
+}
+
+addEventListenerToClass("toggleButton", "click", togglePlay);
+addEventListenerToClass("video", "click", togglePlay);
+addEventListenerToClass("video", "play", updateToggleButton);
+addEventListenerToClass("video", "pause", updateToggleButton);
+addEventListenerToClass("video", "timeupdate", handleProgress);
+addEventListenerToClass("video", "ended", playNextVideo);
+addEventListenerToClass("goLive", "click", playLastVideo);
+addEventListenerToClass("skipBack", "click", playPreviousVideo);
+addEventListenerToClass("skipFwd", "click", playNextVideo);
+
+
+
+frappe.ready(() => {
+    for (var i = 0; i < videos.length; i++) {
+        // Check if the element is an HTML5 video
+        if (videos[i].nodeName !== 'VIDEO') {
+            continue; // Skip to the next iteration of the loop
+        }
+        let exam_submission = videos[i].getAttribute('data-videoid');
+        frappe.call({
+            method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.proctor_video_list",
+            args: {
+                "exam_submission": exam_submission,
+            },
+            success: (data) => {
+                var vid = document.getElementById(exam_submission);
+                let container = vid.closest(".video-container");
+                container.classList.remove("hidden");
+                // convert api response to an array of objects
+                let videoList = Object.entries(data.message.videos).map(([unixtimestamp, videourl]) => {
+                    return { unixtimestamp: parseInt(unixtimestamp, 10), videourl };
+                });
+                // sort them
+                videoList.sort((a, b) => a.unixtimestamp - b.unixtimestamp);
+
+
+                videoStore[exam_submission] = videoList.map(video => video.videourl);;
+                playVideoAtIndex(exam_submission, videoStore[exam_submission].length - 1);
+            },
+        });
+    }
+    frappe.realtime.on('newproctorvideo', (data) => {
+        videoStore[data.exam_submission].push(data.url);
+    });
+    $('#chatModal').on('show.bs.modal', function (e) {
+        var button = $(e.relatedTarget);
+        var videoId = button.data('videoid');
+        console.log("VIDEOID", videoId, button);
+        updateMessages(videoId);
+    });
+
+    frappe.realtime.on('newproctormsg', (data) => {
+        convertedTime = timeAgo(data.creation);
+        addChatBubble(convertedTime, data.message_text, data.message_type)
+    });
+
+});

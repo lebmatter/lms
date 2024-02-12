@@ -20,64 +20,19 @@ Proctor
         font-size: 16px;
     }
 
-    #messages {
-        max-height: 350px;
-        /* Set the maximum height for the container */
-        overflow-y: auto;
-        /* Enable vertical scrolling when content exceeds the max height */
-    }
-
-    /* Custom styles for the chat bubble container */
-    .chat-container {
+    .video-container {
         position: relative;
-        margin-bottom: 20px;
-        /* Add some spacing between chat containers */
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
     }
 
-    /* Custom styles for the chat bubble */
-    .chat-bubble {
-        display: inline-block;
-        /* Set the display to inline-block */
-        background-color: #f0f0f0;
-        border-radius: 10px;
-        padding: 10px;
-        max-width: calc(100% - 20px);
-        /* Adjust the max-width relative to the text content */
-    }
-
-    /* Custom styles for the timestamp */
-    .chat-timestamp {
-        top: -25px;
-        /* Adjust the vertical position as per your design */
-        left: 10px;
-        /* Adjust the horizontal position as per your design */
-        font-size: 12px;
-        color: #999;
-    }
-
-    /* To make the chat bubble align to the left */
-    .chat-left {
-        text-align: left;
-    }
-
-    .container {
+    .video-container video {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .video-container {
-        margin: 0 auto;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .video {
-        width: 100%;
     }
 
     .controls__button {
@@ -132,153 +87,94 @@ Proctor
     .svg-white {
         fill: white;
     }
-
-    input[type=range] {
-        -webkit-appearance: none;
-        background: transparent;
-        width: 100%;
-        margin: 0 5px;
-    }
-
-    input[type=range]:focus {
-        outline: none;
-    }
-
-    input[type=range]::-webkit-slider-runnable-track {
-        width: 100%;
-        height: 8.4px;
-        cursor: pointer;
-        background: rgba(255, 255, 255, 0.8);
-        border-radius: 4px;
-    }
-
-    input[type=range]::-webkit-slider-thumb {
-        height: 0.9rem;
-        width: 0.9rem;
-        border-radius: 50px;
-        background: #0D4646;
-        cursor: pointer;
-        -webkit-appearance: none;
-        margin-top: -3.5px;
-    }
-
-    input[type=range]::-moz-range-track {
-        width: 100%;
-        height: 8.4px;
-        cursor: pointer;
-        background: rgba(255, 255, 255, 0.8);
-        border-radius: 4px;
-    }
-
-    input[type=range]::-moz-range-thumb {
-        height: 0.9rem;
-        width: 0.9rem;
-        border-radius: 50px;
-        background: #0D4646;
-        cursor: pointer;
-        -webkit-appearance: none;
-        margin-top: -3.5px;
-    }
 </style>
 {% endblock %}
 
 {% block page_content %}
 
-<div class="justify-content-center">
-    <div class="alert alert-info" role="alert">
-        {% if submissions|length == 0 %}
-        No live videos to proctor.
-        {% else %}
-        Live exams: {{ submissions|length }}
-        {% endif %}
-    </div>
-</div>
 <div class="container">
-    <div class=" row">
+    <div class="alert alert-info mt-2" role="alert">
+        Live exams: {{ submissions|length }}
+    </div>
+    <div class="row">
+        {% for index, submission in enumerate(submissions) %}
+        <div class="col-md-4">
+            <div class="video-container" data-videoid="{{ submission }}">
+                <video class="video" id="{{ submission }}" data-videoid="{{ submission }}" preload="metadata">
+                    <p>Your browser doesn't support HTML5 video.</p>
+                </video>
+                <div class="controls">
+                    <small class="fileTimeStamp"></small>
+                    <button class="controls__button toggleButton" title="Toggle Play">
+                        <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-play">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                    </button>
+                    <!-- <button class="controls__button volToggle" title="Toggle Volume" disabled>
+                        <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-volume-x">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <line x1="23" y1="9" x2="17" y2="15"></line>
+                            <line x1="17" y1="9" x2="23" y2="15"></line>
+                        </svg>
+                    </button> -->
+                    <button class="controls__button skipBack" title="Skip back">
+                        <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-rewind">
+                            <polygon points="11 19 2 12 11 5 11 19"></polygon>
+                            <polygon points="22 19 13 12 22 5 22 19"></polygon>
+                        </svg>
+                    </button>
+                    <button class="controls__button skipFwd" title="Skip forward">
+                        <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-fast-forward">
+                            <polygon points="13 19 22 12 13 5 13 19"></polygon>
+                            <polygon points="2 19 11 12 2 5 2 19"></polygon>
+                        </svg>
+                    </button>
+                    <small><button class="controls__button goLive" title="Go Live">
+                            Go Live
+                        </button></small>
+                    <button type="button" class="controls__button menu" title="Chat" data-toggle="modal"
+                        data-target="#chatModal" data-videoid="{{ submission }}">
+                        <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
 
-        {% for submission in submissions %}
-        <div class="video-container hidden" data-videoid="{{ submission }}">
-            <video class="video" id="{{ submission }}" data-videoid="{{ submission }}" preload="metadata">
-                <p>Your browser doesn't support HTML5 video.</p>
-            </video>
-            <div class="controls">
-                <small class="fileTimeStamp"></small>
-                <button class="controls__button toggleButton" title="Toggle Play">
-                    <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="feather feather-play">
-                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                    </svg>
-                </button>
-                <button class="controls__button volToggle" title="Toggle Volume" disabled>
-                    <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="feather feather-volume-x">
-                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                        <line x1="23" y1="9" x2="17" y2="15"></line>
-                        <line x1="17" y1="9" x2="23" y2="15"></line>
-                    </svg>
-                </button>
-                <button class="controls__button skipBack" title="Skip back">
-                    <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="feather feather-rewind">
-                        <polygon points="11 19 2 12 11 5 11 19"></polygon>
-                        <polygon points="22 19 13 12 22 5 22 19"></polygon>
-                    </svg>
-                </button>
-                <button class="controls__button skipFwd" title="Skip forward">
-                    <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="feather feather-fast-forward">
-                        <polygon points="13 19 22 12 13 5 13 19"></polygon>
-                        <polygon points="2 19 11 12 2 5 2 19"></polygon>
-                    </svg>
-                </button>
-                <button class="controls__button goLive" title="Go Live">
-                    Go Live
-                </button>
-                <button type="button" class="controls__button menu" title="Chat" data-toggle="modal"
-                    data-target="#chatModal" data-videoid="{{ submission }}">
-                    <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="feather feather-message-square">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                </button>
+                    </button>
+                </div>
             </div>
         </div>
+        {% if loop.index % 3 == 0 %}
+    </div>
+    <div class="row mt-5">
+        {% endif %}
         {% endfor %}
     </div>
 </div>
-<!-- The Modal -->
-<div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+<!-- Bootstrap Modal -->
+<div class="modal" id="examAlert">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="chatModalLabel">Chat with candidate</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h5 class="modal-title" id="alertTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="container-fluid">
-                    <div class="row mb-5"><button type="button" class="btn btn-danger" data-dismiss="modal">Terminate
-                            Exam</button></div>
-                    <div class="row">
-                        <div id="messages" class="tab-pane fade show active">
-                        </div>
-                    </div>
-                </div>
+            <div class="modal-body" id="alertText">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
-
-
 {% endblock %}
 
 <!-- Scripts -->
@@ -289,185 +185,6 @@ Proctor
 </script>
 <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
 <script type="text/javascript">
-
-    var videoStore = {};
-    var currentVideoIndex = {};
-    const videos = document.getElementsByClassName('video');
-    const toggleButton = document.getElementsByClassName("toggleButton");
-
-    function addEventListenerToClass(className, eventType, handlerFunction) {
-        var elements = document.getElementsByClassName(className);
-
-        for (var i = 0; i < elements.length; i++) {
-            elements[i].addEventListener(eventType, handlerFunction);
-        }
-    }
-    function togglePlay() {
-        // Find the closest '.video-container' ancestor
-        const videoContainer = this.closest('.video-container');
-
-        // Within that container, find the video element
-        const video = videoContainer.querySelector('video');
-        if (video.paused || video.ended) {
-            video.play();
-        } else {
-            video.pause();
-        }
-    }
-
-    function updateToggleButton() {
-        // Find the closest '.video-container' ancestor from the video
-        const videoContainer = this.closest('.video-container');
-
-        // Within that container, find the toggleButton
-        const toggleButton = videoContainer.querySelector('.toggleButton');
-        toggleButton.innerHTML = this.paused ? "►" : "❚ ❚";
-    }
-
-    function handleProgress() {
-        const videoContainer = this.closest('.video-container');
-        let fTS = videoContainer.querySelector(".fileTimeStamp");
-        let exam_submission = videoContainer.getAttribute("data-videoid");
-
-        // Within that container, find the video element
-        const video = videoContainer.querySelector('video');
-        fTS.innerText = parseUnitTime(videoStore[exam_submission][currentVideoIndex[exam_submission]], video.currentTime);
-    }
-
-    function scrub(e) {
-        const scrubTime = (e.offsetX / progress.offsetWidth) * video.duration;
-        video.currentTime = scrubTime;
-    }
-
-    function playVideoAtIndex(exam_submission, index) {
-        currentVideoIndex[exam_submission] = index;
-        var vid = document.getElementById(exam_submission);
-        const videoContainer = vid.closest('.video-container');
-        let liveBtn = videoContainer.querySelector(".goLive");
-        let skipfwd = videoContainer.querySelector(".skipFwd");
-
-        if (currentVideoIndex[exam_submission] < videoStore[exam_submission].length) {
-            vid.src = videoStore[exam_submission][currentVideoIndex[exam_submission]];
-            vid.load();
-            vid.play();
-        } else {
-            console.log('End of playlist');
-        }
-
-        const video = videoContainer.querySelector('video');
-        // if currentidx is length-1, then we are playing last video
-        let disconnected = videoDisconnected(videoStore[exam_submission][videoStore[exam_submission].length - 1]);
-        if (currentVideoIndex[exam_submission] == videoStore[exam_submission].length - 1) {
-            skipfwd.disabled = true;
-            // check if the last video is 30 sec old
-            if (!video.paused) {
-                if (!disconnected) {
-                    liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
-                        '<circle cx="5" cy="5" r="5" fill="green" />' +
-                        '</svg> Live';
-                } else {
-                    liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
-                        '<circle cx="5" cy="5" r="5" fill="red" />' +
-                        '</svg> Disconnected';
-                }
-
-            }
-        } else {
-            skipfwd.disabled = false;
-            if (!disconnected) {
-                liveBtn.innerText = "Go Live";
-            } else {
-                liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
-                    '<circle cx="5" cy="5" r="5" fill="red" />' +
-                    '</svg> Disconnected';
-            }
-        }
-
-    }
-
-    function handleSliderUpdate() {
-        // Find the closest '.video-container' ancestor
-        const videoContainer = this.closest('.video-container');
-        let exam_submission = videoContainer.getAttribute("data-videoid");
-        playVideoAtIndex(exam_submission, this.value);
-    }
-
-    function playNextVideo() {
-        const videoContainer = this.closest('.video-container');
-        let exam_submission = videoContainer.getAttribute("data-videoid");
-        playVideoAtIndex(exam_submission, currentVideoIndex[exam_submission] + 1);
-
-    }
-
-    function playLastVideo() {
-        const videoContainer = this.closest('.video-container');
-        let exam_submission = videoContainer.getAttribute("data-videoid");
-        playVideoAtIndex(exam_submission, videoStore[exam_submission].length - 1);
-
-    }
-
-    function playPreviousVideo() {
-        const videoContainer = this.closest('.video-container');
-        let exam_submission = videoContainer.getAttribute("data-videoid");
-        playVideoAtIndex(exam_submission, currentVideoIndex[exam_submission] - 1);
-    }
-
-    addEventListenerToClass("toggleButton", "click", togglePlay);
-    addEventListenerToClass("video", "click", togglePlay);
-    addEventListenerToClass("video", "play", updateToggleButton);
-    addEventListenerToClass("video", "pause", updateToggleButton);
-    addEventListenerToClass("video", "timeupdate", handleProgress);
-    addEventListenerToClass("video", "ended", playNextVideo);
-    addEventListenerToClass("goLive", "click", playLastVideo);
-    addEventListenerToClass("skipBack", "click", playPreviousVideo);
-    addEventListenerToClass("skipFwd", "click", playNextVideo);
-
-
-
-    frappe.ready(() => {
-        for (var i = 0; i < videos.length; i++) {
-            // Check if the element is an HTML5 video
-            if (videos[i].nodeName !== 'VIDEO') {
-                continue; // Skip to the next iteration of the loop
-            }
-            let exam_submission = videos[i].getAttribute('data-videoid');
-            frappe.call({
-                method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.proctor_video_list",
-                args: {
-                    "exam_submission": exam_submission,
-                },
-                success: (data) => {
-                    var vid = document.getElementById(exam_submission);
-                    let container = vid.closest(".video-container");
-                    container.classList.remove("hidden");
-                    // convert api response to an array of objects
-                    let videoList = Object.entries(data.message.videos).map(([unixtimestamp, videourl]) => {
-                        return { unixtimestamp: parseInt(unixtimestamp, 10), videourl };
-                    });
-                    // sort them
-                    videoList.sort((a, b) => a.unixtimestamp - b.unixtimestamp);
-
-
-                    videoStore[exam_submission] = videoList.map(video => video.videourl);;
-                    playVideoAtIndex(exam_submission, videoStore[exam_submission].length - 1);
-                },
-            });
-        }
-        frappe.realtime.on('newproctorvideo', (data) => {
-            videoStore[data.exam_submission].push(data.url);
-        });
-        $('#chatModal').on('show.bs.modal', function (e) {
-            var button = $(e.relatedTarget);
-            var videoId = button.data('videoid');
-            console.log("VIDEOID", videoId, button);
-            updateMessages(videoId);
-        });
-
-        frappe.realtime.on('newproctormsg', (data) => {
-            convertedTime = timeAgo(data.creation);
-            addChatBubble(convertedTime, data.message_text, data.message_type)
-        });
-
-    });
+    {% include "lms/templates/exam/proctorutils.js" %}
 </script>
 {% endblock %}
