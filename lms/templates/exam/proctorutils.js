@@ -148,6 +148,16 @@ function playPreviousVideo() {
     playVideoAtIndex(exam_submission, currentVideoIndex[exam_submission] - 1);
 }
 
+function openChatModal() {
+    const videoContainer = this.closest('.video-container');
+    const video = videoContainer.querySelector('video');
+    const modalVideo = document.getElementById('modalVideo');
+    modalVideo.src = video.src;
+    $('#chatModal').modal('show');
+    const videoId = videoContainer.getAttribute("data-videoid");
+    updateMessages(videoId);
+}
+
 addEventListenerToClass("toggleButton", "click", togglePlay);
 addEventListenerToClass("video", "click", togglePlay);
 addEventListenerToClass("video", "play", updateToggleButton);
@@ -157,6 +167,7 @@ addEventListenerToClass("video", "ended", playNextVideo);
 addEventListenerToClass("goLive", "click", playLastVideo);
 addEventListenerToClass("skipBack", "click", playPreviousVideo);
 addEventListenerToClass("skipFwd", "click", playNextVideo);
+addEventListenerToClass("menu", "click", openChatModal);
 
 
 
@@ -191,12 +202,6 @@ frappe.ready(() => {
     }
     frappe.realtime.on('newproctorvideo', (data) => {
         videoStore[data.exam_submission].push(data.url);
-    });
-    $('#chatModal').on('show.bs.modal', function (e) {
-        var button = $(e.relatedTarget);
-        var videoId = button.data('videoid');
-        console.log("VIDEOID", videoId, button);
-        updateMessages(videoId);
     });
 
     frappe.realtime.on('newproctormsg', (data) => {
