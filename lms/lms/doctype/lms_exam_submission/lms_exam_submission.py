@@ -48,22 +48,6 @@ class LMSExamSubmission(Document):
 		
 		return False, end_time	
 
-	def get_messages(self):
-		"""
-		Get messages as dict
-		"""
-		res = []
-		for msg in self.messages:
-			res.append({
-				"creation": msg.creation.isoformat(),
-				"message_text": msg.message,
-				"message_type":msg.type_of_message
-			})
-
-		# sort by datetime
-		res = sorted(res, key=lambda x: x['creation'])
-		
-		return res
 
 	def before_save(self):
 		if self.exam_started_time:
@@ -396,18 +380,28 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 	assert exam_submission
 	assert message
 
+	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
 	# check of the logged in user is same as exam submission candidate
-	if frappe.session.user != frappe.cache().hget(exam_submission, "candidate"):
+	if frappe.session.user not in [doc.candidate, doc.assigned_proctor]:
 		raise PermissionError("You don't have access to post messages.")
 
-	submission = frappe.get_doc("LMS Exam Submission", exam_submission)
-	submission.append('messages',{
-		"from_user": frappe.db.get_value(
-		"LMS Exam Submission", exam_submission, "candidate"),
+	type_of_user = "System"
+	if frappe.session.user == doc.candidate:
+		type_of_user = "Candidate"
+	elif frappe.session.user == doc.assigned_proctor:
+		type_of_user = "Proctor"
+
+	doc = frappe.get_doc({
+		"doctype": "LMS Exam Messages",
+		"exam_submission": exam_submission,
+		"timestamp": datetime.now(),
+		"from": type_of_user,
+		"from_user": frappe.session.user,
 		"message": message,
 		"type_of_message": type_of_message
 	})
-	submission.save(ignore_permissions=True)
+	doc.insert(ignore_permissions=True)
+
 	# trigger webocket msg to proctor and candidate
 	chat_message = {
 			"creation": datetime.now().isoformat(),
@@ -441,7 +435,19 @@ def exam_messages(exam_submission=None):
 	if frappe.session.user not in [doc.candidate, doc.assigned_proctor]:
 		raise PermissionError("You don't have access to view messages.")
 
-	return {"messages": doc.get_messages()}
+	msgs = frappe.get_all("LMS Exam Messages", filters={
+		"exam_submission": exam_submission
+	})
+	res = [{
+			"creation": msg.timestamp.isoformat(),
+			"message_text": msg.message,
+			"message_type":msg.type_of_message
+	} for msg in msgs]
+
+	# sort by datetime
+	res = sorted(res, key=lambda x: x['creation'])
+
+	return {"messages": res}
 
 
 @frappe.whitelist()

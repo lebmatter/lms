@@ -9,7 +9,8 @@
   "from",
   "from_user",
   "message",
-  "type_of_message"
+  "type_of_message",
+  "timestamp"
  ],
  "fields": [
   {
@@ -44,13 +45,21 @@
   {
    "fieldname": "type_of_message",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Type of Message",
    "options": "General\nWarning\nCritical"
+  },
+  {
+   "fieldname": "timestamp",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Timestamp",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-13 11:27:27.250909",
+ "modified": "2024-02-13 11:56:12.086982",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Messages",
