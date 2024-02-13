@@ -1,3 +1,28 @@
+var hiddenTime = 0;
+var visibleTime = 0;
+var startTime;
+
+function handleVisibilityChange() {
+    if (document.hidden) {
+        // Page is now hidden
+        startTime = new Date();
+    } else if (exam.restrict_tab_changes === 1 && currentQsNo >= 2) {
+
+        // Page is now visible
+        var endTime = new Date();
+        var secondsInactive = Math.floor((endTime - startTime) / 1000);
+        hiddenTime += secondsInactive;
+        visibleTime += (secondsInactive - 1); // Subtract 1 second for the transition time
+        let tabChangeStr = "Page was inactive for " + secondsInactive + " seconds";
+        sendMessage(tabChangeStr, "Warning");
+
+        // Reset the variables
+        hiddenTime = 0;
+        visibleTime = 0;
+        startTime = null;
+    }
+}
+
 function storeObjectInLocalStorage(key, object) {
     const objectString = JSON.stringify(object);
     localStorage.setItem(key, objectString);
@@ -216,6 +241,7 @@ frappe.ready(() => {
     });
 
     updateMessages(exam["exam_submission"]);
+    document.addEventListener("visibilitychange", handleVisibilityChange, false);
 
 });
 
@@ -264,7 +290,6 @@ function updateOverviewMap() {
 };
 
 function displayQuestion(current_qs) {
-    let awayStartTime;
     // $("#quiz-form").fadeOut(300);
     let currentQuestion = {
         "exam": exam.name,
@@ -417,30 +442,20 @@ function displayQuestion(current_qs) {
     } else {
         $('#exam-timer').hide();
     }
-    // $("#quiz-form").fadeIn(300);
-    $(window).blur(function () {
-        if (exam.restrict_tab_changes === 1 && currentQsNo >= 2) {
-            awayStartTime = new Date();
-            examAlert(
-                "Tab change detected",
-                "Multiple tab changes will result in exam termination!",
-            );
-        }
-    });
 
-    $("#examAlert").on("hidden.bs.modal", function () {
-        let currentTime = new Date();
-        let timeAwayInMilliseconds = currentTime - awayStartTime;
-        let timeAwayInMinutes = Math.floor(timeAwayInMilliseconds / (1000 * 60));
-        let timeAwayInSeconds = Math.floor((timeAwayInMilliseconds % (1000 * 60)) / 1000);
+    // $("#examAlert").on("hidden.bs.modal", function () {
+    //     let currentTime = new Date();
+    //     let timeAwayInMilliseconds = currentTime - awayStartTime;
+    //     let timeAwayInMinutes = Math.floor(timeAwayInMilliseconds / (1000 * 60));
+    //     let timeAwayInSeconds = Math.floor((timeAwayInMilliseconds % (1000 * 60)) / 1000);
 
-        console.log(currentTime, awayStartTime);
-        console.log(timeAwayInMinutes, timeAwayInSeconds);
-        tabChangeStr = `Tab changed for ${timeAwayInMinutes}:${timeAwayInSeconds}s`;
-        awayStartTime = null;
-        sendMessage(tabChangeStr, "Warning");
+    //     console.log(currentTime, awayStartTime);
+    //     console.log(timeAwayInMinutes, timeAwayInSeconds);
+    //     tabChangeStr = `Tab changed for ${timeAwayInMinutes}:${timeAwayInSeconds}s`;
+    //     awayStartTime = null;
+    //     sendMessage(tabChangeStr, "Warning");
 
-    });
+    // });
 
 };
 

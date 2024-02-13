@@ -437,7 +437,7 @@ def exam_messages(exam_submission=None):
 
 	msgs = frappe.get_all("LMS Exam Messages", filters={
 		"exam_submission": exam_submission
-	})
+	}, fields=["*"])
 	res = [{
 			"creation": msg.timestamp.isoformat(),
 			"message_text": msg.message,
