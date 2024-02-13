@@ -85,6 +85,8 @@ def can_process_question(doc, member=None):
 			doc.status = "Submitted"
 			doc.save(ignore_permissions=True)
 			frappe.throw("This exam has ended at {}".format(end_time))
+	elif doc.status == "Terminated":
+		frappe.throw("Exam is terminated.")
 	else:
 		frappe.throw("Exam is not started yet.")
 	if doc.candidate != (member or frappe.session.user):
@@ -410,7 +412,7 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 			"type_of_message": type_of_message
 	}
 	frappe.publish_realtime(
-		event='newproctormsg',
+		event='newcandidatemsg',
 		message=chat_message,
 		user=frappe.cache().hget(exam_submission, "candidate")
 	)
@@ -421,6 +423,26 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 	)
 
 	return {"status": 1}
+
+@frappe.whitelist()
+def terminate_exam(exam_submission):
+	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
+	# only proctor can terminate exam
+	if frappe.session.user != doc.assigned_proctor:
+		raise PermissionError("No permission to terminate this exam.")
+	doc.status = "Terminated"
+	doc.save(ignore_permissions=True)
+	frappe.db.commit()
+
+	# add a message
+	post_exam_message(
+		exam_submission,
+		message="Exam is terminated.",
+		type_of_message="Critical"
+	)
+
+	return {"status": "Terminated"}
+
 
 
 @frappe.whitelist()

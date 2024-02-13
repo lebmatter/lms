@@ -153,8 +153,9 @@ function openChatModal() {
     const video = videoContainer.querySelector('video');
     const modalVideo = document.getElementById('modalVideo');
     modalVideo.src = video.src;
-    $('#chatModal').modal('show');
     const videoId = videoContainer.getAttribute("data-videoid");
+    $('#chatModal').attr("data-videoid", videoId)
+    $('#chatModal').modal('show');
     updateMessages(videoId);
 }
 
@@ -206,7 +207,66 @@ frappe.ready(() => {
 
     frappe.realtime.on('newproctormsg', (data) => {
         convertedTime = timeAgo(data.creation);
-        addChatBubble(convertedTime, data.message_text, data.message_type)
+        addChatBubble(convertedTime, data.message, data.type_of_message)
     });
+
+    // chatModal controls
+    // Handle send button click event
+    $("#send-button").click(function () {
+        var message = $("#message-input").val();
+        sendMessage(message);
+        $("#message-input").val("");
+    });
+
+    // Handle enter key press event
+    $("#message-input").keypress(function (e) {
+        if (e.which == 13) {
+            var message = $("#message-input").val();
+            sendMessage(message);
+            $("#message-input").val("");
+        }
+    });
+
+    $("#terminateExam").click(function () {
+        let videoId = $('#chatModal').attr("data-videoid");
+        var result = prompt("Do you want to terminate this candidate's exam? Confirm by typing `Terminate Exam`. This step is irreversable.");
+        if (result === "Terminate Exam") {
+            frappe.call({
+                method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.terminate_exam",
+                type: "POST",
+                args: {
+                    'exam_submission': videoId
+                },
+                callback: (data) => {
+                    let confrm = confirm("Exam terminated!");
+                    if (confrm) {
+                        window.location.reload()
+                    }
+                },
+            });
+        } else {
+            alert("Invalid input given.");
+        }
+
+    });
+
+    // Function to send a message
+    function sendMessage(message) {
+        let videoId = $('#chatModal').attr("data-videoid");
+        if (message.trim() !== "") {
+            frappe.call({
+                method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.post_exam_message",
+                type: "POST",
+                args: {
+                    'exam_submission': videoId,
+                    'message': message,
+                    'type_of_message': "General",
+                },
+                callback: (data) => {
+                    console.log(data);
+                },
+            });
+        }
+    }
 
 });

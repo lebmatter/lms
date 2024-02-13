@@ -235,7 +235,7 @@ frappe.ready(() => {
         $('#toggleButton').text('Show Video');
     });
 
-    frappe.realtime.on('newproctormsg', (data) => {
+    frappe.realtime.on('newcandidatemsg', (data) => {
         convertedTime = timeAgo(data.creation);
         addChatBubble(convertedTime, data.message, data.type_of_message)
     });

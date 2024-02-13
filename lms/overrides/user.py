@@ -251,7 +251,7 @@ def get_live_exam(member=None):
 			"additional_time_given"
    ])
 	for submission in submissions:
-		if submission["status"] in ["Registration Cancelled", "Aborted"]:
+		if submission["status"] in ["Registration Cancelled", "Aborted", "Terminated"]:
 			continue
 		
 		schedule = frappe.get_doc("LMS Exam Schedule", submission["exam_schedule"])
