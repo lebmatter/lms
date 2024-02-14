@@ -393,10 +393,11 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 	elif frappe.session.user == doc.assigned_proctor:
 		type_of_user = "Proctor"
 
+	tnow = frappe.utils.now()
 	doc = frappe.get_doc({
 		"doctype": "LMS Exam Messages",
 		"exam_submission": exam_submission,
-		"timestamp": datetime.now(),
+		"timestamp": tnow,
 		"from": type_of_user,
 		"from_user": frappe.session.user,
 		"message": message,
@@ -406,7 +407,7 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 
 	# trigger webocket msg to proctor and candidate
 	chat_message = {
-			"creation": datetime.now().isoformat(),
+			"creation": tnow,
 			"exam_submission": exam_submission,
 			"message": message,
 			"type_of_message": type_of_message
