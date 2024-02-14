@@ -25,7 +25,7 @@ const appendSymbol = symbol => {
 
     }
     else {
-        $("#calcResult").val("Error");
+        $("#calcResult").val("Error: Invalid characters");
         return
     }
     if (symbol === '=') {
