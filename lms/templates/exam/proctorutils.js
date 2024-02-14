@@ -160,6 +160,16 @@ function openChatModal() {
     updateMessages(videoId);
 }
 
+function toggleBorder() {
+    const videoContainer = this.closest('.video-container');
+    const video = videoContainer.querySelector('video');
+    if (video.src === '') {
+        videoContainer.classList.add('border', 'border-primary');
+    } else {
+        videoContainer.classList.remove('border', 'border-primary');
+    }
+}
+
 addEventListenerToClass("toggleButton", "click", togglePlay);
 addEventListenerToClass("video", "click", togglePlay);
 addEventListenerToClass("video", "play", updateToggleButton);
@@ -170,6 +180,7 @@ addEventListenerToClass("goLive", "click", playLastVideo);
 addEventListenerToClass("skipBack", "click", playPreviousVideo);
 addEventListenerToClass("skipFwd", "click", playNextVideo);
 addEventListenerToClass("menu", "click", openChatModal);
+addEventListenerToClass("video", "loadedmetadata", toggleBorder);
 
 
 
