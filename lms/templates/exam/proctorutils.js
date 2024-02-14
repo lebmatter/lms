@@ -156,6 +156,7 @@ function openChatModal() {
     const videoId = videoContainer.getAttribute("data-videoid");
     $('#chatModal').attr("data-videoid", videoId)
     $('#chatModal').modal('show');
+    $('#messages').attr("data-examid", videoId)
     updateMessages(videoId);
 }
 
@@ -207,7 +208,7 @@ frappe.ready(() => {
 
     frappe.realtime.on('newproctormsg', (data) => {
         convertedTime = timeAgo(data.creation);
-        addChatBubble(convertedTime, data.message, data.type_of_message)
+        addChatBubble(data.exam_submission, convertedTime, data.message, data.type_of_message)
     });
 
     // chatModal controls

@@ -45,21 +45,23 @@ function videoDisconnected(lastVideoURL) {
 
 }
 
-const addChatBubble = (timestamp, message, messageType) => {
+const addChatBubble = (exam_submission, timestamp, message, messageType) => {
     var chatContainer = $('#messages');
-    var chatTimestamp = $('<div class="chat-timestamp">' + timestamp + '</div>');
-    var msgWithPill = message;
-    if (messageType === "Warning") {
-        msgWithPill = '<span class="badge badge-pill badge-warning">Warning</span> ' + message
-    } else if (messageType === "Critical") {
-        msgWithPill = '<span class="badge badge-pill badge-danger">Critical</span> ' + message
-    }
-    var chatBubble = $('<div class="chat-bubble chat-left"><p>' + msgWithPill + '</p></div>');
-    var chatWrapper = $('<div class="messages"></div>');
+    if ($('#messages').attr("data-examid") === exam_submission) {
+        var chatTimestamp = $('<div class="chat-timestamp">' + timestamp + '</div>');
+        var msgWithPill = message;
+        if (messageType === "Warning") {
+            msgWithPill = '<span class="badge badge-pill badge-warning">Warning</span> ' + message
+        } else if (messageType === "Critical") {
+            msgWithPill = '<span class="badge badge-pill badge-danger">Critical</span> ' + message
+        }
+        var chatBubble = $('<div class="chat-bubble chat-left"><p>' + msgWithPill + '</p></div>');
+        var chatWrapper = $('<div class="messages"></div>');
 
-    chatWrapper.prepend(chatTimestamp);
-    chatWrapper.prepend(chatBubble);
-    chatContainer.prepend(chatWrapper);
+        chatWrapper.prepend(chatTimestamp);
+        chatWrapper.prepend(chatBubble);
+        chatContainer.prepend(chatWrapper);
+    }
 }
 
 const updateMessages = (exam_submission) => {
@@ -85,7 +87,7 @@ const updateMessages = (exam_submission) => {
             // Add new messages as alerts to the Bootstrap div
             newMessages.forEach(message => {
                 convertedTime = timeAgo(message.creation);
-                addChatBubble(convertedTime, message.message_text, message.message_type)
+                addChatBubble(exam_submission, convertedTime, message.message_text, message.message_type)
             });
 
         },
