@@ -13,7 +13,7 @@ function timeAgo(timestamp) {
     const minutesDifference = Math.floor(timeDifference / (1000 * 60));
 
     if (minutesDifference < 1) {
-        return 'Just now';
+        return '<span class="text-primary font-italic">Just now</span>';
     } else if (minutesDifference === 1) {
         return '1 minute ago';
     } else if (minutesDifference < 60) {
@@ -48,7 +48,7 @@ function videoDisconnected(lastVideoURL) {
 const addChatBubble = (exam_submission, timestamp, message, messageType) => {
     var chatContainer = $('#messages');
     if ($('#messages').attr("data-examid") === exam_submission) {
-        var chatTimestamp = $('<div class="chat-timestamp">' + timestamp + '</div>');
+        var chatTimestamp = $('<div class="chat-timestamp"><small>' + timestamp + '</small></div>');
         var msgWithPill = message;
         if (messageType === "Warning") {
             msgWithPill = '<span class="badge badge-pill badge-warning">Warning</span> ' + message
@@ -58,9 +58,10 @@ const addChatBubble = (exam_submission, timestamp, message, messageType) => {
         var chatBubble = $('<div class="chat-bubble chat-left"><small>' + msgWithPill + '</small></div>');
         var chatWrapper = $('<div class="messages"></div>');
 
-        chatWrapper.prepend(chatTimestamp);
-        chatWrapper.prepend(chatBubble);
-        chatContainer.prepend(chatWrapper);
+        chatWrapper.append(chatTimestamp);
+        chatWrapper.append(chatBubble);
+        chatContainer.append(chatWrapper);
+        chatContainer.scrollTop(chatContainer.prop("scrollHeight"));
     }
 }
 
