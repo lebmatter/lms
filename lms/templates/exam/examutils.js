@@ -55,7 +55,7 @@ const addChatBubble = (exam_submission, timestamp, message, messageType) => {
         } else if (messageType === "Critical") {
             msgWithPill = '<span class="badge badge-pill badge-danger">Critical</span> ' + message
         }
-        var chatBubble = $('<div class="chat-bubble chat-left"><p>' + msgWithPill + '</p></div>');
+        var chatBubble = $('<div class="chat-bubble chat-left"><small>' + msgWithPill + '</small></div>');
         var chatWrapper = $('<div class="messages"></div>');
 
         chatWrapper.prepend(chatTimestamp);
