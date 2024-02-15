@@ -64,17 +64,10 @@ function handleProgress() {
     }
 }
 
-function scrub(e) {
-    const scrubTime = (e.offsetX / progress.offsetWidth) * video.duration;
-    video.currentTime = scrubTime;
-}
 
 function playVideoAtIndex(exam_submission, index) {
     currentVideoIndex[exam_submission] = index;
     var vid = document.getElementById(exam_submission);
-    const videoContainer = vid.closest('.video-container');
-    let liveBtn = videoContainer.querySelector(".goLive");
-    let skipfwd = videoContainer.querySelector(".skipFwd");
 
     if (currentVideoIndex[exam_submission] < videoStore[exam_submission].length) {
         vid.src = videoStore[exam_submission][currentVideoIndex[exam_submission]];
@@ -82,39 +75,6 @@ function playVideoAtIndex(exam_submission, index) {
         vid.play();
     } else {
         console.log('End of playlist');
-    }
-
-    const video = videoContainer.querySelector('video');
-    // if currentidx is length-1, then we are playing last video
-    let disconnected = videoDisconnected(videoStore[exam_submission][videoStore[exam_submission].length - 1]);
-    if (currentVideoIndex[exam_submission] == videoStore[exam_submission].length - 1) {
-        skipfwd.disabled = true;
-        // check if the last video is 30 sec old
-        if (!video.paused) {
-            if (!disconnected) {
-                liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
-                    '<circle cx="5" cy="5" r="5" fill="green" />' +
-                    '</svg> Live';
-                videoContainer.setAttribute("data-islive", "1");
-            } else {
-                liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
-                    '<circle cx="5" cy="5" r="5" fill="red" />' +
-                    '</svg> Offline';
-                videoContainer.setAttribute("data-islive", "0");
-            }
-
-        }
-    } else {
-        skipfwd.disabled = false;
-        if (!disconnected) {
-            liveBtn.innerText = "Go Live";
-            videoContainer.setAttribute("data-islive", "0");
-        } else {
-            liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
-                '<circle cx="5" cy="5" r="5" fill="red" />' +
-                '</svg> Disconnected';
-            videoContainer.setAttribute("data-islive", "0");
-        }
     }
 
 }
@@ -160,13 +120,48 @@ function openChatModal() {
     updateMessages(videoId);
 }
 
-function toggleBorder() {
+function onLoanMetaData() {
     const videoContainer = this.closest('.video-container');
     const video = videoContainer.querySelector('video');
+    let liveBtn = videoContainer.querySelector(".goLive");
+    let skipfwd = videoContainer.querySelector(".skipFwd");
+    let exam_submission = videoContainer.getAttribute("data-videoid");
+
     if (video.src === '') {
         videoContainer.classList.add('border', 'border-primary');
     } else {
         videoContainer.classList.remove('border', 'border-primary');
+        // if currentidx is length-1, then we are playing last video
+        let disconnected = videoDisconnected(videoStore[exam_submission][videoStore[exam_submission].length - 1]);
+        if (currentVideoIndex[exam_submission] == videoStore[exam_submission].length - 1) {
+            skipfwd.disabled = true;
+            // check if the last video is 30 sec old
+            if (!video.paused) {
+                if (!disconnected) {
+                    liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
+                        '<circle cx="5" cy="5" r="5" fill="green" />' +
+                        '</svg> Live';
+                    videoContainer.setAttribute("data-islive", "1");
+                } else {
+                    liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
+                        '<circle cx="5" cy="5" r="5" fill="red" />' +
+                        '</svg> Offline';
+                    videoContainer.setAttribute("data-islive", "0");
+                }
+
+            }
+        } else {
+            skipfwd.disabled = false;
+            if (!disconnected) {
+                liveBtn.innerText = "Go Live";
+                videoContainer.setAttribute("data-islive", "0");
+            } else {
+                liveBtn.innerHTML = '<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg">' +
+                    '<circle cx="5" cy="5" r="5" fill="red" />' +
+                    '</svg> Disconnected';
+                videoContainer.setAttribute("data-islive", "0");
+            }
+        }
     }
 }
 
@@ -180,7 +175,7 @@ addEventListenerToClass("goLive", "click", playLastVideo);
 addEventListenerToClass("skipBack", "click", playPreviousVideo);
 addEventListenerToClass("skipFwd", "click", playNextVideo);
 addEventListenerToClass("menu", "click", openChatModal);
-addEventListenerToClass("video", "loadedmetadata", toggleBorder);
+addEventListenerToClass("video", "loadedmetadata", onLoanMetaData);
 
 
 
