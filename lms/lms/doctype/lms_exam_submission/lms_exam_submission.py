@@ -403,24 +403,6 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 	})
 	doc.insert(ignore_permissions=True)
 
-	# trigger webocket msg to proctor and candidate
-	chat_message = {
-			"creation": tnow,
-			"exam_submission": exam_submission,
-			"message": message,
-			"type_of_message": type_of_message
-	}
-	frappe.publish_realtime(
-		event='newcandidatemsg',
-		message=chat_message,
-		user=frappe.cache().hget(exam_submission, "candidate")
-	)
-	frappe.publish_realtime(
-		event='newproctormsg',
-		message=chat_message,
-		user=frappe.cache().hget(exam_submission, "assigned_proctor")
-	)
-
 	return {"status": 1}
 
 @frappe.whitelist()
