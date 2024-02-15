@@ -69,8 +69,6 @@ class LMSExamSubmission(Document):
 			# Determine the examiner with the least number of assignments
 			next_examiner = min(pcount, key=pcount.get)
 			self.assigned_proctor = next_examiner
-		
-
 
 def can_process_question(doc, member=None):
 	"""
@@ -512,7 +510,68 @@ def exam_overview(exam_submission=None):
 		res["total_answered"] - res["total_marked_for_later"]
 
 	return res
-	
+
+def get_videos(exam_submission, ttl=None):
+	"""
+	Get list of videos. Optional cache the urls with ttl
+	"""
+	lms_settings = frappe.get_single("LMS Settings")
+	cfdomain = 'https://{}.r2.cloudflarestorage.com'.format(
+		lms_settings.cloudflare_account_id
+	)
+	s3_client = boto3.client(
+		's3', 
+		endpoint_url = cfdomain,
+		aws_access_key_id=lms_settings.aws_key, 
+		aws_secret_access_key=lms_settings.get_password("aws_secret"),
+		config=Config(signature_version='s3v4')
+	)
+	res = {"videos": {}}
+
+	# Paginator to handle buckets with many objects
+	paginator = s3_client.get_paginator('list_objects_v2')
+	for page in paginator.paginate(Bucket=lms_settings.s3_bucket, Prefix=exam_submission):
+		if 'Contents' in page:
+			for obj in page['Contents']:
+				if not obj['Key'].endswith('.webm'):
+					continue
+
+				# check cache for presigned url
+				filetimestamp = obj['Key'].split("/")[-1][:-4]
+				cached_url = frappe.cache().get(obj['Key'])
+				if not cached_url:
+					presigned_url = s3_client.generate_presigned_url(
+						'get_object', Params={
+							'Bucket': lms_settings.s3_bucket,
+							'Key': obj['Key']},
+							ExpiresIn=ttl
+					)
+					res["videos"][filetimestamp] = presigned_url
+					if ttl:
+						frappe.cache().setex(obj['Key'], ttl, presigned_url)
+				else:
+					res["videos"][filetimestamp] = cached_url.decode()
+	return res
+
+@frappe.whitelist()
+def exam_video_list(exam_submission):
+	"""
+	Get the list of videos from s3
+	"""
+	assert exam_submission
+	if frappe.session.user == "Guest":
+		raise frappe.PermissionError(_("Please login to access this page."))
+
+	required_roles = ["Class Evaluator", "System Manager"]
+	user_roles = frappe.get_roles(frappe.session.user)
+	has_role = any(item in user_roles for item in required_roles)
+	if not has_role:
+		raise frappe.PermissionError(_("No permission to access this page."))
+
+	res = get_videos(exam_submission)
+
+	return res
+
 #########################
 ### Examiner APIs ########
 #########################
@@ -533,42 +592,8 @@ def proctor_video_list(exam_submission=None):
 	if frappe.session.user != frappe.cache().hget(exam_submission, "assigned_proctor"):
 		raise frappe.PermissionError(_("No proctor access to the exam."))
 
-	# list from s3
-	lms_settings = frappe.get_single("LMS Settings")
-	cfdomain = 'https://{}.r2.cloudflarestorage.com'.format(
-		lms_settings.cloudflare_account_id
-	)
-	s3_client = boto3.client(
-		's3', 
-		endpoint_url = cfdomain,
-		aws_access_key_id=lms_settings.aws_key, 
-		aws_secret_access_key=lms_settings.get_password("aws_secret"),
-		config=Config(signature_version='s3v4')
-	)
-	res = {"videos": {}}
 	ttl = frappe.cache().ttl("{}:tracker".format(exam_submission))
-	# Paginator to handle buckets with many objects
-	paginator = s3_client.get_paginator('list_objects_v2')
-	for page in paginator.paginate(Bucket=lms_settings.s3_bucket, Prefix=exam_submission):
-		if 'Contents' in page:
-			for obj in page['Contents']:
-				if not obj['Key'].endswith('.webm'):
-					continue
-
-				# check cache for presigned url
-				filetimestamp = obj['Key'].split("/")[-1][:-4]
-				cached_url = frappe.cache().get(obj['Key'])
-				if not cached_url:
-					presigned_url = s3_client.generate_presigned_url(
-						'get_object', Params={
-							'Bucket': lms_settings.s3_bucket,
-							'Key': obj['Key']},
-							ExpiresIn=ttl
-					)
-					res["videos"][filetimestamp] = presigned_url
-					frappe.cache().setex(obj['Key'], ttl, presigned_url)
-				else:
-					res["videos"][filetimestamp] = cached_url.decode()
+	res = get_videos(exam_submission, ttl)
 
 	return res
 

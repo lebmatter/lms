@@ -12,12 +12,13 @@
   "exam_schedule",
   "exam",
   "course",
-  "candidate_video",
   "column_break_ngvn",
   "status",
   "exam_started_time",
   "additional_time_given",
   "exam_submitted_time",
+  "video_section",
+  "candidate_video",
   "result_tab",
   "total_marks",
   "result_status",
@@ -60,11 +61,6 @@
    "label": "Candidate",
    "options": "User",
    "reqd": 1
-  },
-  {
-   "fieldname": "candidate_video",
-   "fieldtype": "Attach",
-   "label": "Candidate Video"
   },
   {
    "default": "Registered",
@@ -155,6 +151,17 @@
    "label": "Assigned Proctor",
    "options": "User",
    "read_only": 1
+  },
+  {
+   "fieldname": "video_section",
+   "fieldtype": "Section Break",
+   "label": "Video"
+  },
+  {
+   "fieldname": "candidate_video",
+   "fieldtype": "HTML",
+   "label": "Candidate Video",
+   "options": "<video id=\"candidateVideo\" style=\"max-width: 400px;\"></video>\n  <div id=\"controls\" class=\"icon-group\">\n    <button class=\"btn btn-light\" id=\"previous-btn\">\u23ee\ufe0f</button>\n    <button class=\"btn btn-light\" id=\"play-pause-btn\">\u25b6\ufe0f/\u23f8\ufe0f</button>\n    <button class=\"btn btn-light\" id=\"next-btn\">\u23ed\ufe0f</button>\n<input type=\"text\" id=\"index-field\" readonly>\n  </div>"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -164,7 +171,7 @@
    "link_fieldname": "exam_submission"
   }
  ],
- "modified": "2024-02-13 14:49:34.073155",
+ "modified": "2024-02-15 12:12:07.259747",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",
