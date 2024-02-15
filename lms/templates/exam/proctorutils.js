@@ -242,14 +242,13 @@ frappe.ready(() => {
     });
 
     $("#terminateExam").click(function () {
-        let videoId = $('#chatModal').attr("data-videoid");
         var result = prompt("Do you want to terminate this candidate's exam? Confirm by typing `Terminate Exam`. This step is irreversable.");
         if (result === "Terminate Exam") {
             frappe.call({
                 method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.terminate_exam",
                 type: "POST",
                 args: {
-                    'exam_submission': videoId
+                    'exam_submission': activeChat
                 },
                 callback: (data) => {
                     let confrm = confirm("Exam terminated!");
@@ -266,13 +265,12 @@ frappe.ready(() => {
 
     // Function to send a message
     function sendMessage(message) {
-        let videoId = $('#chatModal').attr("data-videoid");
         if (message.trim() !== "") {
             frappe.call({
                 method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.post_exam_message",
                 type: "POST",
                 args: {
-                    'exam_submission': videoId,
+                    'exam_submission': activeChat,
                     'message': message,
                     'type_of_message': "General",
                 },
