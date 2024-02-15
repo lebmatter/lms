@@ -10,7 +10,7 @@ class LMSExamMessages(Document):
 	def after_insert(self):
 		# trigger webocket msg to proctor and candidate
 		chat_message = {
-				"creation": self.timestamp.isoformat(),
+				"creation": self.timestamp,
 				"exam_submission": self.exam_submission,
 				"message": self.message,
 				"type_of_message": self.type_of_message

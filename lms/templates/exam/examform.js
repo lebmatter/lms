@@ -237,7 +237,7 @@ frappe.ready(() => {
 
     frappe.realtime.on('newcandidatemsg', (data) => {
         convertedTime = timeAgo(data.creation);
-        addChatBubble(data.exam_submission, convertedTime, data.message, data.type_of_message)
+        addChatBubble(convertedTime, data.message, data.type_of_message)
     });
 
     updateMessages(exam["exam_submission"]);

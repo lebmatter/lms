@@ -1,5 +1,6 @@
 var videoStore = {};
 var currentVideoIndex = {};
+var activeChat = "";
 const videos = document.getElementsByClassName('video');
 const toggleButton = document.getElementsByClassName("toggleButton");
 
@@ -154,9 +155,8 @@ function openChatModal() {
     const modalVideo = document.getElementById('modalVideo');
     modalVideo.src = video.src;
     const videoId = videoContainer.getAttribute("data-videoid");
-    $('#chatModal').attr("data-videoid", videoId)
     $('#chatModal').modal('show');
-    $('#messages').attr("data-examid", videoId)
+    activeChat = videoId;
     updateMessages(videoId);
 }
 
@@ -219,7 +219,9 @@ frappe.ready(() => {
 
     frappe.realtime.on('newproctormsg', (data) => {
         convertedTime = timeAgo(data.creation);
-        addChatBubble(data.exam_submission, convertedTime, data.message, data.type_of_message)
+        if (data.exam_submission === activeChat) {
+            addChatBubble(convertedTime, data.message, data.type_of_message)
+        }
     });
 
     // chatModal controls
@@ -280,5 +282,9 @@ frappe.ready(() => {
             });
         }
     }
+
+    $('#chatModal').on('hidden.bs.modal', function () {
+        activeChat = "";
+    });
 
 });

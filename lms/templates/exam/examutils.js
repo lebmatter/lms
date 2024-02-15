@@ -45,24 +45,22 @@ function videoDisconnected(lastVideoURL) {
 
 }
 
-const addChatBubble = (exam_submission, timestamp, message, messageType) => {
+const addChatBubble = (timestamp, message, messageType) => {
     var chatContainer = $('#messages');
-    if ($('#messages').attr("data-examid") === exam_submission) {
-        var chatTimestamp = $('<div class="chat-timestamp"><small>' + timestamp + '</small></div>');
-        var msgWithPill = message;
-        if (messageType === "Warning") {
-            msgWithPill = '<span class="badge badge-pill badge-warning">Warning</span> ' + message
-        } else if (messageType === "Critical") {
-            msgWithPill = '<span class="badge badge-pill badge-danger">Critical</span> ' + message
-        }
-        var chatBubble = $('<div class="chat-bubble chat-left"><small>' + msgWithPill + '</small></div>');
-        var chatWrapper = $('<div class="messages"></div>');
-
-        chatWrapper.append(chatTimestamp);
-        chatWrapper.append(chatBubble);
-        chatContainer.append(chatWrapper);
-        chatContainer.scrollTop(chatContainer.prop("scrollHeight"));
+    var chatTimestamp = $('<div class="chat-timestamp"><small>' + timestamp + '</small></div>');
+    var msgWithPill = message;
+    if (messageType === "Warning") {
+        msgWithPill = '<span class="badge badge-pill badge-warning">Warning</span> ' + message
+    } else if (messageType === "Critical") {
+        msgWithPill = '<span class="badge badge-pill badge-danger">Critical</span> ' + message
     }
+    var chatBubble = $('<div class="chat-bubble chat-left"><small>' + msgWithPill + '</small></div>');
+    var chatWrapper = $('<div class="messages"></div>');
+
+    chatWrapper.append(chatTimestamp);
+    chatWrapper.append(chatBubble);
+    chatContainer.append(chatWrapper);
+    chatContainer.scrollTop(chatContainer.prop("scrollHeight"));
 }
 
 const updateMessages = (exam_submission) => {
@@ -88,7 +86,7 @@ const updateMessages = (exam_submission) => {
             // Add new messages as alerts to the Bootstrap div
             newMessages.forEach(message => {
                 convertedTime = timeAgo(message.creation);
-                addChatBubble(exam_submission, convertedTime, message.message_text, message.message_type)
+                addChatBubble(convertedTime, message.message_text, message.message_type)
             });
 
         },
