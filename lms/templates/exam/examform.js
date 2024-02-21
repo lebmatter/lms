@@ -177,12 +177,14 @@ frappe.ready(() => {
         getQuestion(exam["current_qs"]);
     }
 
-    if (exam.submission_status === "Started") {
-        // Start the countdown timer
-        updateTimer();
+    if (exam.submission_status === "Started" || exam.submission_status === "Registered") {
         if (exam.enable_video_proctoring) {
             startRecording();
         }
+    }
+    if (exam.submission_status === "Started") {
+        // Start the countdown timer
+        updateTimer();
     }
 
     $("#nextQs").click((e) => {
