@@ -208,6 +208,7 @@ def start_exam(exam_submission=None):
 		"additional_time_given": str(doc.additional_time_given),
 		"assigned_evaluator": doc.assigned_evaluator or "",
 		"assigned_proctor": doc.assigned_proctor or "",
+		"warning_count": 0,
 	}
 	for k, v in qs_data.items():
 		data[k] = v

@@ -6,7 +6,7 @@ function handleVisibilityChange() {
     if (document.hidden) {
         // Page is now hidden
         startTime = new Date();
-    } else if (exam.restrict_tab_changes === 1 && currentQsNo >= 2) {
+    } else if (currentQsNo >= 2) {
 
         // Page is now visible
         var endTime = new Date();

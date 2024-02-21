@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+from lms.lms.doctype.lms_exam_submission.lms_exam_submission import terminate_exam
 
 
 class LMSExamMessages(Document):
@@ -32,3 +33,14 @@ class LMSExamMessages(Document):
 				message=chat_message,
 				user=proctor
 			)
+		# update critical warning error
+		wc = frappe.cache().hget(self.exam_submission, "warning_count") or 0
+		new_wc = wc + 1
+		frappe.cache().hset(self.exam_submission, "warning_count", new_wc)
+
+		if self.type_of_message == "Warning":
+			exam = frappe.get_cached_value("LMS Exam Submission", self.exam_submission, "exam")
+			max_warning = frappe.get_cached_value("LMS Exam", exam, "max_warning_count")
+			if new_wc > max_warning:
+				terminate_exam(self.exam_submission)
+
