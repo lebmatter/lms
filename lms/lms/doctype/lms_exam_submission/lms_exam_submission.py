@@ -18,7 +18,7 @@ from botocore.client import Config
 class LMSExamSubmission(Document):
 
 	def can_start_exam(self):
-		scheduled_start = frappe.db.get_value(
+		scheduled_start = frappe.get_cached_value(
 		"LMS Exam Schedule", self.exam_schedule, "start_date_time"
 		)
 		if self.exam_started_time:
@@ -35,7 +35,7 @@ class LMSExamSubmission(Document):
 		End time is schedule start time + duration + additional time given
 		returns True, end_time if exam has ended
 		"""
-		scheduled_start, duration = frappe.db.get_value(
+		scheduled_start, duration = frappe.get_cached_value(
 		"LMS Exam Schedule", self.exam_schedule, ["start_date_time", "duration"]
 		)
 		end_time = scheduled_start + timedelta(minutes=duration) + \
@@ -130,7 +130,7 @@ def evaluation_values(exam, submitted_answers):
 		if ans.evaluation_status == "Pending":
 			eval_pending += 1
 	# check result status
-	exam_total_mark, pass_perc = frappe.db.get_value(
+	exam_total_mark, pass_perc = frappe.get_cached_value(
 		"LMS Exam", exam, ["total_marks", "pass_percentage"]
 	)
 	pass_mark = (exam_total_mark * pass_perc)/100
@@ -168,7 +168,7 @@ def start_exam(exam_submission=None):
 	questions = frappe.get_all(
 		"Schedule Exam Question", filters={"parent": doc.exam}, fields=["exam_question"]
 	)
-	random_questions = frappe.db.get_value("LMS Exam", doc.exam, "randomize_questions")
+	random_questions = frappe.get_cached_value("LMS Exam", doc.exam, "randomize_questions")
 	if random_questions:
 		random.shuffle(questions)
 
@@ -189,7 +189,7 @@ def start_exam(exam_submission=None):
 	doc.save(ignore_permissions=True)
 
 	# cache submission details
-	start_date_time, duration = frappe.db.get_value(
+	start_date_time, duration = frappe.get_cached_value(
 		"LMS Exam Schedule", doc.exam_schedule, ["start_date_time", "duration"]
 	)
 	# end time is schedule start time + duration + additional time given
@@ -235,7 +235,7 @@ def end_exam(exam_submission=None):
 	doc.save(ignore_permissions=True)
 
 	# return result details
-	exam = frappe.db.get_value(
+	exam = frappe.get_cached_value(
 		"LMS Exam", doc.exam,
 		["show_result", "question_type"],
 		as_dict=True
@@ -462,11 +462,11 @@ def exam_overview(exam_submission=None):
 	all_submitted = get_submitted_questions(
 		exam_submission, fields=["marked_for_later", "exam_question", "answer", "seq_no"]
 	)
-	exam_schedule = frappe.db.get_value(
+	exam_schedule = frappe.get_cached_value(
 		"LMS Exam Submission", exam_submission, "exam_schedule"
 	)
-	exam = frappe.db.get_value("LMS Exam Schedule", exam_schedule, "exam")
-	total_questions = frappe.db.get_value("LMS Exam", exam, "total_questions")
+	exam = frappe.get_cached_value("LMS Exam Schedule", exam_schedule, "exam")
+	total_questions = frappe.get_cached_value("LMS Exam", exam, "total_questions")
 	res = {
 		"exam_submission": exam_submission,
 		"submitted": {},
