@@ -1,6 +1,8 @@
 var hiddenTime = 0;
 var visibleTime = 0;
 var startTime;
+var examOverview;
+var currentQuestion;
 
 function handleVisibilityChange() {
     if (document.hidden) {
@@ -21,25 +23,6 @@ function handleVisibilityChange() {
         visibleTime = 0;
         startTime = null;
     }
-}
-
-function storeObjectInLocalStorage(key, object) {
-    const objectString = JSON.stringify(object);
-    localStorage.setItem(key, objectString);
-}
-
-function getObjectFromLocalStorage(key) {
-    const objectString = localStorage.getItem(key);
-    if (objectString) {
-        return JSON.parse(objectString);
-    }
-    else {
-        return {}
-    }
-}
-
-function clearKeyFromLocalStorage(key) {
-    localStorage.removeItem(key);
 }
 
 // Function to update the countdown timer
@@ -72,15 +55,6 @@ function updateTimer() {
     }
 
 }
-
-
-/*
-Exam data will be stored in localStorage in following keys
-exam, exanOverview, currentQuestion
-*/
-
-const examOverviewKey = "examOverView";
-const currentQuestionKey = "currentQuestion";
 
 const answrdCheck = `
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
@@ -185,9 +159,6 @@ function stopRecording() {
 }
 
 frappe.ready(() => {
-    clearKeyFromLocalStorage(examOverviewKey);
-    clearKeyFromLocalStorage(currentQuestionKey);
-
     updateOverviewMap();
 
     // check if exam is already started
@@ -254,7 +225,7 @@ function updateOverviewMap() {
             "exam_submission": exam.exam_submission,
         },
         success: (data) => {
-            storeObjectInLocalStorage(examOverviewKey, data.message);
+            examOverview = data.message;
             // document.getElementById("answered").innerHTML = data.message.total_answered;
             // document.getElementById("notattempted").innerHTML = data.message.total_not_attempted;
             document.getElementById("markedforlater").innerHTML = data.message.total_marked_for_later;
@@ -291,7 +262,7 @@ function updateOverviewMap() {
 
 function displayQuestion(current_qs) {
     // $("#quiz-form").fadeOut(300);
-    let currentQuestion = {
+    currentQuestion = {
         "exam": exam.name,
         "no": current_qs.qs_no,
         "name": current_qs.name,
@@ -311,8 +282,6 @@ function displayQuestion(current_qs) {
         "answer": current_qs.answer || '',
         "marked_for_later": current_qs.marked_for_later
     }
-    storeObjectInLocalStorage(currentQuestionKey, currentQuestion);
-    examOverview = getObjectFromLocalStorage(examOverviewKey);
 
     $("#start-banner").addClass("hide");
     $("#quiz-form").removeClass("hide");
@@ -530,7 +499,6 @@ function getQuestion(qsno) {
 
 
 function submitAnswer(loadNext) {
-    var currentQuestion = getObjectFromLocalStorage(currentQuestionKey);
     let answer;
     var mrkForLtr = $("#markedForLater").prop('checked') ? 1 : 0;
     if (currentQuestion["type"] == "Choices") {
