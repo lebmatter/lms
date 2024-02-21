@@ -270,17 +270,16 @@ def get_question(exam_submission=None, qsno=1):
 		if prev.split(":")[-1] == "Not Attempted":
 			frappe.throw("Previous question not attempted.")
 
+	# get the qs with seq no
+	qs_ = frappe.cache().hget(exam_submission, "qs:{}".format(qs_no))
+	if not qs_:
+		frappe.throw("Invalid question no. {} requested.".format(qs_no))
+	qs_name = qs_.split(":")[0]
+	
 	try:
-		# get the qs with seq no
-		qs_name = frappe.db.get_value(
-				"Exam Result",
-				{"parent": exam_submission, "seq_no": qs_no },
-				"exam_question"
-		)
+		question_doc = frappe.get_cached_doc("LMS Exam Question", qs_name)
 	except frappe.DoesNotExistError:
 		frappe.throw("Invalid question requested.")
-	else:
-		question_doc = frappe.get_cached_doc("LMS Exam Question", qs_name)
 
 
 	answer_doc = frappe.get_value(
