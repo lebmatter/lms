@@ -226,6 +226,14 @@ function updateOverviewMap() {
         },
         success: (data) => {
             examOverview = data.message;
+            // if this is the lastQs, change button
+            if (currentQuestion["no"] === examOverview["total_questions"]) {
+                $('#nextQs').hide();
+                $('#finish').show();
+            } else {
+                $('#nextQs').show();
+                $('#finish').hide();
+            }
             // document.getElementById("answered").innerHTML = data.message.total_answered;
             // document.getElementById("notattempted").innerHTML = data.message.total_not_attempted;
             document.getElementById("markedforlater").innerHTML = data.message.total_marked_for_later;
@@ -396,14 +404,6 @@ function displayQuestion(current_qs) {
         }, 5000); // 5 seconds
 
     }
-    // if this is the lastQs, change button
-    if (currentQuestion["no"] === examOverview["total_questions"]) {
-        $('#nextQs').hide();
-        $('#finish').show();
-    } else {
-        $('#nextQs').show();
-        $('#finish').hide();
-    }
 
     if (exam.time) {
         $('#exam-timer').attr('data-time', exam.time);
@@ -411,20 +411,6 @@ function displayQuestion(current_qs) {
     } else {
         $('#exam-timer').hide();
     }
-
-    // $("#examAlert").on("hidden.bs.modal", function () {
-    //     let currentTime = new Date();
-    //     let timeAwayInMilliseconds = currentTime - awayStartTime;
-    //     let timeAwayInMinutes = Math.floor(timeAwayInMilliseconds / (1000 * 60));
-    //     let timeAwayInSeconds = Math.floor((timeAwayInMilliseconds % (1000 * 60)) / 1000);
-
-    //     console.log(currentTime, awayStartTime);
-    //     console.log(timeAwayInMinutes, timeAwayInSeconds);
-    //     tabChangeStr = `Tab changed for ${timeAwayInMinutes}:${timeAwayInSeconds}s`;
-    //     awayStartTime = null;
-    //     sendMessage(tabChangeStr, "Warning");
-
-    // });
 
 };
 
