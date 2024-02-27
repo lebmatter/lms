@@ -22,7 +22,6 @@ class LMSExamSchedule(Document):
 		
 		# validate examiner list
 		self.validate_examiner_list()
-		self.assign_examiners()
 
 	def validate_examiner_list(self):
 		"""
@@ -33,7 +32,10 @@ class LMSExamSchedule(Document):
 		if not self.examiners:
 			return
 		
-		exam_start = parse(self.start_date_time)
+		if type(self.start_date_time) != datetime:
+			exam_start = parse(self.start_date_time)
+		else:
+			exam_start = self.start_date_time
 		end_time = exam_start + timedelta(minutes=self.duration)
 		other_exams = frappe.get_all(
 			"LMS Exam Schedule",
@@ -59,67 +61,6 @@ class LMSExamSchedule(Document):
 							overlap, exam2["name"]
 						))
 			
-
-	def assign_examiners(self):
-		"""
-		Fn should be called on before_save
-		This will overwrite all submissions
-		"""
-		assignments_proctor = {}
-		assignments_evaluator = {}
-		proctors = [ex.examiner for ex in self.examiners if ex.can_proctor]
-		evaluators = [ex.examiner for ex in self.examiners if ex.can_evaluate]
-		candidates = frappe.get_all(
-			"LMS Exam Submission",
-			filters={
-				"exam_schedule": self.name
-		}, fields=["name", "assigned_proctor", "assigned_evaluator"],
-		order_by="name")
-		candidate_list = [c_["name"] for c_ in candidates]
-
-		# Iterate over candidates and assign each to an examiner
-		if proctors:
-			for i, candidate in enumerate(candidate_list):
-				# Cycle through procots
-				proctor = proctors[i % len(proctors)]
-				if proctor not in assignments_proctor:
-					assignments_proctor[proctor] = []
-				assignments_proctor[proctor].append(candidate)
-
-				# Cycle through evaluators
-				evaluator = evaluators[i % len(evaluators)]
-				if evaluator not in assignments_evaluator:
-					assignments_evaluator[evaluator] = []
-				assignments_evaluator[evaluator].append(candidate)
-
-		for examiner_, submissions_ in assignments_proctor.items():
-			# update submission
-			for sub_ in submissions_:
-				existing_user = frappe.db.get_value(
-					"LMS Exam Submission", sub_, "assigned_proctor"
-				)
-				if examiner_ != existing_user:
-					frappe.db.set_value(
-						"LMS Exam Submission", sub_, "assigned_proctor", examiner_
-					)
-		for examiner_, submissions_ in assignments_evaluator.items():
-			# update submission
-			for sub_ in submissions_:
-				existing_user = frappe.db.get_value(
-					"LMS Exam Submission", sub_, "assigned_evaluator"
-				)
-				if examiner_ != existing_user:
-					frappe.db.set_value(
-						"LMS Exam Submission", sub_, "assigned_evaluator", examiner_
-					)
-		# update current schedule
-		for doc in self.examiners:
-			if doc.examiner in assignments_proctor:
-				doc.proctoring_count = len(assignments_proctor[doc.examiner])
-			if doc.examiner in assignments_evaluator:
-				doc.evaluation_count = len(assignments_evaluator[doc.examiner])
-
-
 def check_overlap(start_time1, end_time1, start_time2, end_time2):
     assert isinstance(start_time1, datetime), "start_time1 must be a datetime object"
     assert isinstance(end_time1, datetime), "end_time1 must be a datetime object"
