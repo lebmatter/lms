@@ -6,6 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "default_home",
+  "default_home_page",
   "send_calendar_invite_for_evaluations",
   "allow_student_progress",
   "column_break_zdel",
@@ -32,6 +33,7 @@
   "mentor_request_creation",
   "mentor_request_status_update",
   "proctor_settings_tab",
+  "section_break_msma",
   "aws_column",
   "cloudflare_account_id",
   "aws_key",
@@ -194,7 +196,7 @@
   {
    "fieldname": "proctor_settings_tab",
    "fieldtype": "Tab Break",
-   "label": "Proctor Settings"
+   "label": "Exam Settings"
   },
   {
    "fieldname": "aws_column",
@@ -246,12 +248,23 @@
    "fieldname": "cloudflare_account_id",
    "fieldtype": "Data",
    "label": "Account ID"
+  },
+  {
+   "fieldname": "section_break_msma",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "courses",
+   "fieldname": "default_home_page",
+   "fieldtype": "Select",
+   "label": "Default home page",
+   "options": "courses\nexams"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-02-08 14:44:41.899627",
+ "modified": "2024-03-14 16:53:22.165640",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Settings",

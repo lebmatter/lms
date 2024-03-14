@@ -401,7 +401,9 @@ def on_session_creation(login_manager):
 	if frappe.db.get_single_value(
 		"System Settings", "setup_complete"
 	) and frappe.db.get_single_value("LMS Settings", "default_home"):
-		frappe.local.response["home_page"] = "/exams"
+		frappe.local.response["home_page"] = "/{}".format(
+			frappe.db.get_single_value("LMS Settings", "default_home_page")
+		)
 
 
 @frappe.whitelist()
