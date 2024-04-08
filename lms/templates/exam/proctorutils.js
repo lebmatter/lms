@@ -117,7 +117,9 @@ function openChatModal() {
     const videoId = videoContainer.getAttribute("data-videoid");
     $('#chatModal').modal('show');
     activeChat = videoId;
-    updateMessages(videoId);
+    setInterval(function () {
+        updateMessages(videoId);
+    }, 1000); // 1 seconds
 }
 
 function onLoanMetaData() {
@@ -178,8 +180,7 @@ addEventListenerToClass("menu", "click", openChatModal);
 addEventListenerToClass("video", "loadedmetadata", onLoanMetaData);
 
 
-
-frappe.ready(() => {
+function updateVideoList() {
     for (var i = 0; i < videos.length; i++) {
         // Check if the element is an HTML5 video
         if (videos[i].nodeName !== 'VIDEO') {
@@ -203,21 +204,29 @@ frappe.ready(() => {
                 videoList.sort((a, b) => a.unixtimestamp - b.unixtimestamp);
 
 
-                videoStore[exam_submission] = videoList.map(video => video.videourl);;
+                videoStore[exam_submission] = videoList.map(video => video.videourl);
                 playVideoAtIndex(exam_submission, videoStore[exam_submission].length - 1);
             },
         });
     }
-    frappe.realtime.on('newproctorvideo', (data) => {
-        videoStore[data.exam_submission].push(data.url);
-    });
+}
 
-    frappe.realtime.on('newproctormsg', (data) => {
-        convertedTime = timeAgo(data.creation);
-        if (data.exam_submission === activeChat) {
-            addChatBubble(convertedTime, data.message, data.type_of_message)
-        }
-    });
+
+frappe.ready(() => {
+
+    setInterval(function () {
+        updateVideoList();
+    }, 5000); // 5 seconds
+    // frappe.realtime.on('newproctorvideo', (data) => {
+    //     videoStore[data.exam_submission].push(data.url);
+    // });
+
+    // frappe.realtime.on('newproctormsg', (data) => {
+    //     convertedTime = timeAgo(data.creation);
+    //     if (data.exam_submission === activeChat) {
+    //         addChatBubble(convertedTime, data.message, data.type_of_message)
+    //     }
+    // });
 
     // chatModal controls
     // Handle send button click event

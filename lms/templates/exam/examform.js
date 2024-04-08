@@ -208,12 +208,14 @@ frappe.ready(() => {
         $('#toggleButton').text('Show Video');
     });
 
-    frappe.realtime.on('newcandidatemsg', (data) => {
-        convertedTime = timeAgo(data.creation);
-        addChatBubble(convertedTime, data.message, data.type_of_message)
-    });
+    // frappe.realtime.on('newcandidatemsg', (data) => {
+    //     convertedTime = timeAgo(data.creation);
+    //     addChatBubble(convertedTime, data.message, data.type_of_message)
+    // });
 
-    updateMessages(exam["exam_submission"]);
+    setInterval(function () {
+        updateMessages(exam["exam_submission"]);
+    }, 1000); // 1 seconds
     document.addEventListener("visibilitychange", handleVisibilityChange, false);
 
 });
