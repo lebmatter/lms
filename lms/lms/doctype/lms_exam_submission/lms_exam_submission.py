@@ -54,7 +54,8 @@ class LMSExamSubmission(Document):
 			self.total_marks, self.evaluation_pending, self.result_status = evaluation_values(
 				self.exam, self.submitted_answers
 			)
-		self.assign_proctor_evaluator()
+		if "System Manager" in frappe.get_roles():
+			self.assign_proctor_evaluator()
 
 	def assign_proctor_evaluator(self):
 		"""
@@ -667,3 +668,12 @@ def upload_video(exam_submission=None):
 			user=frappe.cache().hget(exam_submission, "assigned_proctor")
 		)
 		return {"status": True}
+
+def val_secs(securities):
+	for row in securities:
+		print(row["qty"], row["isin"])
+	return {"done": 1}
+
+@frappe.whitelist()
+def ping(securities):
+	return val_secs(securities)
