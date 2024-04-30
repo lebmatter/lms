@@ -29,6 +29,9 @@ class LMSExamSubmission(Document):
 			frappe.throw("This exam can be started only after {}".format(scheduled_start))
 
 		return start_time
+	
+	def on_trash(self):
+		frappe.db.delete("LMS Exam Messages", {"exam_submission": self.name})
 
 	def exam_ended(self):
 		"""
