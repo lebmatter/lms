@@ -9,6 +9,7 @@
  "field_order": [
   "section_break_lmge",
   "candidate",
+  "candidate_name",
   "exam_schedule",
   "exam",
   "course",
@@ -162,6 +163,13 @@
    "fieldtype": "HTML",
    "label": "Candidate Video",
    "options": "<div id=\"videoDiv\" class=\"hidden\">\n<video id=\"candidateVideo\" style=\"max-width: 400px;\"></video>\n  <div id=\"controls\" class=\"icon-group\">\n    <button class=\"btn btn-light\" id=\"previous-btn\">\u23ee\ufe0f</button>\n    <button class=\"btn btn-light\" id=\"play-pause-btn\">\u25b6\ufe0f/\u23f8\ufe0f</button>\n    <button class=\"btn btn-light\" id=\"next-btn\">\u23ed\ufe0f</button>\n<input type=\"text\" id=\"index-field\" readonly>\n  </div>\n</div>"
+  },
+  {
+   "fetch_from": "candidate.full_name",
+   "fieldname": "candidate_name",
+   "fieldtype": "Data",
+   "label": "Candidate Name",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -171,7 +179,7 @@
    "link_fieldname": "exam_submission"
   }
  ],
- "modified": "2024-02-15 12:32:31.896892",
+ "modified": "2024-04-30 08:21:26.053877",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",
