@@ -115,7 +115,9 @@ function openChatModal() {
     const modalVideo = document.getElementById('modalVideo');
     modalVideo.src = video.src;
     const videoId = videoContainer.getAttribute("data-videoid");
+    const candName = videoContainer.getAttribute("data-candname");
     $('#chatModal').modal('show');
+    $('#candidateName').text(candName);
     activeChat = videoId;
     setInterval(function () {
         updateMessages(videoId);

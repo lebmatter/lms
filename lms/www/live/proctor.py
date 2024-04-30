@@ -15,10 +15,10 @@ def get_context(context):
 	proctor_list = frappe.get_all("LMS Exam Submission", filters={
 		"assigned_proctor": frappe.session.user,
 		"status": "Started"
-	})
+	}, fields=["name", "candidate_name"])
 	tracker = "{}:tracker"
 	live_submissions = [
-		p["name"] for p in proctor_list if frappe.cache().get(tracker.format(p["name"]))
+		p for p in proctor_list if frappe.cache().get(tracker.format(p["name"]))
 	]
 
 	context.submissions = live_submissions

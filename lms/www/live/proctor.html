@@ -142,8 +142,10 @@ Proctor
     </div>
     <div class="row">
         {% for index, submission in enumerate(submissions) %}
+        <small>{{ submission.candidate_name }}</small>
         <div class="col-md-4">
-            <div class="video-container border border-primary" data-videoid="{{ submission }}" data-islive="0">
+            <div class="video-container border border-primary" data-videoid="{{ submission }}"
+                data-candidatename="{{ submission.candidate_name }}" data-islive="0">
                 <video class="video" id="{{ submission }}" data-videoid="{{ submission }}" preload="metadata">
                     <p>Your browser doesn't support HTML5 video.</p>
                 </video>
@@ -207,7 +209,7 @@ Proctor
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="myModalLabel">Chat with the candidate</h5>
+                <h5 class="modal-title" id="myModalLabel">Chat with: <span id="candidateName"></span></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
