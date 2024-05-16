@@ -1,4 +1,4 @@
-const existingMessages = [];
+const existingMessages = {};
 
 const examAlert = (alertTitle, alertText) => {
     $('#alertTitle').text(alertTitle);
@@ -64,6 +64,9 @@ const addChatBubble = (timestamp, message, messageType) => {
 }
 
 const updateMessages = (exam_submission) => {
+    if (!(exam_submission in existingMessages)) {
+        existingMessages[exam_submission] = [];
+    }
     frappe.call({
         method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.exam_messages",
         args: {
@@ -75,11 +78,11 @@ const updateMessages = (exam_submission) => {
 
             // Check if any new messages exist
             const newMessages = msgData.filter(
-                message => !existingMessages.includes(message.message_text)
+                message => !existingMessages[exam_submission].includes(message.message_text)
             );
 
             // Add new messages to the existing messages array
-            existingMessages.push(...newMessages.map(message => message.message_text));
+            existingMessages[exam_submission].push(...newMessages.map(message => message.message_text));
 
 
             // loop through msgs and add alerts
