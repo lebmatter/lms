@@ -1,17 +1,3 @@
-{% if frappe.session.user != "Guest" %}
-{% set membership = frappe.db.get_value("LMS Exam Submission",
-{"candidate": frappe.session.user, "exam": exam.name},
-["name", "course", "progress"], as_dict=1) %}
-{% set progress_status = membership.progress %}
-{% else %}
-{% set membership, progress = None, None %}
-{% endif %}
-{% if progress == "Completed" %}
-{% set progress = 100 %}
-{% else %}
-{% set progress = 0 %}
-{% endif %}
-
 <div class="common-card-style course-card" data-course="{{ exam.name }}">
 
     <div class="course-image {% if not exam.image %} default-image {% endif %}" {% if exam.image %}
