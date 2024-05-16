@@ -8,8 +8,10 @@ from frappe.utils import now
 from frappe.model.document import Document
 
 
-
 class LMSExamSchedule(Document):
+
+	def on_trash(self):
+		frappe.db.delete("LMS Exam Submission", {"exam_schedule": self.name})
 
 	def before_save(self):
 		question_type = frappe.db.get_value("LMS Exam", self.exam, "question_type")
