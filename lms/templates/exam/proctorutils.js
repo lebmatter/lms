@@ -109,6 +109,7 @@ function playPreviousVideo() {
     playVideoAtIndex(exam_submission, currentVideoIndex[exam_submission] - 1);
 }
 
+
 function openChatModal() {
     const videoContainer = this.closest('.video-container');
     const video = videoContainer.querySelector('video');
@@ -119,6 +120,11 @@ function openChatModal() {
     $('#chatModal').modal('show');
     $('#candidateName').text(candName);
     activeChat = videoId;
+    $('#messages').empty();
+    // loop through msgs and add alerts
+    // Add new messages as alerts to the Bootstrap div
+    existingMessages[videoId] = [];
+
     setInterval(function () {
         updateMessages(videoId);
     }, 1000); // 1 seconds

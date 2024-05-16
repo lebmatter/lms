@@ -16,7 +16,9 @@ function handleVisibilityChange() {
         hiddenTime += secondsInactive;
         visibleTime += (secondsInactive - 1); // Subtract 1 second for the transition time
         let tabChangeStr = "Page was inactive for " + secondsInactive + " seconds";
-        sendMessage(tabChangeStr, "Warning");
+        if (secondsInactive > 1) {
+            sendMessage(tabChangeStr, "Warning");
+        }
 
         // Reset the variables
         hiddenTime = 0;
