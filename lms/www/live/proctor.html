@@ -140,10 +140,10 @@ Proctor
     <div class="alert alert-info mt-2" role="alert">
         Live exams: {{ submissions|length }}
     </div>
-    <div class="row">
+    <div class="row text-center">
         {% for index, submission in enumerate(submissions) %}
-        <small>{{ submission.candidate_name }}</small>
         <div class="col-md-4">
+            <small>{{ submission.candidate_name }}</small>
             <div class="video-container border border-primary" data-videoid="{{ submission.name }}"
                 data-candidatename="{{ submission.candidate_name }}" data-islive="0">
                 <video class="video" id="{{ submission.name }}" data-videoid="{{ submission.name }}" preload="metadata">
@@ -186,7 +186,8 @@ Proctor
                     <small><button class="controls__button goLive" title="Go Live">
                             Go Live
                         </button></small>
-                    <button type="button" class="controls__button menu" title="Chat" data-videoid="{{ submission.name }}">
+                    <button type="button" class="controls__button menu" title="Chat"
+                        data-videoid="{{ submission.name }}">
                         <svg class="svg-white" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square">
