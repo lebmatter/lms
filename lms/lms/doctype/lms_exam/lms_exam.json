@@ -34,7 +34,7 @@
   "certification_section",
   "enable_certification",
   "expiry",
-  "certifcate_template",
+  "certificate_template",
   "pricing_column",
   "paid_certificate",
   "currency",
@@ -321,16 +321,16 @@
    "non_negative": 1
   },
   {
-   "depends_on": "enable_certification",
-   "fieldname": "certifcate_template",
-   "fieldtype": "Link",
-   "label": "Certifcate Template",
-   "options": "LMS Exam Certificate Template"
-  },
-  {
    "fieldname": "pricing_column",
    "fieldtype": "Column Break",
    "label": "Pricing"
+  },
+  {
+   "depends_on": "enable_certification",
+   "fieldname": "certificate_template",
+   "fieldtype": "Link",
+   "label": "Certificate Template",
+   "options": "LMS Exam Certificate Template"
   }
  ],
  "is_published_field": "published",
@@ -342,7 +342,7 @@
   }
  ],
  "make_attachments_public": 1,
- "modified": "2024-05-22 15:06:10.666455",
+ "modified": "2024-05-22 16:13:26.503882",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam",
