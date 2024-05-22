@@ -6,6 +6,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "exam_submission",
   "exam",
   "member",
   "member_name",
@@ -53,11 +54,18 @@
    "fieldname": "expiry_date",
    "fieldtype": "Date",
    "label": "Expiry Date"
+  },
+  {
+   "fieldname": "exam_submission",
+   "fieldtype": "Link",
+   "label": "Exam Submission",
+   "options": "LMS Exam Submission",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-10 15:44:24.980539",
+ "modified": "2024-05-22 15:05:00.716146",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Certificate",
