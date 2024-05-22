@@ -44,8 +44,7 @@ class LMSExamCertificate(Document):
             temp_pdf_path = temp_pdf.name
 
         # Retrieve the email template document
-        template_name = frappe.db.get_value("LMS Exam", self.exam, "certifcate_template")
-        email_template = frappe.get_doc("Email Template", template_name)
+        email_template = frappe.get_doc("Email Template", "Exam Certificate Issue")
 
         # Render the subject and message
         subject = frappe.render_template(email_template.subject, context)
