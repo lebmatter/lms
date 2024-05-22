@@ -2,7 +2,7 @@
 # For license information, please see license.txt
 
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 import frappe
 from frappe import _
@@ -13,7 +13,6 @@ from werkzeug.utils import secure_filename
 
 import boto3
 from botocore.client import Config
-
 
 class LMSExamSubmission(Document):
 
@@ -54,9 +53,30 @@ class LMSExamSubmission(Document):
 
 	def before_save(self):
 		if self.exam_started_time:
-			self.total_marks, self.evaluation_pending, self.result_status = evaluation_values(
+			self.total_marks, self.evaluation_pending, result_status = evaluation_values(
 				self.exam, self.submitted_answers
 			)
+			self.result_status = result_status
+			# if result status is passed, issue certificate if required.
+			if result_status == "Passed":
+				cert = frappe.get_last_doc("LMS Exam Certificate", filters={"exam_submission": self.name})
+				if not cert:
+					today = date.today()
+					certexp = frappe.db.get_value("LMS Exam", self.exam, "expiry")
+
+					new_cert = frappe.get_doc({
+						"doctype":"LMS Exam Certificate",
+						"exam_submission": self.name,
+						"exam": self.exam,
+						"memeber": self.candidate,
+						"member_name": self.candidate_name
+						"issue_date": today
+					})
+					if certexp:
+						certexp *= 365
+						new_cert.expiry_date = today + timedelta(days=certexp)
+					new_cert.insert()
+
 		if "System Manager" in frappe.get_roles():
 			self.assign_proctor_evaluator()
 
