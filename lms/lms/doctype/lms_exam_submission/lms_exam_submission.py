@@ -69,7 +69,7 @@ class LMSExamSubmission(Document):
 						"exam_submission": self.name,
 						"exam": self.exam,
 						"memeber": self.candidate,
-						"member_name": self.candidate_name
+						"member_name": self.candidate_name,
 						"issue_date": today
 					})
 					if certexp:
