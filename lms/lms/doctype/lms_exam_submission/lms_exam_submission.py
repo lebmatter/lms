@@ -59,8 +59,9 @@ class LMSExamSubmission(Document):
 			self.result_status = result_status
 			# if result status is passed, issue certificate if required.
 			if result_status == "Passed":
-				cert = frappe.get_last_doc("LMS Exam Certificate", filters={"exam_submission": self.name})
-				if not cert:
+				try:
+					frappe.get_last_doc("LMS Exam Certificate", filters={"exam_submission": self.name})
+				except frappe.DoesNotExistError:
 					today = date.today()
 					certexp = frappe.db.get_value("LMS Exam", self.exam, "expiry")
 
