@@ -69,7 +69,7 @@ class LMSExamSubmission(Document):
 						"doctype":"LMS Exam Certificate",
 						"exam_submission": self.name,
 						"exam": self.exam,
-						"memeber": self.candidate,
+						"member": self.candidate,
 						"member_name": self.candidate_name,
 						"issue_date": today
 					})
@@ -167,6 +167,7 @@ def evaluation_values(exam, submitted_answers):
 	# add marks and evalualtion oending count is applicable
 	total_marks = 0
 	eval_pending = 0
+	result_status = "NA"
 	for ans in submitted_answers:
 		if ans.is_correct:
 			total_marks += ans.mark
