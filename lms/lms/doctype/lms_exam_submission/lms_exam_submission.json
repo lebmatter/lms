@@ -23,6 +23,7 @@
   "result_tab",
   "total_marks",
   "result_status",
+  "issued_certificate",
   "column_break_whlx",
   "evaluation_pending",
   "assigned_evaluator",
@@ -36,7 +37,8 @@
    "fieldtype": "Link",
    "label": "Exam Schedule",
    "options": "LMS Exam Schedule",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fetch_from": "exam_schedule.exam",
@@ -170,6 +172,13 @@
    "fieldtype": "Data",
    "label": "Candidate Name",
    "read_only": 1
+  },
+  {
+   "fieldname": "issued_certificate",
+   "fieldtype": "Link",
+   "label": "Issued Certificate",
+   "options": "LMS Exam Certificate",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -177,9 +186,13 @@
   {
    "link_doctype": "LMS Exam Messages",
    "link_fieldname": "exam_submission"
+  },
+  {
+   "link_doctype": "LMS Exam Certificate",
+   "link_fieldname": "exam_submission"
   }
  ],
- "modified": "2024-04-30 08:21:26.053877",
+ "modified": "2024-05-30 16:11:13.628989",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",

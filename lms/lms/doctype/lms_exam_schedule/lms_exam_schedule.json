@@ -14,9 +14,12 @@
   "column_break_3",
   "question_type",
   "duration",
+  "status",
+  "certificate_template",
   "exam_settings_section",
   "column_break_5bke",
-  "examiners"
+  "examiners",
+  "amended_from"
  ],
  "fields": [
   {
@@ -38,7 +41,8 @@
    "in_standard_filter": 1,
    "label": "Exam",
    "options": "LMS Exam",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "examiners",
@@ -74,6 +78,32 @@
    "fieldtype": "Int",
    "label": "Duration",
    "read_only": 1
+  },
+  {
+   "default": "Scheduled",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Scheduled\nEnded",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "LMS Exam Schedule",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": ".certificate_template",
+   "fieldname": "certificate_template",
+   "fieldtype": "Link",
+   "label": "Certificate Template",
+   "options": "LMS Exam Certificate Template"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -84,7 +114,7 @@
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2023-09-18 15:32:09.489624",
+ "modified": "2024-05-30 16:05:41.117940",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",

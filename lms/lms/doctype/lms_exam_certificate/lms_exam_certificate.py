@@ -9,6 +9,14 @@ from frappe.utils.pdf import get_pdf
 
 
 class LMSExamCertificate(Document):
+
+    def before_save(self):
+        # only one certificate per exam submission
+        existing_certs = frappe.get_all("LMS Exam Certificate", filters={"exam_submission": self.exam_submission})
+        if len(existing_certs) > 0:
+            frappe.throw("Duplicate certificate exist for exam submission {}.".format(self.exam_submission))
+
+
     def after_insert(self):
         self.send_email()
 
@@ -18,9 +26,6 @@ class LMSExamCertificate(Document):
         # assert result status
         result_status = frappe.db.get_value("LMS Exam Submission", self.exam_submission, "result_status")
         assert result_status == "Passed", "Exam is not passed. Can't send certificate."
-
-        existing_certs = frappe.get_all("LMS Exam Certificate", filters={"exam_submission": self.exam_submission})
-        assert len(existing_certs) == 0, "Cannot create duplicate certificates for same exam."
 
     def send_email(self):
         self.can_send_certificate()
@@ -36,7 +41,17 @@ class LMSExamCertificate(Document):
         cert_content = frappe.render_template(cert_template_text, context)
 
         # Generate PDF
-        pdf_content = get_pdf(cert_content)
+        options = {
+            'margin-left': '0mm',
+            'margin-right': '0mm',
+            'margin-top': '0mm',
+            'margin-bottom': '0mm',
+            'no-pdf-compression': '',
+            'page-width': '9.8in',
+            'page-height': '13.5in',
+            'disable-smart-shrinking': ''
+        }
+        pdf_content = get_pdf(cert_content, options=options)
 
         # Create a temporary file
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
@@ -57,9 +72,8 @@ class LMSExamCertificate(Document):
             pdf_attachment = pdf_file.read()
 
         try:
-            # Send the email
             frappe.sendmail(
-                recipients=[member_email],
+                recipients=["labeeb@zerodha.com"],
                 subject=subject,
                 message=message,
                 attachments=[{

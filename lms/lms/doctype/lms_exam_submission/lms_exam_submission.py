@@ -53,30 +53,9 @@ class LMSExamSubmission(Document):
 
 	def before_save(self):
 		if self.exam_started_time:
-			self.total_marks, self.evaluation_pending, result_status = evaluation_values(
+			self.total_marks, self.evaluation_pending, self.result_status = evaluation_values(
 				self.exam, self.submitted_answers
 			)
-			self.result_status = result_status
-			# if result status is passed, issue certificate if required.
-			if result_status == "Passed":
-				try:
-					frappe.get_last_doc("LMS Exam Certificate", filters={"exam_submission": self.name})
-				except frappe.DoesNotExistError:
-					today = date.today()
-					certexp = frappe.db.get_value("LMS Exam", self.exam, "expiry")
-
-					new_cert = frappe.get_doc({
-						"doctype":"LMS Exam Certificate",
-						"exam_submission": self.name,
-						"exam": self.exam,
-						"member": self.candidate,
-						"member_name": self.candidate_name,
-						"issue_date": today
-					})
-					if certexp:
-						certexp *= 365
-						new_cert.expiry_date = today + timedelta(days=certexp)
-					new_cert.insert()
 
 		if "System Manager" in frappe.get_roles():
 			self.assign_proctor_evaluator()
@@ -289,6 +268,7 @@ def end_exam(exam_submission=None):
 		frappe.throw("Exam is not in started state.")
 
 	doc.status = "Submitted"
+	doc.exam_submitted_time = datetime.now()
 	doc.save(ignore_permissions=True)
 
 	# return result details
