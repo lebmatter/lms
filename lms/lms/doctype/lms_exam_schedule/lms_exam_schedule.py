@@ -150,7 +150,6 @@ def end_schedule(docname):
 	Submit all unsubmitted exams
 	Send certificated if applicable
 	"""
-	import pdb; pdb.set_trace()
 	doc = frappe.get_doc("LMS Exam Schedule", docname)
 	if not doc.can_end_schedule():
 		return
