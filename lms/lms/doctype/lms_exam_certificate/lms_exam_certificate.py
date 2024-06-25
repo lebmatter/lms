@@ -2,10 +2,10 @@
 # For license information, please see license.txt
 
 import os
+import subprocess
 import tempfile
 import frappe
 from frappe.model.document import Document
-from frappe.utils.pdf import get_pdf
 
 
 class LMSExamCertificate(Document):
@@ -30,33 +30,41 @@ class LMSExamCertificate(Document):
     def send_email(self):
         self.can_send_certificate()
 
-
         cert_template = frappe.db.get_value("LMS Exam", self.exam, "certificate_template")
-        cert_template_text = frappe.db.get_value("LMS Exam Certificate Template", cert_template, "template")
+        cert_template_path = frappe.db.get_value("LMS Exam Certificate Template", cert_template, "template_path")
+        assert cert_template_path
+        assert os.path.exits(cert_template_path)
+
         # Render certificate content
         context = {
             "name": self.member_name,
             "score": frappe.db.get_value("LMS Exam Submission", self.exam_submission, "total_marks"),
         }
-        cert_content = frappe.render_template(cert_template_text, context)
+        # Create a temporary file
+        temp_file = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.pdf')
+        temp_pdf_path = temp_file.name
 
         # Generate PDF
-        options = {
-            'margin-left': '0mm',
-            'margin-right': '0mm',
-            'margin-top': '0mm',
-            'margin-bottom': '0mm',
-            'no-pdf-compression': '',
-            'page-width': '9.8in',
-            'page-height': '13.5in',
-            'disable-smart-shrinking': ''
-        }
-        pdf_content = get_pdf(cert_content, options=options)
-
-        # Create a temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
-            temp_pdf.write(pdf_content)
-            temp_pdf_path = temp_pdf.name
+        command = [
+            "wkhtmltopdf",
+            "-L", "0mm",
+            "-R", "0mm",
+            "-T", "0mm",
+            "-B", "0mm",
+            "--no-outline",
+            "--no-pdf-compression",
+            "--page-width", "9.8in",
+            "--page-height", "13.5in",
+            "--disable-smart-shrinking",
+            cert_template_path,
+            temp_pdf_path
+        ]
+        # Execute the command
+        try:
+            subprocess.run(command, check=True)
+            print("PDF generated successfully.")
+        except subprocess.CalledProcessError as e:
+            print(f"Error generating PDF: {e}")
 
         # Retrieve the email template document
         email_template = frappe.get_doc("Email Template", "Exam Certificate Issue")
@@ -83,4 +91,5 @@ class LMSExamCertificate(Document):
             )
         finally:
             # Delete the temporary file
-            os.remove(temp_pdf_path)
+            temp_file.close()
+
