@@ -48,7 +48,7 @@ class LMSExamCertificate(Document):
             html_content = file.read()
             rendered_html = frappe.render_template(html_content, context)
             # Save the rendered HTML to a new file
-            with open(input_html, "w") as file:
+            with open(input_html.name, "w") as file:
                 file.write(rendered_html)
 
         # Generate PDF
