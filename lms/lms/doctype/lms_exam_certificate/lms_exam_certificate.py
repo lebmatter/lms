@@ -40,9 +40,16 @@ class LMSExamCertificate(Document):
             "name": self.member_name,
             "score": frappe.db.get_value("LMS Exam Submission", self.exam_submission, "total_marks"),
         }
-        # Create a temporary file
-        temp_file = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.pdf')
-        temp_pdf_path = temp_file.name
+        input_html = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.html')
+        cert_pdf = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.pdf')
+
+        # template temporary file
+        with open(cert_template_path, "r") as file:
+            html_content = file.read()
+            rendered_html = frappe.render_template(html_content, context)
+            # Save the rendered HTML to a new file
+            with open(input_html, "w") as file:
+                file.write(rendered_html)
 
         # Generate PDF
         command = [
@@ -56,8 +63,8 @@ class LMSExamCertificate(Document):
             "--page-width", "9.8in",
             "--page-height", "13.5in",
             "--disable-smart-shrinking",
-            cert_template_path,
-            temp_pdf_path
+            input_html.name,
+            cert_pdf.name
         ]
         # Execute the command
         try:
@@ -76,12 +83,12 @@ class LMSExamCertificate(Document):
         member_email = frappe.db.get_value("User", self.member, "email")
 
         # Read the PDF content from the temporary file
-        with open(temp_pdf_path, 'rb') as pdf_file:
+        with open(cert_pdf.name, 'rb') as pdf_file:
             pdf_attachment = pdf_file.read()
 
         try:
             frappe.sendmail(
-                recipients=["labeeb@zerodha.com"],
+                recipients=[member_email],
                 subject=subject,
                 message=message,
                 attachments=[{
@@ -91,5 +98,6 @@ class LMSExamCertificate(Document):
             )
         finally:
             # Delete the temporary file
-            temp_file.close()
+            cert_pdf.close()
+            input_html.close()
 
