@@ -31,6 +31,7 @@ class LMSExamSubmission(Document):
 	
 	def on_trash(self):
 		frappe.db.delete("LMS Exam Messages", {"exam_submission": self.name})
+		frappe.db.delete("LMS Exam Certificate", {"exam_submission": self.name})
 
 	def exam_ended(self):
 		"""

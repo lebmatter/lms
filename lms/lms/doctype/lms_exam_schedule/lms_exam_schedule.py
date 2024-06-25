@@ -34,10 +34,6 @@ class LMSExamSchedule(Document):
 
 	
 	def can_end_schedule(self):
-		if self.status == "Ended":
-			frappe.msgprint("Schedule is already ended!")
-			return False
-		
 		now = datetime.now()
 		end_time = self.start_date_time + timedelta(minutes=self.duration +0)
 		if now < end_time:
@@ -154,6 +150,7 @@ def end_schedule(docname):
 	Submit all unsubmitted exams
 	Send certificated if applicable
 	"""
+	import pdb; pdb.set_trace()
 	doc = frappe.get_doc("LMS Exam Schedule", docname)
 	if not doc.can_end_schedule():
 		return

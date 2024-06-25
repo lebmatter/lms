@@ -33,7 +33,7 @@ class LMSExamCertificate(Document):
         cert_template = frappe.db.get_value("LMS Exam", self.exam, "certificate_template")
         cert_template_path = frappe.db.get_value("LMS Exam Certificate Template", cert_template, "template_path")
         assert cert_template_path
-        assert os.path.exits(cert_template_path)
+        assert os.path.exists(cert_template_path)
 
         # Render certificate content
         context = {
