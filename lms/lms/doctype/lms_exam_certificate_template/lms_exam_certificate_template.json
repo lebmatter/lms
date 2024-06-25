@@ -6,7 +6,8 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
-  "template_path"
+  "template_path",
+  "wkhmltopdf_params"
  ],
  "fields": [
   {
@@ -18,11 +19,16 @@
    "fieldname": "template_path",
    "fieldtype": "Data",
    "label": "Template path"
+  },
+  {
+   "fieldname": "wkhmltopdf_params",
+   "fieldtype": "Data",
+   "label": "Wkhmltopdf params"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-06-14 09:51:07.021728",
+ "modified": "2024-06-25 15:50:43.127735",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Certificate Template",
