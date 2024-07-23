@@ -39,6 +39,7 @@ class LMSExamCertificate(Document):
         context = {
             "name": self.member_name,
             "score": frappe.db.get_value("LMS Exam Submission", self.exam_submission, "total_marks"),
+            "total_marks": frappe.db.get_value("LMS Exam", self.exam, "total_marks")
         }
         input_html = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.html')
         cert_pdf = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.pdf')
