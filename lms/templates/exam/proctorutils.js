@@ -404,4 +404,16 @@ frappe.ready(() => {
   $("#chatModal").on("hidden.bs.modal", function () {
     activeChat = "";
   });
+
+
+  var $examStatus = $('.examstatus');
+
+  if ($examStatus.text() === 'Started') {
+      $examStatus.removeClass();
+      $examStatus.addClass('btn btn-sm btn-success');
+  } else if ($examStatus.text() === 'Terminated') {
+      $examStatus.removeClass();
+      $examStatus.addClass('btn btn-sm btn-danger');
+  }
+
 });

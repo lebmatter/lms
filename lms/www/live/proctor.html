@@ -143,7 +143,7 @@ Proctor
     <div class="row text-center">
         {% for index, submission in enumerate(submissions) %}
         <div class="col-md-4">
-            <small>{{ submission.candidate_name }}</small>
+            <small>{{ submission.candidate_name }} | <span class="examstatus">{{ submission.status }}</span></small>
             <div class="video-container border border-primary" data-videoid="{{ submission.name }}"
                 data-candidatename="{{ submission.candidate_name }}" data-islive="0">
                 <video class="video" id="{{ submission.name }}" data-videoid="{{ submission.name }}" preload="metadata">
