@@ -185,6 +185,11 @@ frappe.ready(() => {
         }
     }
     if (exam.submission_status === "Started") {
+        // Check if the navbar does not already have the class 'hidden'
+        var $navbar = $('.navbar');
+        if (!$navbar.hasClass('hidden')) {
+            $navbar.addClass('hidden');
+        }
         // Start the countdown timer
         updateTimer();
     }
