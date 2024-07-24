@@ -1,38 +1,76 @@
 {% extends "lms/templates/lms_base.html" %}
-<!-- {% from "www/macros/livecode.html" import LiveCodeEditorJS, LiveCodeEditor with context %} -->
 
-
-{% block title %}
-Score Card
-{% endblock %}
-
+{% block title %}Exam Score Card{% endblock %}
 
 {% block head_include %}
 {% for ext in page_extensions %}
 {{ ext.render_header() }}
 {% endfor %}
+<style>
+    .score-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    .score-header {
+        background-color: #4a69bd;
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+    .score-body {
+        padding: 30px;
+    }
+    .score-circle {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background-color: #4a69bd;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin: 0 auto 20px;
+    }
+    .result-status {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .result-status.passed {
+        color: #27ae60;
+    }
+    .result-status.failed {
+        color: #e74c3c;
+    }
+</style>
 {% endblock %}
 
 {% block page_content %}
-<div class="container mt-4"></div>
-<div class="container mt-4">
-    <div class="card text-center">
-        <div class="card-header">
-            Score card: {{ exam_submission.exam }}
+<div class="container mt-5">
+    <div class="score-card">
+        <div class="score-header">
+            <h2>Exam Score Card</h2>
+            <p>{{ exam_submission.exam }}</p>
         </div>
-        <div class="card-body">
-            <h5 class="card-title">Result status: {{ exam_submission.result_status }}</h5>
-            <p class="card-text">You score: {{ exam_submission.total_marks }}/{{ exam_submission.exam_total_marks }}</p>
-            <a href="/exams" class="btn btn-primary">View all exams</a>
-        </div>
-        <div class="card-footer text-muted">
+        <div class="score-body">
+            <div class="score-circle">
+                {{ exam_submission.total_marks }}/{{ exam_submission.exam_total_marks }}
+            </div>
+            <div class="result-status {% if exam_submission.result_status == 'Passed' %}passed{% else %}failed{% endif %}">
+                Result: {{ exam_submission.result_status }}
+            </div>
+            <div class="text-center mt-4">
+                <a href="/exams" class="btn btn-primary btn-lg">View All Exams</a>
+            </div>
         </div>
     </div>
 </div>
-<div class="container mt-4"></div>
 {% endblock %}
 
-<!-- Scripts -->
-{%- block script %}
+{% block script %}
 {{ super() }}
 {% endblock %}

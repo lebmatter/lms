@@ -3,9 +3,21 @@
 {% block content %}
 	{% include "public/icons/symbol-defs.svg" %}
 	{% include "lms/templates/onboarding_header.html" %}
-	{% block page_content %}
-		Hello, world!
-	{% endblock %}
+	<div class="container-sm">
+		{% block page_content %}
+			Hello, world!
+		{% endblock %}
+	</div>
+{% endblock %}
+
+{% block style %}
+<style>
+	.container-sm {
+		max-width: 960px;
+		margin: 0 auto;
+		padding: 0 15px;
+	}
+</style>
 {% endblock %}
 
 {%- block script -%}
