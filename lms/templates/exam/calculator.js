@@ -9,8 +9,8 @@ function handleKeyboardInput(event) {
         appendNumber(key);
     } else if (['+', '-', '*', '/', '%'].includes(key)) {
         appendSymbol(key);
-    } else if (key === 'Enter') {
-        appendSymbol('=');
+    } else if (key === 'Enter' || key === '=') {
+        calculateResult();
     } else if (key === 'Backspace') {
         let currentResult = getCurrentResult();
         updateResult(currentResult.slice(0, -1) || '0');
@@ -27,6 +27,27 @@ const updateResult = (newResult) => {
     $("#calcResult").val(newResult);
 };
 
+const calculateResult = () => {
+    let currentResult = getCurrentResult();
+    // sanitize current result with regex
+    var pattern = /^[-+*/%0-9.]*$/;
+    if (!pattern.test(currentResult)) {
+        updateResult("Error: Invalid characters");
+        return;
+    }
+    
+    try {
+        let evaluatedResult = eval(currentResult);
+        if (!isFinite(evaluatedResult)) {
+            updateResult("Error");
+        } else {
+            updateResult(evaluatedResult);
+        }
+    } catch (error) {
+        updateResult('Error');
+    }
+};
+
 const appendSymbol = symbol => {
     let currentResult = getCurrentResult();
     // sanitize current result with regex
@@ -36,20 +57,7 @@ const appendSymbol = symbol => {
         return;
     }
     
-    if (symbol === '=') {
-        try {
-            let evaluatedResult = eval(currentResult);
-            if (!isFinite(evaluatedResult)) {
-                updateResult("Error");
-            } else {
-                updateResult(evaluatedResult);
-            }
-        } catch (error) {
-            updateResult('Error');
-        }
-    } else {
-        updateResult(currentResult + symbol);
-    }
+    updateResult(currentResult + symbol);
 };
 
 const appendNumber = number => {
