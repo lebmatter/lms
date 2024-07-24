@@ -573,15 +573,24 @@ function submitAnswer(loadNext) {
                         $("#quiz-form").addClass("hide");
 
                         $("#quiz-title").html();
-                        $("#quiz-btn").text("Submit exam");
-                        $("#quiz-btn").click((e) => {
-                            e.preventDefault();
-                            endExam();
-                        });
-                        $("#quiz-btn").show();
-                        $("#quiz-message").html(
-                            "<p class='text-muted'>You have remaining time in the exam.</p><p class='text-muted'>You can review and revise your answers until the allocated time expires.</p>"
-                        );
+                        $("#quiz-btn").text("Submit exam")
+                            .click((e) => {
+                                e.preventDefault();
+                                endExam();
+                            })
+                            .show();
+                        let messageHtml = "<span class='text-muted'>You have remaining time in the exam.</\span><br><span class='text-muted'>You can review and revise your answers until the allocated time expires.</span>";
+                        
+                        if (examOverview.total_marked_for_later >= 1) {
+                            messageHtml += `
+                            <div class="alert alert-warning mt-3" role="alert">
+                                <strong>Warning:</strong><br>
+                                You have ${examOverview.total_marked_for_later} question(s) marked for later review.<br>
+                                Please make sure to answer all questions before submitting the exam.
+                            </div>`;
+                        }
+                        
+                        $("#quiz-message").html(messageHtml);
                         $("#quiz-message").show();
                     }
                 }
