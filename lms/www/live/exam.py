@@ -30,6 +30,9 @@ def get_context(context):
 	elif exam_details["submission_status"] == "Submitted":
 		frappe.local.flags.redirect_location = f"/exams/scorecard/{exam_details['exam_submission']}"
 		raise frappe.Redirect
+	elif exam_details["submission_status"] == "Terminated":
+		frappe.local.flags.redirect_location = f"/exams/terminated/{exam_details['exam_submission']}"
+		raise frappe.Redirect
 	
 	elif exam_details["live_status"] == "Live":
 		context.alert = {}
@@ -67,4 +70,3 @@ def get_context(context):
 				exam_details["exam"],
 				exam_details["start_time"]
 		)}
-		

@@ -1,0 +1,67 @@
+{% extends "lms/templates/lms_base.html" %}
+
+{% block title %}Exam Terminated{% endblock %}
+
+{% block head_include %}
+{% for ext in page_extensions %}
+{{ ext.render_header() }}
+{% endfor %}
+<style>
+    .terminated-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    .terminated-header {
+        background-color: #e74c3c;
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+    .terminated-body {
+        padding: 30px;
+    }
+    .terminated-icon {
+        font-size: 64px;
+        color: #e74c3c;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .terminated-message {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #e74c3c;
+    }
+</style>
+{% endblock %}
+
+{% block page_content %}
+<div class="container mt-5">
+    <div class="terminated-card">
+        <div class="terminated-header">
+            <h2>Exam Terminated</h2>
+        </div>
+        <div class="terminated-body">
+            <div class="terminated-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="terminated-message">
+                Your exam has been terminated.
+            </div>
+            <div class="text-center">
+                <p>Reason: {{ termination_reason }}</p>
+            </div>
+            <div class="text-center mt-4">
+                <a href="/exams" class="btn btn-primary btn-lg">Back to Exams</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+{% endblock %}
