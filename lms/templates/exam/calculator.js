@@ -82,6 +82,7 @@ const clearResult = () => {
 };
 
 const dispatchKeyEvent = (key) => {
+    console.log(key);
     // Only dispatch events for valid calculator inputs
     if (/^[0-9+\-*/%=.]$/.test(key) || key === 'Escape') {
         const event = new KeyboardEvent('keydown', {

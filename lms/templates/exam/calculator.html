@@ -3,7 +3,7 @@
         <div class="calculator">
             <div class="row mb-2">
                 <div class="col-12">
-                    <input type="text" id="calcResult" class="form-control" onkeydown="return appendSymbol('=')">
+                    <input type="text" id="calcResult" class="form-control" pattern="[0-9+\-*/%=.]*" onkeypress="return /[0-9+\-*/%=.]/.test(event.key)" onkeydown="return appendSymbol('=')">
                 </div>
             </div>
             <div class="row mb-2">
