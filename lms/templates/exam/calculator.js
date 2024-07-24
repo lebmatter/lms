@@ -14,7 +14,7 @@ function handleKeyboardInput(event) {
     } else if (key === 'Backspace') {
         let currentResult = getCurrentResult();
         updateResult(currentResult.slice(0, -1) || '0');
-    } else if (key === 'Escape') {
+    } else if (key === 'Escape' || key === 'c') {
         clearResult();
     }
 }
