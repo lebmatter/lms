@@ -57,7 +57,14 @@ const appendSymbol = symbol => {
         return;
     }
     
-    updateResult(currentResult + symbol);
+    // Check if the current result ends with a non-numeric symbol
+    if (/[-+*/%]$/.test(currentResult)) {
+        // If it does, replace the last symbol with the new one
+        updateResult(currentResult.slice(0, -1) + symbol);
+    } else {
+        // If it doesn't, append the new symbol
+        updateResult(currentResult + symbol);
+    }
 };
 
 const appendNumber = number => {
