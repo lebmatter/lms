@@ -430,7 +430,7 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 		type_of_user = "Proctor"
 
 	tnow = frappe.utils.now()
-	doc = frappe.get_doc({
+	msg_doc = frappe.get_doc({
 		"doctype": "LMS Exam Messages",
 		"exam_submission": exam_submission,
 		"timestamp": tnow,
@@ -440,7 +440,54 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 		"type_of_message": type_of_message,
 		"warning_type": warning_type
 	})
-	doc.insert(ignore_permissions=True)
+	msg_doc.insert(ignore_permissions=True)
+
+	# Check if the warning is for tab change and update the warning count
+	if warning_type == "tabchange":
+		# Count the number of tabchange warnings for this exam submission
+		warning_count = frappe.db.count("LMS Exam Messages", 
+			filters={"exam_submission": exam_submission, "warning_type": "tabchange"})
+
+		# Get the max_warning_count from LMS Exam
+		max_warning_count = frappe.get_value("LMS Exam", doc.exam, "max_warning_count")
+
+		# If warning count exceeds max_warning_count, terminate the exam
+		if warning_count >= max_warning_count:
+			doc.status = "Terminated"
+			doc.save(ignore_permissions=True)
+			frappe.db.commit()
+
+			# Add a message for exam termination
+			terminate_msg = frappe.get_doc({
+				"doctype": "LMS Exam Messages",
+				"exam_submission": exam_submission,
+				"timestamp": frappe.utils.now(),
+				"from": "System",
+				"from_user": "Administrator",
+				"message": "Exam terminated due to excessive tab changes.",
+				"type_of_message": "Critical",
+				"warning_type": "other"
+			})
+			terminate_msg.insert(ignore_permissions=True)
+	
+	# Terminate exam immediately if warning_type is nowebcam
+	elif warning_type == "nowebcam":
+		doc.status = "Terminated"
+		doc.save(ignore_permissions=True)
+		frappe.db.commit()
+
+		# Add a message for exam termination
+		terminate_msg = frappe.get_doc({
+			"doctype": "LMS Exam Messages",
+			"exam_submission": exam_submission,
+			"timestamp": frappe.utils.now(),
+			"from": "System",
+			"from_user": "Administrator",
+			"message": "Exam terminated due to webcam disconnection.",
+			"type_of_message": "Critical",
+			"warning_type": "nowebcam"
+		})
+		terminate_msg.insert(ignore_permissions=True)
 
 	return {"status": 1}
 
