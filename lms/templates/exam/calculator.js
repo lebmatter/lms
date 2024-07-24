@@ -27,6 +27,12 @@ const updateResult = (newResult) => {
     $("#calcResult").val(newResult);
 };
 
+const showResult = (newResult) => {
+    // Remove trailing symbols                                                                                                                                                                                                                                                                               
+    newResult = newResult.toString().replace(/[+\-*/%.]$/, ''); 
+    $("#calcResult").val(newResult);
+};
+
 const calculateResult = () => {
     let currentResult = getCurrentResult();
     // sanitize current result with regex
@@ -41,7 +47,7 @@ const calculateResult = () => {
         if (!isFinite(evaluatedResult)) {
             updateResult("Error");
         } else {
-            updateResult(evaluatedResult);
+            showResult(evaluatedResult);
         }
     } catch (error) {
         updateResult('Error');
