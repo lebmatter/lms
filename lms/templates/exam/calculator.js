@@ -75,10 +75,13 @@ const clearResult = () => {
 };
 
 const dispatchKeyEvent = (key) => {
-    const event = new KeyboardEvent('keydown', {
-        key: key,
-        bubbles: true,
-        cancelable: true,
-    });
-    document.dispatchEvent(event);
+    // Only dispatch events for valid calculator inputs
+    if (/^[0-9+\-*/%=.]$/.test(key) || key === 'Escape') {
+        const event = new KeyboardEvent('keydown', {
+            key: key,
+            bubbles: true,
+            cancelable: true,
+        });
+        document.dispatchEvent(event);
+    }
 };
