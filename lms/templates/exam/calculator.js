@@ -55,6 +55,7 @@ const calculateResult = () => {
     }
     
     try {
+        currentResult = currentResult.replace(/%/g, '/100');
         let evaluatedResult = eval(currentResult);
         if (!isFinite(evaluatedResult)) {
             updateResult("Error");
