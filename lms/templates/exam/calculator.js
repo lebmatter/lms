@@ -1,23 +1,35 @@
 frappe.ready(() => {
     updateResult(0);
     document.addEventListener('keydown', handleKeyboardInput);
+
+    $card = $('#calcCard');
+    $card.on('focusin', function() {
+        $(this).addClass('focus-ring');
+      });
+
+    $card.on('focusout', function() {
+    $(this).removeClass('focus-ring');
+    });
+
 });
 
 function handleKeyboardInput(event) {
-    const key = event.key;
-    if (/[0-9.]/.test(key)) {
-        appendNumber(key);
-    } else if (['+', '-', '*', '/', '%'].includes(key)) {
-        appendSymbol(key);
-    } else if (key === 'Enter' || key === '=') {
-        calculateResult();
-    } else if (key === 'Backspace') {
-        let currentResult = getCurrentResult();
-        updateResult(currentResult.slice(0, -1) || '0');
-    } else if (key === 'Escape' || key === 'c') {
-        clearResult();
-    }
-}
+    $card = $('#calcCard');
+    if ($card.is(':focus') || $card.find(':focus').length > 0) {
+        const key = event.key;
+        if (/[0-9.]/.test(key)) {
+            appendNumber(key);
+        } else if (['+', '-', '*', '/', '%'].includes(key)) {
+            appendSymbol(key);
+        } else if (key === 'Enter' || key === '=') {
+            calculateResult();
+        } else if (key === 'Backspace') {
+            let currentResult = getCurrentResult();
+            updateResult(currentResult.slice(0, -1) || '0');
+        } else if (key === 'Escape' || key === 'c') {
+            clearResult();
+        }
+}}
 
 const getCurrentResult = () => {
     const resultElement = document.getElementById('calcResult');
@@ -88,14 +100,16 @@ const clearResult = () => {
 };
 
 const dispatchKeyEvent = (key) => {
-    console.log(key);
     // Only dispatch events for valid calculator inputs
-    if (/^[0-9+\-*/%=.]$/.test(key) || key === 'Escape') {
-        const event = new KeyboardEvent('keydown', {
-            key: key,
-            bubbles: true,
-            cancelable: true,
-        });
-        document.dispatchEvent(event);
-    }
+    $card = $('#calcCard');
+    if ($card.is(':focus') || $card.find(':focus').length > 0) {
+        if (/^[0-9+\-*/%=.]$/.test(key) || key === 'Escape') {
+            const event = new KeyboardEvent('keydown', {
+                key: key,
+                bubbles: true,
+                cancelable: true,
+            });
+            document.dispatchEvent(event);
+        }
+      } 
 };
