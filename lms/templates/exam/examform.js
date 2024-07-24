@@ -16,7 +16,7 @@ function handleVisibilityChange() {
         visibleTime += (secondsInactive - 1); // Subtract 1 second for the transition time
         let tabChangeStr = "Page was inactive for " + secondsInactive + " seconds";
         if (secondsInactive > 1) {
-            sendMessage(tabChangeStr, "Warning");
+            sendMessage(tabChangeStr, "Warning", "tabchange");
         }
 
         // Reset the variables
@@ -33,7 +33,7 @@ function detectMonitorChange() {
         let currentScreens = window.screen.width + 'x' + window.screen.height;
         if (currentScreens !== lastScreens) {
             let monitorChangeStr = "Monitor configuration changed from " + lastScreens + " to " + currentScreens;
-            sendMessage(monitorChangeStr, "Warning");
+            sendMessage(monitorChangeStr, "Warning", "monitorchange");
             lastScreens = currentScreens;
         }
     }, 1000); // Check every second
@@ -120,7 +120,7 @@ function startRecording() {
                         'Webcam was disabled or stopped',
                         'Exam will be terminated. Refresh the page or fix the issue.'
                     );
-                    sendMessage('Webcam was disabled or stopped', 'Warning');
+                    sendMessage('Webcam was disabled or stopped', 'Warning', 'nowebcam');
                 });
             });
 
@@ -158,7 +158,7 @@ function startRecording() {
                 'No webcam detected',
                 'Exam will be terminated. Refresh the page or fix the issue.'
             );
-            sendMessage('Webcam was not detected', 'Warning');
+            sendMessage('Webcam was not detected', 'Warning', 'nowebcam');
         });
 }
 
@@ -458,7 +458,7 @@ function displayQuestion(current_qs) {
 
 };
 
-function sendMessage(message, messageType) {
+function sendMessage(message, messageType, warningType) {
     frappe.call({
         method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.post_exam_message",
         type: "POST",
@@ -466,6 +466,7 @@ function sendMessage(message, messageType) {
             'exam_submission': exam["exam_submission"],
             'message': message,
             'type_of_message': messageType,
+            'warning_type': warningType,
         },
         callback: (data) => {
             console.log(data);

@@ -54,7 +54,7 @@
    "fieldname": "warning_type",
    "fieldtype": "Select",
    "label": "Warning Type",
-   "options": "tabchange\nmonitorchange"
+   "options": "tabchange\nmonitorchange\nnowebcam\nother"
   },
   {
    "fieldname": "timestamp",

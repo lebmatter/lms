@@ -411,7 +411,7 @@ def submit_exam(exam_submission=None):
 	return {"status": "Submitted"}
 
 @frappe.whitelist()
-def post_exam_message(exam_submission=None, message=None, type_of_message="General"):
+def post_exam_message(exam_submission=None, message=None, type_of_message="General", warning_type="other"):
 	"""
 	Submit response and add marks if applicable
 	"""
@@ -437,7 +437,8 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 		"from": type_of_user,
 		"from_user": frappe.session.user,
 		"message": message,
-		"type_of_message": type_of_message
+		"type_of_message": type_of_message,
+		"warning_type": warning_type
 	})
 	doc.insert(ignore_permissions=True)
 
