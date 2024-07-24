@@ -12,9 +12,9 @@ frappe.ready(() => {
     });
 
     $('.calcBtn').on('mousedown', function(e) {
-        e.preventDefault(); // Prevent default mousedown behavior
         const key = $(this).data('key');
         dispatchKeyEvent(key);
+        e.preventDefault(); // Prevent default mousedown behavior after handling the event
     });
 });
 
@@ -108,14 +108,15 @@ const clearResult = () => {
 const dispatchKeyEvent = (key) => {
     // Only dispatch events for valid calculator inputs
     $card = $('#calcCard');
-    if ($card.is(':focus') || $card.find(':focus').length > 0) {
-        if (/^[0-9+\-*/%=.]$/.test(key) || key === 'Escape') {
-            const event = new KeyboardEvent('keydown', {
-                key: key,
-                bubbles: true,
-                cancelable: true,
-            });
-            document.dispatchEvent(event);
-        }
-      } 
+    if (!$card.is(':focus') && $card.find(':focus').length === 0) {
+        $card.focus();
+    }
+    if (/^[0-9+\-*/%=.]$/.test(key) || key === 'Escape') {
+        const event = new KeyboardEvent('keydown', {
+            key: key,
+            bubbles: true,
+            cancelable: true,
+        });
+        document.dispatchEvent(event);
+    }
 };
