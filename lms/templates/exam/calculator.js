@@ -5,7 +5,7 @@ frappe.ready(() => {
 
 function handleKeyboardInput(event) {
     const key = event.key;
-    if (/[0-9]/.test(key)) {
+    if (/[0-9.]/.test(key)) {
         appendNumber(key);
     } else if (['+', '-', '*', '/', '%'].includes(key)) {
         appendSymbol(key);
