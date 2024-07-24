@@ -73,3 +73,12 @@ const appendNumber = number => {
 const clearResult = () => {
     updateResult(0);
 };
+
+const dispatchKeyEvent = (key) => {
+    const event = new KeyboardEvent('keydown', {
+        key: key,
+        bubbles: true,
+        cancelable: true,
+    });
+    document.dispatchEvent(event);
+};
