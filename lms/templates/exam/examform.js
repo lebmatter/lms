@@ -177,6 +177,21 @@ function stopRecording() {
 frappe.ready(() => {
     updateOverviewMap();
 
+    // Disable right-click context menu
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    // Disable text selection
+    document.addEventListener('selectstart', function(e) {
+        e.preventDefault();
+    });
+
+    // Disable copy
+    document.addEventListener('copy', function(e) {
+        e.preventDefault();
+    });
+
     // check if exam is already started
     if (exam["submission_status"] === "Registered") {
         $("#quiz-btn").text("Start exam");
