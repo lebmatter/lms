@@ -9,7 +9,6 @@ function handleVisibilityChange() {
         // Page is now hidden
         startTime = new Date();
     } else if (currentQsNo >= 2) {
-
         // Page is now visible
         var endTime = new Date();
         var secondsInactive = Math.floor((endTime - startTime) / 1000);
@@ -25,6 +24,19 @@ function handleVisibilityChange() {
         visibleTime = 0;
         startTime = null;
     }
+}
+
+function detectMonitorChange() {
+    let lastScreens = window.screen.width + 'x' + window.screen.height;
+
+    setInterval(() => {
+        let currentScreens = window.screen.width + 'x' + window.screen.height;
+        if (currentScreens !== lastScreens) {
+            let monitorChangeStr = "Monitor configuration changed from " + lastScreens + " to " + currentScreens;
+            sendMessage(monitorChangeStr, "Warning");
+            lastScreens = currentScreens;
+        }
+    }, 1000); // Check every second
 }
 
 // Function to update the countdown timer
@@ -183,6 +195,7 @@ frappe.ready(() => {
         if (exam.enable_video_proctoring) {
             startRecording();
         }
+        detectMonitorChange(); // Add this line to start monitoring for screen changes
     }
     if (exam.submission_status === "Started") {
         // Check if the navbar does not already have the class 'hidden'
