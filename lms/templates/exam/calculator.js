@@ -5,12 +5,17 @@ frappe.ready(() => {
     $card = $('#calcCard');
     $card.on('focusin', function() {
         $(this).addClass('focus-ring');
-      });
-
-    $card.on('focusout', function() {
-    $(this).removeClass('focus-ring');
     });
 
+    $card.on('focusout', function() {
+        $(this).removeClass('focus-ring');
+    });
+
+    $('.calcBtn').on('mousedown', function(e) {
+        e.preventDefault(); // Prevent default mousedown behavior
+        const key = $(this).data('key');
+        dispatchKeyEvent(key);
+    });
 });
 
 function handleKeyboardInput(event) {
