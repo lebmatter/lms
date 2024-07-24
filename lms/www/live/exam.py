@@ -28,13 +28,9 @@ def get_context(context):
 			"text": "You do not have any live or upcoming exams."
 		}
 	elif exam_details["submission_status"] == "Submitted":
-		context.exam = {}
-		context.alert = {
-			"title": "Exam submitted!",
-			"text": "You have already submitted your previous exam: {}.".format(
-				exam_details["exam"]
-			)
-		}
+		frappe.local.flags.redirect_location = f"/exams/scorecard/{exam_details['exam_submission']}"
+		raise frappe.Redirect
+	
 	elif exam_details["live_status"] == "Live":
 		context.alert = {}
 		exam = frappe.db.get_value(
