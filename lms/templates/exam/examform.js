@@ -127,6 +127,7 @@ function startRecording() {
             // Attach the stream to the video element
             document.getElementById('webcam-stream').srcObject = stream;
 
+            if (exam["submission_status"] === "Started") { 
             // Create a recorder instance
             recorder = RecordRTC(stream, {
                 type: 'video',
@@ -150,6 +151,7 @@ function startRecording() {
                     recorder.startRecording();
                 });
             }, 10000);
+            }
         })
         .catch(function (error) {
             examAlert(
@@ -251,13 +253,16 @@ function updateOverviewMap() {
         success: (data) => {
             examOverview = data.message;
             // if this is the lastQs, change button
-            if (currentQuestion["no"] === examOverview["total_questions"]) {
-                $('#nextQs').hide();
-                $('#finish').show();
-            } else {
-                $('#nextQs').show();
-                $('#finish').hide();
+            if (currentQuestion) {
+                if (currentQuestion["no"] === examOverview["total_questions"]) {
+                    $('#nextQs').hide();
+                    $('#finish').show();
+                } else {
+                    $('#nextQs').show();
+                    $('#finish').hide();
+                }
             }
+
             // document.getElementById("answered").innerHTML = data.message.total_answered;
             // document.getElementById("notattempted").innerHTML = data.message.total_not_attempted;
             document.getElementById("markedforlater").innerHTML = data.message.total_marked_for_later;
