@@ -346,6 +346,11 @@ function displayQuestion(current_qs) {
         'data-type': currentQuestion["type"],
         'data-multi': currentQuestion["multiple"]
     });
+
+    // Add event listener for markedForLater checkbox
+    $('#markedForLater').on('change', function() {
+        hasChanged = true;
+    });
     if (currentQuestion["description_image"]) {
         $("#question-image").show();
         $("#question-image").attr("src", currentQuestion["description_image"]);
