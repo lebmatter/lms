@@ -95,6 +95,12 @@ const updateMessages = (exam_submission) => {
                 convertedTime = timeAgo(message.creation);
                 addChatBubble(convertedTime, message.message_text, message.message_type)
             });
+            if (message.message_type === "Critical") {
+                    // Delay the reload by 3 seconds (3000 milliseconds)
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 3000); // 3 seconds delay
+            }
 
         },
     });
