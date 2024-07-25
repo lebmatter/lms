@@ -192,7 +192,7 @@
    "link_fieldname": "exam_submission"
   }
  ],
- "modified": "2024-05-30 16:11:13.628989",
+ "modified": "2024-07-25 12:42:10.759719",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",
@@ -212,6 +212,7 @@
    "write": 1
   }
  ],
+ "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
