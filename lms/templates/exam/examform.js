@@ -34,7 +34,7 @@ function handleWindowChange() {
             var secondsInactive = Math.floor((endTime - startTime) / 1000);
             if (secondsInactive > 1) {
                 let windowChangeStr = "Window was inactive for " + secondsInactive + " seconds";
-                sendMessage(windowChangeStr, "Warning", "windowchange");
+                sendMessage(windowChangeStr, "Warning", "tabchange");
             }
             startTime = null;
         }
@@ -216,7 +216,7 @@ frappe.ready(() => {
 
     // Add event listener for window unload (close)
     window.addEventListener('beforeunload', function (e) {
-        sendMessage("Window closed", "Warning", "windowclose");
+        sendMessage("Window closed", "Warning", "tabchange");
         // Cancel the event
         e.preventDefault();
         // Chrome requires returnValue to be set
