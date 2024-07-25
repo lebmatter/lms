@@ -7,57 +7,88 @@
 {{ ext.render_header() }}
 {% endfor %}
 <style>
-    .terminated-card {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        border-radius: 15px;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    body {
+        background-color: #f9f9f9;
+        font-family: 'Inter', sans-serif;
+    }
+    .terminated-container {
+        max-width: 600px;
+        margin: 50px auto;
+        background-color: #fff;
+        border-radius: 3px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
         overflow: hidden;
     }
     .terminated-header {
-        background-color: #e74c3c;
+        background-color: #ff5722;
         color: white;
         padding: 20px;
         text-align: center;
+        font-size: 24px;
+        font-weight: 600;
     }
     .terminated-body {
         padding: 30px;
     }
     .terminated-icon {
-        font-size: 64px;
-        color: #e74c3c;
         text-align: center;
         margin-bottom: 20px;
     }
+    .terminated-icon i {
+        font-size: 64px;
+        color: #ff5722;
+    }
     .terminated-message {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 20px;
+        font-size: 18px;
         text-align: center;
-        color: #e74c3c;
+        margin-bottom: 20px;
+        color: #333;
+    }
+    .terminated-reason {
+        background-color: #f5f5f5;
+        border-left: 4px solid #ff5722;
+        padding: 15px;
+        margin-bottom: 20px;
+        font-size: 16px;
+        color: #333;
+    }
+    .back-button {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        background-color: #3f51b5;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 3px;
+        transition: background-color 0.3s ease;
+    }
+    .back-button:hover {
+        background-color: #303f9f;
+        color: white;
+        text-decoration: none;
     }
 </style>
 {% endblock %}
 
 {% block page_content %}
-<div class="container mt-5">
-    <div class="terminated-card">
-        <div class="terminated-header">
-            <h2>Exam Terminated</h2>
+<div class="terminated-container">
+    <div class="terminated-header">
+        Exam Terminated
+    </div>
+    <div class="terminated-body">
+        <div class="terminated-icon">
+            <i class="fas fa-exclamation-triangle"></i>
         </div>
-        <div class="terminated-body">
-            <div class="terminated-icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <div class="terminated-message">
-                Your exam has been terminated.
-            </div>
-            <div class="text-center">
-                <p>Reason: {{ termination_reason }}</p>
-            </div>
-            <div class="text-center mt-4">
-                <a href="/exams" class="btn btn-primary btn-lg">Back to Exams</a>
-            </div>
+        <div class="terminated-message">
+            We're sorry, but your exam has been terminated.
         </div>
+        <div class="terminated-reason">
+            <strong>Reason:</strong> {{ termination_reason }}
+        </div>
+        <a href="/exams" class="back-button">Back to Exams</a>
     </div>
 </div>
 {% endblock %}

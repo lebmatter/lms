@@ -7,66 +7,101 @@
 {{ ext.render_header() }}
 {% endfor %}
 <style>
+    body {
+        background-color: #f9f9f9;
+        font-family: 'Inter', sans-serif;
+    }
     .score-card {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        border-radius: 15px;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        max-width: 600px;
+        margin: 50px auto;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         overflow: hidden;
     }
     .score-header {
-        background-color: #4a69bd;
+        background-color: #3f51b5;
         color: white;
         padding: 20px;
         text-align: center;
+        font-size: 24px;
+        font-weight: 600;
     }
     .score-body {
         padding: 30px;
     }
     .score-circle {
-        width: 150px;
-        height: 150px;
+        width: 180px;
+        height: 180px;
         border-radius: 50%;
-        background-color: #4a69bd;
-        color: white;
+        background-color: #f5f5f5;
+        color: #3f51b5;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 24px;
-        margin: 0 auto 20px;
+        font-size: 36px;
+        font-weight: bold;
+        margin: 0 auto 30px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .result-status {
-        font-size: 24px;
+        font-size: 28px;
         font-weight: bold;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
         text-align: center;
     }
     .result-status.passed {
-        color: #27ae60;
+        color: #4caf50;
     }
     .result-status.failed {
-        color: #e74c3c;
+        color: #f44336;
+    }
+    .exam-details {
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    .exam-details p {
+        margin-bottom: 10px;
+    }
+    .back-button {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        background-color: #3f51b5;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        font-size: 18px;
+        font-weight: 600;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+    .back-button:hover {
+        background-color: #303f9f;
+        color: white;
+        text-decoration: none;
     }
 </style>
 {% endblock %}
 
 {% block page_content %}
-<div class="container mt-5">
-    <div class="score-card">
-        <div class="score-header">
-            <h2>Exam Score Card</h2>
-            <p>{{ exam_submission.exam }}</p>
+<div class="score-card">
+    <div class="score-header">
+        Exam Score Card
+    </div>
+    <div class="score-body">
+        <div class="score-circle">
+            {{ exam_submission.total_marks }}/{{ exam_submission.exam_total_marks }}
         </div>
-        <div class="score-body">
-            <div class="score-circle">
-                {{ exam_submission.total_marks }}/{{ exam_submission.exam_total_marks }}
-            </div>
-            <div class="result-status {% if exam_submission.result_status == 'Passed' %}passed{% else %}failed{% endif %}">
-                Result: {{ exam_submission.result_status }}
-            </div>
-            <div class="text-center mt-4">
-                <a href="/exams" class="btn btn-primary btn-lg">View All Exams</a>
-            </div>
+        <div class="result-status {% if exam_submission.result_status == 'Passed' %}passed{% else %}failed{% endif %}">
+            Result: {{ exam_submission.result_status }}
         </div>
+        <div class="exam-details">
+            <p><strong>Exam:</strong> {{ exam_submission.exam }}</p>
+        </div>
+        <a href="/exams" class="back-button">View All Exams</a>
     </div>
 </div>
 {% endblock %}
