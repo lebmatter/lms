@@ -210,19 +210,6 @@ frappe.ready(() => {
         e.preventDefault();
     });
 
-    // Add event listeners for window focus and blur
-    window.addEventListener('focus', handleWindowChange);
-    window.addEventListener('blur', handleWindowChange);
-
-    // Add event listener for window unload (close)
-    window.addEventListener('beforeunload', function (e) {
-        sendMessage("Window closed", "Warning", "tabchange");
-        // Cancel the event
-        e.preventDefault();
-        // Chrome requires returnValue to be set
-        e.returnValue = '';
-    });
-
     // check if exam is already started
     if (exam["submission_status"] === "Registered") {
         $("#quiz-btn").text("Start exam");
@@ -246,6 +233,19 @@ frappe.ready(() => {
         detectMonitorChange(); // Add this line to start monitoring for screen changes
     }
     if (exam.submission_status === "Started") {
+
+        // Add event listeners for window focus and blur
+        window.addEventListener('focus', handleWindowChange);
+        window.addEventListener('blur', handleWindowChange);
+
+        // Add event listener for window unload (close)
+        window.addEventListener('beforeunload', function (e) {
+            sendMessage("Window closed", "Warning", "tabchange");
+            // Cancel the event
+            e.preventDefault();
+            // Chrome requires returnValue to be set
+            e.returnValue = '';
+        });
         // Check if the navbar does not already have the class 'hidden'
         var $navbar = $('.navbar');
         if (!$navbar.hasClass('hidden')) {
