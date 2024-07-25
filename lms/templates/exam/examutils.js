@@ -46,20 +46,24 @@ function videoDisconnected(lastVideoURL) {
 }
 
 const addChatBubble = (timestamp, message, messageType) => {
-    var chatContainer = $('#messages');
-    var chatTimestamp = $('<div class="chat-timestamp"><small>' + timestamp + '</small></div>');
+    var chatContainer = $('#chat-messages');
+    var chatTimestamp = $('<div class="chat-timestamp">' + timestamp + '</div>');
     var msgWithPill = message;
     if (messageType === "Warning") {
-        msgWithPill = '<span class="badge badge-pill badge-warning">Warning</span> ' + message
+        msgWithPill = '<span class="badge badge-warning mr-1">Warning</span>' + message;
     } else if (messageType === "Critical") {
-        msgWithPill = '<span class="badge badge-pill badge-danger">Critical</span> ' + message
+        msgWithPill = '<span class="badge badge-danger mr-1">Critical</span>' + message;
     }
-    var chatBubble = $('<div class="chat-bubble chat-left"><small>' + msgWithPill + '</small></div>');
-    var chatWrapper = $('<div class="messages"></div>');
+    var chatBubble = $('<div class="chat-bubble chat-left">' + msgWithPill + '</div>');
+    var chatWrapper = $('<div class="d-flex flex-column mb-2"></div>');
 
     chatWrapper.append(chatTimestamp);
     chatWrapper.append(chatBubble);
+    
+    // Append the new chat bubble to the chat messages container
     chatContainer.append(chatWrapper);
+    
+    // Scroll to the bottom of the chat container
     chatContainer.scrollTop(chatContainer.prop("scrollHeight"));
 }
 

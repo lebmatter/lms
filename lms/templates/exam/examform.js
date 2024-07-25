@@ -474,6 +474,26 @@ function sendMessage(message, messageType, warningType) {
     });
 }
 
+function sendChatMessage() {
+    var message = $('#chat-input').val().trim();
+    if(message) {
+        frappe.call({
+            method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.post_exam_message",
+            type: "POST",
+            args: {
+                'exam_submission': exam["exam_submission"],
+                'message': message,
+                'type_of_message': 'General',
+                'warning_type': '',
+            },
+            callback: (data) => {
+                $('#chat-input').val('');
+                updateMessages(exam.exam_submission);
+            },
+        });
+    }
+}
+
 function endExam() {
     if (!examEnded) {
         frappe.call({
