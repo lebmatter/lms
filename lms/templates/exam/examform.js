@@ -5,7 +5,7 @@ var examOverview;
 var currentQuestion;
 
 function handleVisibilityChange() {
-    if (document.hidden) {
+    if (document.hidden || document.msHidden || document.webkitHidden) {
         // Page is now hidden
         startTime = new Date();
     } else if (currentQsNo >= 2) {
@@ -23,6 +23,24 @@ function handleVisibilityChange() {
         hiddenTime = 0;
         visibleTime = 0;
         startTime = null;
+    }
+}
+
+function handleWindowChange() {
+    if (document.hasFocus()) {
+        // Window is focused
+        if (startTime) {
+            var endTime = new Date();
+            var secondsInactive = Math.floor((endTime - startTime) / 1000);
+            if (secondsInactive > 1) {
+                let windowChangeStr = "Window was inactive for " + secondsInactive + " seconds";
+                sendMessage(windowChangeStr, "Warning", "windowchange");
+            }
+            startTime = null;
+        }
+    } else {
+        // Window lost focus
+        startTime = new Date();
     }
 }
 
@@ -190,6 +208,19 @@ frappe.ready(() => {
     // Disable copy
     document.addEventListener('copy', function(e) {
         e.preventDefault();
+    });
+
+    // Add event listeners for window focus and blur
+    window.addEventListener('focus', handleWindowChange);
+    window.addEventListener('blur', handleWindowChange);
+
+    // Add event listener for window unload (close)
+    window.addEventListener('beforeunload', function (e) {
+        sendMessage("Window closed", "Warning", "windowclose");
+        // Cancel the event
+        e.preventDefault();
+        // Chrome requires returnValue to be set
+        e.returnValue = '';
     });
 
     // check if exam is already started
