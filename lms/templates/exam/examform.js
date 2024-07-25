@@ -241,10 +241,6 @@ frappe.ready(() => {
         // Add event listener for window unload (close)
         window.addEventListener('beforeunload', function (e) {
             sendMessage("Window closed", "Warning", "tabchange");
-            // Cancel the event
-            e.preventDefault();
-            // Chrome requires returnValue to be set
-            e.returnValue = '';
         });
         // Check if the navbar does not already have the class 'hidden'
         var $navbar = $('.navbar');
