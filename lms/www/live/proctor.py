@@ -21,6 +21,7 @@ def get_context(context):
 	]
 
 	context.submissions = live_submissions
+	context.pending_candidates = len(proctor_list) - len(live_submissions)
 	context.video_chunk_length = frappe.db.get_single_value(
 		"LMS Settings", "video_chunk_length"
 	)

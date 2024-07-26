@@ -137,8 +137,15 @@ Proctor
 {% block page_content %}
 
 <div class="container">
-    <div class="alert alert-info mt-2" role="alert">
-        Live exams: {{ submissions|length }}
+    <div class="row mt-2 mb-3">
+        <div class="col-12">
+            <button type="button" class="btn btn-primary mr-2">
+                Live exams <span class="badge badge-light">{{ submissions|length }}</span>
+            </button>
+            <button type="button" class="btn btn-secondary">
+                Pending candidates <span class="badge badge-light">{{ pending_candidates }}</span>
+            </button>
+        </div>
     </div>
     <div class="row text-center">
         {% for index, submission in enumerate(submissions) %}
