@@ -65,8 +65,7 @@
    "fieldtype": "Datetime",
    "in_list_view": 1,
    "label": "Start Date Time",
-   "reqd": 1,
-   "set_only_once": 1
+   "reqd": 1
   },
   {
    "fetch_from": "exam.question_type",
@@ -117,7 +116,7 @@
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2024-08-07 13:10:53.055747",
+ "modified": "2024-08-07 15:15:09.599180",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",
