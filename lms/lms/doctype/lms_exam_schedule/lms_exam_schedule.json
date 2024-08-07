@@ -42,7 +42,8 @@
    "label": "Exam",
    "options": "LMS Exam",
    "reqd": 1,
-   "search_index": 1
+   "search_index": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "examiners",
@@ -59,11 +60,13 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "start_date_time",
    "fieldtype": "Datetime",
    "in_list_view": 1,
    "label": "Start Date Time",
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "fetch_from": "exam.question_type",
@@ -114,7 +117,7 @@
    "link_fieldname": "exam_schedule"
   }
  ],
- "modified": "2024-07-25 12:41:38.442915",
+ "modified": "2024-08-07 13:10:53.055747",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Schedule",
