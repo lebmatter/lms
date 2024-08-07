@@ -32,6 +32,30 @@ class LMSExamSchedule(Document):
 				frappe.msgprint("Warning: Certification is not enabled in the exam.")
 				self.certificate_template = ""
 
+	def after_save(self):
+		self.send_proctor_emails()
+
+	def send_proctor_emails(self):
+		for examiner in self.examiners:
+			if not examiner.notification_sent:
+				context = {
+					"exam": self.exam,
+					"scheduled_time": self.start_date_time
+				}
+				# Retrieve the email template document
+				email_template = frappe.get_doc("Email Template", "Exam Proctor Assignment")
+
+				# Render the subject and message
+				subject = frappe.render_template(email_template.subject, context)
+				message = frappe.render_template(email_template.response, context)
+
+				member_email = frappe.db.get_value("User", self.examiner, "email")
+				frappe.sendmail(
+					recipients=[member_email],
+					subject=subject,
+					message=message,
+				)
+				frappe.db.set_value("Examiner", examiner.name, "notification_sent", 1)
 	
 	def can_end_schedule(self):
 		now = datetime.now()
@@ -39,7 +63,7 @@ class LMSExamSchedule(Document):
 		if now < end_time:
 			frappe.msgprint("Can't end the schedule before {} (end time + 5 min buffer).".format(end_time.isoformat()))
 			return False
-		
+		 
 		return True
 
 	def validate_examiner_list(self):
@@ -68,7 +92,7 @@ class LMSExamSchedule(Document):
 			if check_overlap(exam_start, end_time, exam2["start_date_time"], exam2_end):
 				examiners2 = frappe.db.get_all(
 					"Examiner",
-					filters={"parent": "resulttest", "can_proctor": 1},
+					filters={"parent": self.name, "can_proctor": 1},
 					fields=["examiner"]
 				)
 				examiners2 = [ex.examiner for ex in examiners2]
