@@ -7,6 +7,20 @@ import frappe
 from frappe.utils import now
 from frappe.model.document import Document
 
+@frappe.whitelist()
+def upcoming_schedules():
+	schedules = frappe.get_all(
+		"LMS Exam Schedule",
+		filters=[
+			["start_date_time", ">", datetime.now()],
+			["visibility", "=", "Public"],
+			["status", "=", "Scheduled"]
+		],
+		fields=["name", "exam"]
+	)
+
+	return {"upcoming_schedules": schedules}
+
 
 class LMSExamSchedule(Document):
 
