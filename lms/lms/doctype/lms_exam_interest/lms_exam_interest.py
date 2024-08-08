@@ -20,8 +20,10 @@ def create_website_user(full_name, email):
         "email": email,
         "first_name": first_name,
         "last_name": last_name,
+		"full_name": full_name,
         "enabled": 1,
-        "user_type": "Website User"
+        "user_type": "Website User",
+		"send_welcome_email": 0
     })
     
     # Add roles (adjust as needed)
