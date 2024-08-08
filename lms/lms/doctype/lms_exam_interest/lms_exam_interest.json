@@ -6,12 +6,24 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "exam_schedule",
   "exam",
+  "email",
+  "mobile_no",
+  "full_name",
   "user",
-  "email_sent"
+  "exam_submission",
+  "is_duplicate",
+  "payment_details_section",
+  "amount",
+  "payment_id",
+  "section_break_tpcf",
+  "channel",
+  "remarks"
  ],
  "fields": [
   {
+   "fetch_from": "exam_schedule.exam",
    "fieldname": "exam",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -28,16 +40,79 @@
    "options": "User"
   },
   {
+   "allow_in_quick_entry": 1,
+   "fieldname": "exam_schedule",
+   "fieldtype": "Link",
+   "label": "Exam Schedule",
+   "options": "LMS Exam Schedule",
+   "reqd": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Email",
+   "reqd": 1
+  },
+  {
+   "fieldname": "exam_submission",
+   "fieldtype": "Link",
+   "label": "Exam Submission",
+   "options": "LMS Exam Submission"
+  },
+  {
+   "fieldname": "payment_details_section",
+   "fieldtype": "Section Break",
+   "label": "Payment details"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Float",
+   "label": "Amount"
+  },
+  {
+   "fieldname": "payment_id",
+   "fieldtype": "Data",
+   "label": "Payment ID"
+  },
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "label": "Full name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "mobile_no",
+   "fieldtype": "Data",
+   "label": "Mobile",
+   "reqd": 1
+  },
+  {
    "default": "0",
-   "fieldname": "email_sent",
+   "fieldname": "is_duplicate",
    "fieldtype": "Check",
-   "label": "Email Sent",
-   "options": "email_sent"
+   "label": "Is Duplicate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_tpcf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "channel",
+   "fieldtype": "Autocomplete",
+   "label": "Channel"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Autocomplete",
+   "label": "Remarks"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-07 22:44:55.473480",
+ "modified": "2024-08-08 13:35:51.917039",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Interest",
@@ -56,6 +131,7 @@
    "write": 1
   }
  ],
+ "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
