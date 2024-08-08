@@ -47,16 +47,16 @@ class LMSExamSchedule(Document):
 				self.certificate_template = ""
 		
 		old_doc = self.get_doc_before_save()
-		if old_doc.start_date_time != self.start_date_time:
-			frappe.msgprint(
-				msg="""Scheduled time has changed from {} to {}. \
-					System will send exam time modification emails to the students and proctors.""".format(
-						old_doc.start_date_time, self.start_date_time
-					),
-				title="Sending modification emails...",
-				wide=True
-			)
-			# self.send_mofification_emails()
+		if old_doc:
+			if old_doc.start_date_time != self.start_date_time:
+				frappe.msgprint(
+					msg="""Scheduled time has changed from {} to {}. \
+						System will send exam time modification emails to the students and proctors.""".format(
+							old_doc.start_date_time, self.start_date_time
+						),
+					title="Sending modification emails...",
+					wide=True
+				)
 
 	def after_save(self):
 		self.send_proctor_emails()
