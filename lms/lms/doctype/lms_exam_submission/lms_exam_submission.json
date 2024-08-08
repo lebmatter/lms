@@ -14,6 +14,7 @@
   "exam",
   "course",
   "new_user",
+  "reset_password_key",
   "column_break_ngvn",
   "status",
   "exam_started_time",
@@ -185,8 +186,15 @@
    "default": "0",
    "fieldname": "new_user",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "New user",
    "read_only": 1
+  },
+  {
+   "fieldname": "reset_password_key",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Reset password key"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -200,7 +208,7 @@
    "link_fieldname": "exam_submission"
   }
  ],
- "modified": "2024-08-08 14:27:29.613961",
+ "modified": "2024-08-08 14:42:34.942993",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",

@@ -96,6 +96,7 @@ class LMSExamSubmission(Document):
 		last_login = frappe.db.get_value("User", self.candidate, "last_login")
 		if not last_login:
 			self.new_user = 1
+			self.reset_password_key = frappe.db.get_value("User", self.candidate, "reset_password_key")
 
 
 def can_process_question(doc, member=None):
