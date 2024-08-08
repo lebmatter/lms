@@ -113,6 +113,9 @@ class LMSExamSchedule(Document):
 		)
 
 		for exam2 in other_exams:
+			if exam2["name"] == self.name:
+				continue
+
 			examiners1 = [ex.examiner for ex in self.examiners]
 			exam2_end = exam2["start_date_time"] + timedelta(minutes=exam2["duration"])
 			if check_overlap(exam_start, end_time, exam2["start_date_time"], exam2_end):
