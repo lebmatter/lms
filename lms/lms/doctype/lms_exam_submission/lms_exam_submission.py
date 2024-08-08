@@ -91,6 +91,11 @@ class LMSExamSubmission(Document):
 			ex_.proctoring_count = pcount[ex_.examiner]
 			ex_.evaluation_count = ecount[ex_.examiner]
 		sched.save()
+	
+	def before_insert(self):
+		last_login = frappe.db.get_value("User", self.candidate, "last_login")
+		if not last_login:
+			self.new_user = 1
 
 
 def can_process_question(doc, member=None):

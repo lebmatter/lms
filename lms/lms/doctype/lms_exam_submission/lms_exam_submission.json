@@ -13,6 +13,7 @@
   "exam_schedule",
   "exam",
   "course",
+  "new_user",
   "column_break_ngvn",
   "status",
   "exam_started_time",
@@ -179,6 +180,13 @@
    "label": "Issued Certificate",
    "options": "LMS Exam Certificate",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "new_user",
+   "fieldtype": "Check",
+   "label": "New user",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -192,7 +200,7 @@
    "link_fieldname": "exam_submission"
   }
  ],
- "modified": "2024-07-25 12:42:10.759719",
+ "modified": "2024-08-08 14:27:29.613961",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",
