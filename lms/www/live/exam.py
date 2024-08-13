@@ -16,7 +16,8 @@ def get_context(context):
 	context.no_cache = 1
 
 	if frappe.session.user == "Guest":
-		raise frappe.PermissionError(_("Please login to access this page."))
+		frappe.local.flags.redirect_location = "/login"
+		raise frappe.Redirect
 
 	exam_details = get_live_exam(frappe.session.user)
 	context.page_context = {}

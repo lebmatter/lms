@@ -9,7 +9,8 @@ def get_context(context):
 	context.no_cache = 1
 
 	if frappe.session.user == "Guest":
-		raise frappe.PermissionError(_("Please login to access this page."))
+		frappe.local.flags.redirect_location = "/login"
+		raise frappe.Redirect
 
 	context.page_context = {}
 	proctor_list = frappe.get_all("LMS Exam Submission", filters={
