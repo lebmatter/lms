@@ -345,7 +345,7 @@ frappe.ready(() => {
   // Handle send button click event
   $("#send-button").click(function () {
     var message = $("#message-input").val();
-    sendMessage(message);
+    sendProcMessage(message);
     $("#message-input").val("");
   });
 
@@ -353,7 +353,7 @@ frappe.ready(() => {
   $("#message-input").keypress(function (e) {
     if (e.which == 13) {
       var message = $("#message-input").val();
-      sendMessage(message);
+      sendProcMessage(message);
       $("#message-input").val("");
     }
   });
@@ -383,7 +383,7 @@ frappe.ready(() => {
   });
 
   // Function to send a message
-  function sendMessage(message) {
+  function sendProcMessage(message) {
     if (message.trim() !== "") {
       frappe.call({
         method:
@@ -393,6 +393,7 @@ frappe.ready(() => {
           exam_submission: activeChat,
           message: message,
           type_of_message: "General",
+          from: "Proctor"
         },
         callback: (data) => {
           console.log(data);

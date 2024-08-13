@@ -530,14 +530,11 @@ def exam_messages(exam_submission=None):
 	if frappe.session.user not in [doc.candidate, doc.assigned_proctor]:
 		raise PermissionError("You don't have access to view messages.")
 
-	msgs = frappe.get_all("LMS Exam Messages", filters={
+	res = frappe.get_all("LMS Exam Messages", filters={
 		"exam_submission": exam_submission
-	}, fields=["*"])
-	res = [{
-			"creation": msg.timestamp.isoformat(),
-			"message_text": msg.message,
-			"message_type":msg.type_of_message
-	} for msg in msgs]
+	}, fields=["creation", "from", "message", "type_of_message"])
+	for idx, _ in enumerate(res):
+		res[idx]["creation"] = res[idx]["creation"].isoformat()
 
 	# sort by datetime
 	res = sorted(res, key=lambda x: x['creation'])

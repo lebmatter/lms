@@ -499,6 +499,7 @@ function sendMessage(message, messageType, warningType) {
             'message': message,
             'type_of_message': messageType,
             'warning_type': warningType,
+            'from': "Candidate"
         },
         callback: (data) => {
             console.log(data);

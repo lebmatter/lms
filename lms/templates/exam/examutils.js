@@ -45,16 +45,26 @@ function videoDisconnected(lastVideoURL) {
 
 }
 
-const addChatBubble = (timestamp, message, messageType) => {
+const addChatBubble = (timestamp, message, messageType, messageFrom) => {
     var chatContainer = $('#chat-messages');
-    var chatTimestamp = $('<div class="chat-timestamp">' + timestamp + '</div>');
+    if (messageFrom === "Candidate") {
+        var chatTimestamp = $('<div class="chat-timestamp-right">' + timestamp + '</div>');
+    } else {
+        var chatTimestamp = $('<div class="chat-timestamp">' + timestamp + '</div>');
+    }
+
     var msgWithPill = message;
     if (messageType === "Warning") {
         msgWithPill = '<span class="badge badge-warning mr-1">Warning</span>' + message;
     } else if (messageType === "Critical") {
         msgWithPill = '<span class="badge badge-danger mr-1">Critical</span>' + message;
     }
-    var chatBubble = $('<div class="chat-bubble chat-left">' + msgWithPill + '</div>');
+    if (messageFrom === "Candidate") {
+        var chatBubble = $('<div class="chat-bubble chat-right">' + msgWithPill + '</div>');
+    } else {
+        var chatBubble = $('<div class="chat-bubble chat-left">' + msgWithPill + '</div>');
+    }
+    
     var chatWrapper = $('<div class="d-flex flex-column mb-2"></div>');
 
     chatWrapper.append(chatTimestamp);
@@ -93,7 +103,7 @@ const updateMessages = (exam_submission) => {
             // Add new messages as alerts to the Bootstrap div
             newMessages.forEach(message => {
                 convertedTime = timeAgo(message.creation);
-                addChatBubble(convertedTime, message.message_text, message.message_type);
+                addChatBubble(convertedTime, message.message, message.type_of_message, message.from);
                 if (message.message_type === "Critical") {
                     // Delay the reload by 3 seconds (3000 milliseconds)
                     setTimeout(function() {
