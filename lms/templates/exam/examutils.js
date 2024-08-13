@@ -103,13 +103,22 @@ const updateMessages = (exam_submission) => {
             // Add new messages as alerts to the Bootstrap div
             newMessages.forEach(message => {
                 convertedTime = timeAgo(message.creation);
-                addChatBubble(convertedTime, message.message, message.type_of_message, message.from);
                 if (message.message_type === "Critical") {
-                    // Delay the reload by 3 seconds (3000 milliseconds)
+                    frappe.msgprint({
+                        title: 'Critial',
+                        message: message.message ,
+                        primary_action:{
+                            action(values) {
+                                window.location.reload();
+                            }
+                        }
+                    });
                     setTimeout(function() {
                         window.location.reload()
-                    }, 5000); // 3 seconds delay
-        }
+                    }, 5000); // 5 seconds delay
+                } else {
+                    addChatBubble(convertedTime, message.message, message.type_of_message, message.from);
+                }
             });
 
         },
