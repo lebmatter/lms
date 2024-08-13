@@ -7,10 +7,21 @@ from lms.lms.utils import (
 	get_restriction_details,
 	has_course_moderator_role
 )
-from lms.overrides.user import get_registered_exams, get_authored_exams
+from lms.overrides.user import get_registered_exams, get_authored_exams, get_live_exam
 
 
 def get_context(context):
+	"""
+	Check if there is any live exams for the user,
+	If so redirect to it. Else show exam list
+	"""
+	if frappe.session.user != "Guest":
+		exam_details = get_live_exam(frappe.session.user)
+		if exam_details:
+			frappe.local.flags.redirect_location = "/live/exam"
+			raise frappe.Redirect
+	
+
 	context.no_cache = 1
 	context.live_exams, context.upcoming_exams = get_exams()
 	context.enrolled_exams = (
