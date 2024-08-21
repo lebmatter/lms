@@ -74,7 +74,8 @@ const addChatBubble = (timestamp, message, messageType, messageFrom) => {
     chatContainer.append(chatWrapper);
     
     // Scroll to the bottom of the chat container
-    chatContainer.scrollTop(chatContainer.prop("scrollHeight"));
+    $('#messages .chat-container').scrollTop($('#messages .chat-container')[0].scrollHeight);
+    
 }
 
 const updateMessages = (exam_submission) => {
@@ -94,7 +95,7 @@ const updateMessages = (exam_submission) => {
             const newMessages = msgData.filter(
                 message => !existingMessages[exam_submission].includes(message.message_text)
             );
-
+            console.log("NEWMSGS", newMessages);
             // Add new messages to the existing messages array
             existingMessages[exam_submission].push(...newMessages.map(message => message.message_text));
 
@@ -103,7 +104,7 @@ const updateMessages = (exam_submission) => {
             // Add new messages as alerts to the Bootstrap div
             newMessages.forEach(message => {
                 convertedTime = timeAgo(message.creation);
-                if (message.message_type === "Critical") {
+                if (message.type_of_message === "Critical") {
                     frappe.msgprint({
                         title: 'Critial',
                         message: message.message ,
@@ -122,5 +123,9 @@ const updateMessages = (exam_submission) => {
             });
 
         },
+    });
+
+    $('#chat-input').on('click', function() {
+        $('#messages .chat-container').scrollTop($('#messages .chat-container')[0].scrollHeight);
     });
 };
