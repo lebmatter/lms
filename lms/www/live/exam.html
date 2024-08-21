@@ -24,17 +24,9 @@ Alert!
         font-size: 16px;
     }
 
-    #messages {
-        max-height: 350px;
-        /* Set the maximum height for the container */
-        overflow-y: auto;
-        /* Enable vertical scrolling when content exceeds the max height */
-    }
-
     /* Zerodha-style chat container */
     #messages {
-        max-height: 300px;
-        overflow-y: auto;
+        max-height: 400px;
         border: 1px solid #e0e0e0;
         border-radius: 4px;
         background-color: #f9f9f9;
@@ -62,6 +54,14 @@ Alert!
         margin-left: auto;
     }
 
+    .chat-timestamp-right {
+        font-size: 11px;
+        color: #999;
+        margin-bottom: 2px;
+        align-self: flex-end;
+        margin-left: auto;
+    }
+
     /* Zerodha-style timestamp */
     .chat-timestamp {
         font-size: 11px;
@@ -73,7 +73,6 @@ Alert!
     .chat-container {
         height: 300px;
         overflow-y: auto;
-        border: 1px solid #e0e0e0;
         border-radius: 4px;
         background-color: #f9f9f9;
         padding: 10px;
@@ -272,6 +271,14 @@ Alert!
     <!-- Scripts -->
     {%- block script %}
     {{ super() }}
+    {% if exam %}
+    <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
+    <script type="text/javascript">
+        var exam = {{ exam | tojson }};
+        {% include "lms/templates/exam/examutils.js" %}
+        {% include "lms/templates/exam/examform.js" %}
+        {% include "lms/templates/exam/calculator.js" %}
+    </script>
     <script>
         $(document).ready(function () {
             $('#toggleInstruction').click(function () {
@@ -305,14 +312,6 @@ Alert!
                 }
             });
         });
-    </script>
-    {% if exam %}
-    <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
-    <script type="text/javascript">
-        var exam = {{ exam | tojson }};
-        {% include "lms/templates/exam/examutils.js" %}
-        {% include "lms/templates/exam/examform.js" %}
-        {% include "lms/templates/exam/calculator.js" %}
     </script>
     {% endif %}
     {% endblock %}
