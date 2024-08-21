@@ -1,7 +1,7 @@
 import hashlib
 import frappe
 import requests
-from pytz import timezone 
+from pytz import timezone
 from datetime import datetime, timedelta
 
 from frappe import _
@@ -24,10 +24,9 @@ class CustomUser(User):
 		self.cover_image = validate_image(self.cover_image)
 
 	def validate_username_duplicates(self):
-		while not self.username or self.username_exists():
-			self.username = append_number_if_name_exists(
-				self.doctype, cleanup_page_name(self.full_name), fieldname="username"
-			)
+		self.username = append_number_if_name_exists(
+			self.doctype, cleanup_page_name(self.full_name), fieldname="username"
+		)
 		if " " in self.username:
 			self.username = self.username.replace(" ", "")
 
@@ -253,10 +252,10 @@ def get_live_exam(member=None):
 	for submission in submissions:
 		if submission["status"] in ["Registration Cancelled", "Aborted"]:
 			continue
-		
+
 		schedule = frappe.get_doc("LMS Exam Schedule", submission["exam_schedule"])
 		exam = frappe.get_doc("LMS Exam", schedule.exam)
-		
+
 		# end time is schedule start time + duration + additional time given
 		end_time = schedule.start_date_time + timedelta(minutes=schedule.duration) + \
 			timedelta(minutes=submission["additional_time_given"])
@@ -280,7 +279,7 @@ def get_live_exam(member=None):
 		for key,val in exam_details.items():
 			if type(val) == datetime:
 				exam_details[key] = val.isoformat()
-		
+
 		# checks if current time is between schedule start and end time
 		# ongoing exams can be in Not staryed, started or submitted states
 		tnow = datetime.strptime(now(), '%Y-%m-%d %H:%M:%S.%f')
@@ -296,7 +295,7 @@ def get_live_exam(member=None):
 				doc = frappe.get_doc("LMS Exam Submission", submission["name"])
 				doc.status == "Submitted"
 				doc.save(ignore_permissions=True)
-			
+
 			return {}
 
 	return exam_details
@@ -465,23 +464,23 @@ def get_users(or_filters, start, page_length, text):
 	# nosemgrep
 	users = frappe.db.sql(
 		"""
-        SELECT DISTINCT u.name
-        FROM `tabUser` u
-        LEFT JOIN `tabEducation Detail` ed
-        ON u.name = ed.parent
-        LEFT JOIN `tabWork Experience` we
-        ON u.name = we.parent
-        LEFT JOIN `tabCertification` c
-        ON u.name = c.parent
-        LEFT JOIN `tabSkills` s
-        ON u.name = s.parent
-        LEFT JOIN `tabPreferred Function` pf
-        ON u.name = pf.parent
-        LEFT JOIN `tabPreferred Industry` pi
-        ON u.name = pi.parent
-        WHERE u.enabled = True {or_filters}
-        ORDER BY u.creation desc
-        LIMIT {start}, {page_length}
+		SELECT DISTINCT u.name
+		FROM `tabUser` u
+		LEFT JOIN `tabEducation Detail` ed
+		ON u.name = ed.parent
+		LEFT JOIN `tabWork Experience` we
+		ON u.name = we.parent
+		LEFT JOIN `tabCertification` c
+		ON u.name = c.parent
+		LEFT JOIN `tabSkills` s
+		ON u.name = s.parent
+		LEFT JOIN `tabPreferred Function` pf
+		ON u.name = pf.parent
+		LEFT JOIN `tabPreferred Industry` pi
+		ON u.name = pi.parent
+		WHERE u.enabled = True {or_filters}
+		ORDER BY u.creation desc
+		LIMIT {start}, {page_length}
 	""".format(
 			or_filters=or_filters, start=start, page_length=page_length
 		),
