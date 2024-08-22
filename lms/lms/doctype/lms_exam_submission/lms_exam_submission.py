@@ -659,9 +659,6 @@ def proctor_video_list(exam_submission=None):
 	if frappe.session.user == "Guest":
 		raise frappe.PermissionError(_("Please login to access this page."))
 
-	if not frappe.cache().get("{}:tracker".format(exam_submission)):
-		raise frappe.PermissionError(_("Exam is invalid/ended."))
-
 	# make sure that logged in user is valid proctor
 	if frappe.session.user != frappe.cache().hget(exam_submission, "assigned_proctor"):
 		raise frappe.PermissionError(_("No proctor access to the exam."))
