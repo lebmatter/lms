@@ -425,6 +425,9 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 	assert message
 
 	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
+	if doc.status != "Started":
+		{"status": 0}
+
 	# check of the logged in user is same as exam submission candidate
 	if frappe.session.user not in [doc.candidate, doc.assigned_proctor]:
 		raise PermissionError("You don't have access to post messages.")
