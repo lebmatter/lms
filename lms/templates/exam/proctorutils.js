@@ -206,23 +206,77 @@ function playPreviousVideo() {
   playVideoAtIndex(exam_submission, currentVideoIndex[exam_submission] - 1);
 }
 
+function appendMessage(convertedTime, text, sender) {
+  console.log("APPEND", convertedTime, text, sender);
+  const chatMessages = document.getElementById('chatMessages');
+
+  const messageElement = document.createElement('div');
+  messageElement.className = `message ${sender === 'Candidate' ? 'bot-message' : 'user-message'}`;
+  const contentElement = document.createElement('div');
+  contentElement.className = 'message-content';
+  contentElement.textContent = text;
+  
+  const timestampElement = document.createElement('div');
+  timestampElement.className = 'timestamp';
+  timestampElement.textContent = convertedTime;
+  
+  messageElement.appendChild(contentElement);
+  messageElement.appendChild(timestampElement);
+  
+  chatMessages.appendChild(messageElement);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+const updateProcMessages = (exam_submission) => {
+  if (!(exam_submission in existingMessages)) {
+      existingMessages[exam_submission] = [];
+  }
+  frappe.call({
+      method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.exam_messages",
+      args: {
+          'exam_submission': exam_submission,
+      },
+      callback: (data) => {
+          msgData = data.message["messages"];
+          $("#msgCount").text(msgData.length);
+
+          // Check if any new messages exist
+          const newMessages = msgData.filter(
+              message => !existingMessages[exam_submission].includes(message.message_text)
+          );
+          // Add new messages to the existing messages array
+          existingMessages[exam_submission].push(...newMessages.map(message => message.message_text));
+
+          // loop through msgs and add alerts
+          // Add new messages as alerts to the Bootstrap div
+          newMessages.forEach(message => {
+              convertedTime = timeAgo(message.creation);
+              appendMessage(convertedTime, message.message, message.from);
+              
+          });
+
+      },
+  });
+
+};
+
 function openChatModal() {
   const videoContainer = this.closest(".video-container");
   const video = videoContainer.querySelector("video");
-  const modalVideo = document.getElementById("modalVideo");
+  const modalVideo = document.getElementById("modalVideoElement");
   modalVideo.src = video.src;
   const videoId = videoContainer.getAttribute("data-videoid");
   const candName = videoContainer.getAttribute("data-candidatename");
   $("#chatModal").modal("show");
   $("#candidateName").text(candName);
   activeChat = videoId;
-  $("#messages").empty();
+  $("#chatMessages").empty();
   // loop through msgs and add alerts
   // Add new messages as alerts to the Bootstrap div
   existingMessages[videoId] = [];
 
   setInterval(function () {
-    updateMessages(videoId);
+    updateProcMessages(videoId);
   }, 1000); // 1 seconds
 }
 
@@ -344,17 +398,19 @@ frappe.ready(() => {
   // chatModal controls
   // Handle send button click event
   $("#send-button").click(function () {
-    var message = $("#message-input").val();
+    var message = $("#messageInput").val();
+    var nowtime = new Date().toLocaleTimeString();
+    appendMessage(nowtime, message, 'Proctor');
     sendProcMessage(message);
-    $("#message-input").val("");
+    $("#messageInput").val("");
   });
 
   // Handle enter key press event
-  $("#message-input").keypress(function (e) {
+  $("#messageInput").keypress(function (e) {
     if (e.which == 13) {
-      var message = $("#message-input").val();
+      var message = $("#messageInput").val();
       sendProcMessage(message);
-      $("#message-input").val("");
+      $("#messageInput").val("");
     }
   });
 

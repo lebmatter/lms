@@ -13,7 +13,7 @@ function timeAgo(timestamp) {
     const minutesDifference = Math.floor(timeDifference / (1000 * 60));
 
     if (minutesDifference < 1) {
-        return '<span class="text-primary font-italic">Just now</span>';
+        return 'Just now';
     } else if (minutesDifference === 1) {
         return '1 minute ago';
     } else if (minutesDifference < 60) {
@@ -73,9 +73,6 @@ const addChatBubble = (timestamp, message, messageType, messageFrom) => {
     // Append the new chat bubble to the chat messages container
     chatContainer.append(chatWrapper);
     
-    // Scroll to the bottom of the chat container
-    $('#messages .chat-container').scrollTop($('#messages .chat-container')[0].scrollHeight);
-    
 }
 
 const updateMessages = (exam_submission) => {
@@ -95,10 +92,8 @@ const updateMessages = (exam_submission) => {
             const newMessages = msgData.filter(
                 message => !existingMessages[exam_submission].includes(message.message_text)
             );
-            console.log("NEWMSGS", newMessages);
             // Add new messages to the existing messages array
             existingMessages[exam_submission].push(...newMessages.map(message => message.message_text));
-
 
             // loop through msgs and add alerts
             // Add new messages as alerts to the Bootstrap div

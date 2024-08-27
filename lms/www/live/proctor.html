@@ -93,43 +93,54 @@ Proctor
         /* Adjust the maximum height as needed */
         overflow-y: auto;
     }
-
-    #messages {
-        max-height: 350px;
-        /* Set the maximum height for the container */
-        overflow-y: auto;
-        /* Enable vertical scrolling when content exceeds the max height */
+    .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
     }
-
-    /* Custom styles for the chat bubble container */
-    .chat-container {
-        position: relative;
+    .message {
+        max-width: 70%;
         margin-bottom: 20px;
-        /* Add some spacing between chat containers */
+        padding: 8px 12px;
+        border-radius: 20px;
+        position: relative;
     }
-
-    /* Custom styles for the chat bubble */
-    .chat-bubble {
-        display: inline-block;
-        /* Set the display to inline-block */
-        background-color: #f0f0f0;
-        border-radius: 10px;
-        padding: 10px;
-        max-width: calc(100% - 20px);
-        /* Adjust the max-width relative to the text content */
+    .message-content {
+        margin-bottom: 5px;
     }
-
-    /* Custom styles for the timestamp */
-    .chat-timestamp {
-        top: -25px;
-        /* Adjust the vertical position as per your design */
+    .timestamp {
+        font-size: 0.75em;
+        color: #777;
+        position: absolute;
+        bottom: -18px;
+    }
+    .user-message {
+        align-self: flex-end;
+        background-color: #007bff;
+        color: white;
+    }
+    .user-message .timestamp {
+        right: 10px;
+    }
+    .bot-message {
+        align-self: flex-start;
+        background-color: #f1f0f0;
+    }
+    .bot-message .timestamp {
         left: 10px;
-        font-size: 0.8rem;
     }
-
-    /* To make the chat bubble align to the left */
-    .chat-left {
-        text-align: left;
+    .modal-video-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+    #modalVideoElement {
+        max-width: 100%;
+        margin-bottom: 20px;
     }
 </style>
 {% endblock %}
@@ -213,44 +224,46 @@ Proctor
     </div>
 </div>
 <!-- Bootstrap Modal -->
-<div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+<div class="modal fade m-10" id="chatModal" tabindex="-1" aria-labelledby="chatVideoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="myModalLabel">Chat with: <span id="candidateName"></span></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h5 class="modal-title" id="chatVideoModalLabel">Chat with: <span id="candidateName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <video id="modalVideo" src="" controls></video>
+                <div class="row">
+                    <!-- Chat Column -->
+                    <div class="col-md-6">
+                        <div class="chat-messages" id="chatMessages">
+                            <!-- Sample messages -->
+                            <!-- <div class="message bot-message">
+                                <div class="message-content">Hello! How can I assist you today?</div>
+                                <div class="timestamp">10:00 AM</div>
+                            </div>
+                            <div class="message user-message">
+                                <div class="message-content">Hi! I have a question about your services.</div>
+                                <div class="timestamp">10:02 AM</div>
+                            </div> -->
                         </div>
-                        <div class="col-md-4">
-                            <div id="chatbox" class="card" style="height: 100%;">
-                                <div class="card-body">
-                                    <div id="messages" class="tab-pane fade show active">
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="input-group">
-                                        <input type="text" id="message-input" class="form-control"
-                                            placeholder="Type your message...">
-                                        <div class="input-group-append">
-                                            <button id="send-button" class="btn btn-success">Send</button>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="input-group">
+                                <input type="text" id="messageInput" class="form-control" placeholder="Type your message...">
+                                <button class="btn btn-primary" id="send-button">Send</button>
+                            </div>
+                    </div>
+                    <!-- Video Column -->
+                    <div class="col-md-6">
+                        <div class="modal-video-container">
+                            <video id="modalVideoElement" controls width="80%">
+                                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div>
+                                <button type="button" class="btn btn-danger" id="terminateExam">Terminate Exam</button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" id="terminateExam">Terminate Exam</button>
-                <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

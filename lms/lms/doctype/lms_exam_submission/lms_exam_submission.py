@@ -433,10 +433,10 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 		raise PermissionError("You don't have access to post messages.")
 
 	type_of_user = "System"
-	if frappe.session.user == doc.candidate:
-		type_of_user = "Candidate"
-	elif frappe.session.user == doc.assigned_proctor:
+	if frappe.session.user == doc.assigned_proctor:
 		type_of_user = "Proctor"
+	elif frappe.session.user == doc.candidate:
+		type_of_user = "Candidate"
 
 	tnow = frappe.utils.now()
 	msg_doc = frappe.get_doc({
