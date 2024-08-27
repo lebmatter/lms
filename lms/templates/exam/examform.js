@@ -316,12 +316,11 @@ function updateOverviewMap() {
             for (let i = 1; i <= data.message.total_questions; i++) {
                 btnCls = "btn-outline-dark";
                 // create a new button
-                const button = $("<button disabled></button>");
+                const button = $("<button></button>");
                 button.text(i);
                 button.addClass("exam-map-btn btn " + btnCls + " m-1 btn-sm");
                 button.attr("id", "button-" + i);
                 if (i <= Object.keys(data.message.submitted).length) {
-                    button.prop("disabled", false);
                     if (data.message.submitted[i].marked_for_later) {
                         button.html(answrLater + ' ' + i);
                     } else if (data.message.submitted[i].answer) {
@@ -597,11 +596,7 @@ function submitAnswer(loadNext) {
         answer = $("#examTextInput").find("textarea").val();
     }
 
-    if (answer === '' && mrkForLtr === 0) {
-        examAlert(
-            "No answer submitted!", "You need to enter an answer(s) or mark it for later."
-        );
-    } else {
+    if (answer != '' || mrkForLtr != 0) {
         frappe.call({
             method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.submit_question_response",
             type: "POST",

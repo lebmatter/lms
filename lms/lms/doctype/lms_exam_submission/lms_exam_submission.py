@@ -310,10 +310,10 @@ def get_question(exam_submission=None, qsno=1):
 	if qs_no > int(frappe.cache().hget(exam_submission, "total_questions")):
 		frappe.throw("Invalid question no. {} requested.".format(qs_no))
 	# check if the previous question is answered. else throw err
-	if qs_no > 1:
-		prev = frappe.cache().hget(exam_submission, "qs:{}".format(qs_no-1))
-		if prev.split(":")[-1] == "Not Attempted":
-			frappe.throw("Previous question not attempted.")
+	# if qs_no > 1:
+	# 	prev = frappe.cache().hget(exam_submission, "qs:{}".format(qs_no-1))
+	# 	if prev.split(":")[-1] == "Not Attempted":
+	# 		frappe.throw("Previous question not attempted.")
 
 	# get the qs with seq no
 	qs_ = frappe.cache().hget(exam_submission, "qs:{}".format(qs_no))
