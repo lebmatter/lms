@@ -240,19 +240,16 @@ const updateProcMessages = (exam_submission) => {
           msgData = data.message["messages"];
           $("#msgCount").text(msgData.length);
 
-          // Check if any new messages exist
-          const newMessages = msgData.filter(
-              message => !existingMessages[exam_submission].includes(message.message_text)
-          );
-          // Add new messages to the existing messages array
-          existingMessages[exam_submission].push(...newMessages.map(message => message.message_text));
-
           // loop through msgs and add alerts
           // Add new messages as alerts to the Bootstrap div
-          newMessages.forEach(message => {
-              convertedTime = timeAgo(message.creation);
-              appendMessage(convertedTime, message.message, message.from);
-              
+          msgData.forEach(chatmsg => {
+              // check msg already processed
+                if (existingMessages[exam_submission].includes(chatmsg.creation)) {
+                  return;
+              }
+              convertedTime = timeAgo(chatmsg.creation);
+              appendMessage(convertedTime, chatmsg.message, chatmsg.from);
+              existingMessages[exam_submission].push(chatmsg.creation);
           });
 
       },

@@ -279,7 +279,7 @@ frappe.ready(() => {
 
     setInterval(function () {
         updateMessages(exam["exam_submission"]);
-    }, 1000); // 1 seconds
+    }, 3000); // 3 seconds
     document.addEventListener("visibilitychange", handleVisibilityChange, false);
 
 });
