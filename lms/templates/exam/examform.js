@@ -31,9 +31,17 @@ function handleWindowChange() {
         // Window is focused
         if (startTime) {
             var endTime = new Date();
-            var secondsInactive = Math.floor((endTime - startTime) / 1000);
-            if (secondsInactive > 1) {
-                let windowChangeStr = "Tab change detected for" + secondsInactive + " seconds. Return to the exam window immediately.";
+            var totalSeconds = (endTime - startTime) / 1000;
+            var minutes = Math.floor(totalSeconds / 60);
+            var seconds = (totalSeconds % 60).toFixed(1);
+            if (minutes == 0) {
+                var timeInactive = seconds + "s"
+            } else {
+                var timeInactive = minutes + "m:" + seconds + "s";
+            }
+
+            if (totalSeconds > 1) {
+                let windowChangeStr = "Tab change detected for" + timeInactive + ". Return to the exam window immediately.";
                 sendMessage(windowChangeStr, "Warning", "tabchange");
             }
             startTime = null;
