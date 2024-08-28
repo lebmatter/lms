@@ -33,7 +33,7 @@ function handleWindowChange() {
             var endTime = new Date();
             var secondsInactive = Math.floor((endTime - startTime) / 1000);
             if (secondsInactive > 1) {
-                let windowChangeStr = "Window was inactive for " + secondsInactive + " seconds";
+                let windowChangeStr = "Tab change detected for" + secondsInactive + " seconds. Return to the exam window immediately.";
                 sendMessage(windowChangeStr, "Warning", "tabchange");
             }
             startTime = null;
