@@ -43,6 +43,7 @@ function handleWindowChange() {
             if (totalSeconds > 1) {
                 let windowChangeStr = "Tab change detected for" + timeInactive + ". Return to the exam window immediately.";
                 sendMessage(windowChangeStr, "Warning", "tabchange");
+                examAlert(windowChangeStr);
             }
             startTime = null;
         }
