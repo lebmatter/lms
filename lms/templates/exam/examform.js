@@ -31,17 +31,16 @@ function handleWindowChange() {
         // Window is focused
         if (startTime) {
             var endTime = new Date();
-            var totalSeconds = (endTime - startTime) / 1000;
+            var totalSeconds = Math.floor((endTime - startTime) / 1000);
             var minutes = Math.floor(totalSeconds / 60);
-            var seconds = (totalSeconds % 60).toFixed(1);
             if (minutes == 0) {
-                var timeInactive = seconds + "s"
+                var timeInactive = totalSeconds + "s"
             } else {
-                var timeInactive = minutes + "m:" + seconds + "s";
+                var timeInactive = minutes + "m:" + totalSeconds + "s";
             }
 
             if (totalSeconds > 1) {
-                let windowChangeStr = "Tab change detected for" + timeInactive + ". Return to the exam window immediately.";
+                let windowChangeStr = "Tab change detected for " + timeInactive + ". Return to the exam window immediately.";
                 sendMessage(windowChangeStr, "Warning", "tabchange");
                 examAlert(windowChangeStr);
             }
