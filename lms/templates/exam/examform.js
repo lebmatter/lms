@@ -391,6 +391,7 @@ function displayQuestion(current_qs) {
     // Add event listener for markedForLater checkbox
     $('#markedForLater').on('change', function() {
         hasChanged = true;
+        submitAnswer();
     });
     if (currentQuestion["description_image"]) {
         $("#question-image").show();
