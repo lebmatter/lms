@@ -326,8 +326,9 @@ function updateOverviewMap() {
             $("#question-length").text(data.message.total_questions);
 
             // populate buttons
-            // Loop to generate 10 buttons and pill labels
-            $("#button-grid").html('');
+            if (data.message.total_questions != 0) {
+                $("#button-grid").html('');
+            }
             for (let i = 1; i <= data.message.total_questions; i++) {
                 btnCls = "btn-outline-dark";
                 // create a new button
