@@ -20,7 +20,7 @@ Alert!
         display: none;
     }
 
-    #timer {
+    .timer {
         font-size: 16px;
     }
 
@@ -234,7 +234,7 @@ Alert!
                                 </path>
                                 <line x1="1" y1="1" x2="23" y2="23"></line>
                             </svg>
-                            <span class="badge badge-pill badge-warning" id="timer">--:--</span>
+                            <span class="badge badge-pill badge-warning timer">--:--</span>
                         </a>
                     </div>
                 </div>
@@ -291,13 +291,13 @@ Alert!
             $('#toggleTimer').click(function () {
                 // Replace the content of the timerdiv with the button
                 $('#toggleTimer').hide();
-                $('#timer').hide();
+                $('.timer').hide();
                 $("#showTimer").show();
             });
             $('#showTimer').click(function () {
                 // Replace the content of the timerdiv with the button
                 $('#toggleTimer').show();
-                $('#timer').show();
+                $('.timer').show();
                 $("#showTimer").hide();
             });
 

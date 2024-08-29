@@ -82,12 +82,12 @@ function updateTimer() {
             // Calculate hours, minutes, and seconds
             var hours = Math.floor(remainingTime / (1000 * 60 * 60));
             // Display the countdown timer
-            $("#timer").text(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+            $(".timer").text(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
 
 
         } else {
             // Display the countdown timer
-            $("#timer").text(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+            $(".timer").text(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
 
         }
         // Update the timer every second
@@ -336,12 +336,11 @@ function updateOverviewMap() {
                 button.text(i);
                 button.addClass("exam-map-btn btn " + btnCls + " m-1 btn-sm");
                 button.attr("id", "button-" + i);
-                if (i <= Object.keys(data.message.submitted).length) {
-                    if (data.message.submitted[i].marked_for_later) {
-                        button.html(answrLater + ' ' + i);
-                    } else if (data.message.submitted[i].answer) {
-                        button.html(answrdCheck + ' ' + i);
-                    }
+                console.log("OVV", data);
+                if (data.message.submitted[i] && data.message.submitted[i].marked_for_later) {
+                    button.html(answrLater + ' ' + i);
+                } else if (data.message.submitted[i] && data.message.submitted[i].answer) {
+                    button.html(answrdCheck + ' ' + i);
                 }
                 // append the button and label to the row
                 // buttonRow.append(button, label);
@@ -603,25 +602,35 @@ function showSubmitConfirmPage() {
         $("#quiz-form").addClass("hide");
 
         $("#quiz-title").html();
-        $("#quiz-btn").text("Submit exam")
-            .click((e) => {
-                e.preventDefault();
-                endExam();
-            })
-            .show();
-        let messageHtml = "<span class='text-muted'>You have remaining time in the exam.</\span><br><span class='text-muted'>You can review and revise your answers until the allocated time expires.</span>";
-        
-        if (examOverview.total_marked_for_later >= 1) {
-            messageHtml += `
-            <div class="alert alert-warning mt-3" role="alert">
-                <strong>Warning:</strong><br>
-                You have ${examOverview.total_marked_for_later} question(s) marked for later review.<br>
-                Please make sure to answer all questions before submitting the exam.
-            </div>`;
-        }
-        
-        $("#quiz-message").html(messageHtml);
-        $("#quiz-message").show();
+        $('#quiz-box').removeClass("text-center");
+        let messageHtml = `
+            <div class="card" style="max-width: 30rem;">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-clock me-2"></i>
+                        <h6 class="mb-0">Time Remaining: <span class="ml-10 timer">--:--</span></h6>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class=" mr-10">Total Questions</span>
+                            <span>${examOverview.total_questions}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="  mr-10">Total Answered</span>
+                            <span>${examOverview.total_answered}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="  mr-10">Marked for Review</span>
+                            <span>${examOverview.total_marked_for_later}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success w-100" id="quizSubmit" onClick=endExam();>Submit Exam</button>
+                </div>
+            </div>
+            `
+        $("#quiz-box").html(messageHtml);
 }
 
 
