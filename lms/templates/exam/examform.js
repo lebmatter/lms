@@ -201,6 +201,7 @@ function stopRecording() {
 }
 
 frappe.ready(() => {
+    $('#submitTopBtn').hide();
     updateOverviewMap();
 
     // Disable right-click context menu
@@ -228,6 +229,7 @@ frappe.ready(() => {
             startExam();
         });
     } else {
+        $('#submitTopBtn').show();
         $("#start-banner").addClass("hide");
         $("#quiz-form").removeClass("hide");
         // on first load, show the last question loaded
@@ -270,6 +272,11 @@ frappe.ready(() => {
         e.preventDefault();
         // submit the current answer
         submitAnswer(true);
+    });
+
+    $("#submitTopBtn").click((e) => {
+        e.preventDefault();
+        showSubmitConfirmPage();
     });
 
     var collapseElement = $('#videoCollapse');
@@ -588,6 +595,34 @@ function getQuestion(qsno) {
     });
 };
 
+function showSubmitConfirmPage() {
+        // user wants to end the exam
+        updateOverviewMap();
+        $("#start-banner").removeClass("hide");
+        $("#quiz-form").addClass("hide");
+
+        $("#quiz-title").html();
+        $("#quiz-btn").text("Submit exam")
+            .click((e) => {
+                e.preventDefault();
+                endExam();
+            })
+            .show();
+        let messageHtml = "<span class='text-muted'>You have remaining time in the exam.</\span><br><span class='text-muted'>You can review and revise your answers until the allocated time expires.</span>";
+        
+        if (examOverview.total_marked_for_later >= 1) {
+            messageHtml += `
+            <div class="alert alert-warning mt-3" role="alert">
+                <strong>Warning:</strong><br>
+                You have ${examOverview.total_marked_for_later} question(s) marked for later review.<br>
+                Please make sure to answer all questions before submitting the exam.
+            </div>`;
+        }
+        
+        $("#quiz-message").html(messageHtml);
+        $("#quiz-message").show();
+}
+
 
 function submitAnswer(loadNext) {
     let answer;
@@ -624,31 +659,7 @@ function submitAnswer(loadNext) {
                         getQuestion(nextQs);
                         updateOverviewMap();
                     } else {
-                        // exam is ended
-                        updateOverviewMap();
-                        $("#start-banner").removeClass("hide");
-                        $("#quiz-form").addClass("hide");
-
-                        $("#quiz-title").html();
-                        $("#quiz-btn").text("Submit exam")
-                            .click((e) => {
-                                e.preventDefault();
-                                endExam();
-                            })
-                            .show();
-                        let messageHtml = "<span class='text-muted'>You have remaining time in the exam.</\span><br><span class='text-muted'>You can review and revise your answers until the allocated time expires.</span>";
-                        
-                        if (examOverview.total_marked_for_later >= 1) {
-                            messageHtml += `
-                            <div class="alert alert-warning mt-3" role="alert">
-                                <strong>Warning:</strong><br>
-                                You have ${examOverview.total_marked_for_later} question(s) marked for later review.<br>
-                                Please make sure to answer all questions before submitting the exam.
-                            </div>`;
-                        }
-                        
-                        $("#quiz-message").html(messageHtml);
-                        $("#quiz-message").show();
+                        showSubmitConfirmPage();
                     }
                 }
             },
