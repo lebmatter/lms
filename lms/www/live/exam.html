@@ -159,8 +159,11 @@ Alert!
             <!-- Bootstrap Navigation -->
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#messages">Messages <span
-                            class="badge badge-pill badge-warning" id="msgCount"></span></a>
+                    <a class="nav-link active" data-toggle="tab" href="#messages">Messages
+                        {% if exam.enable_chat %}
+                        <span class="badge badge-pill badge-warning" id="msgCount"></span>
+                        {% endif %}
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#calculator">Calculator</a>
