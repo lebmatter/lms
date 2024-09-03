@@ -368,27 +368,21 @@ def submit_question_response(exam_submission=None, qs_name=None, answer="", mark
 		raise PermissionError("You don't have access to submit and answer.")
 
 	can_process_question(submission)
-
-	try:
-		result_doc = frappe.get_doc(
-			"Exam Result", "{}-{}".format(exam_submission, qs_name)
-		)
-	except frappe.DoesNotExistError:
+	if not frappe.db.exists("Exam Result", "{}-{}".format(exam_submission, qs_name)):
 		frappe.throw("Invalid question.")
 
-	else:
-		# check if there is any change in answer or flag
-		if result_doc.answer != answer or \
-			result_doc.marked_for_later != markdflater:
-			result_doc.answer = answer
-			result_doc.marked_for_later = markdflater
-			result_doc.evaluation_status = "Pending"
-			result_doc.save(ignore_permissions=True)
-		frappe.cache().hset(
-			exam_submission,
-			"qs:{}".format(result_doc.seq_no),
-			"{}:{}".format(qs_name, "Pending"
-			))
+	result_doc = frappe.get_doc("Exam Result", "{}-{}".format(exam_submission, qs_name))
+	frappe.cache().hset(
+		exam_submission,
+		"qs:{}".format(result_doc.seq_no),
+		"{}:{}".format(qs_name, "Pending"
+	))
+
+	result_doc.answer = answer
+	result_doc.marked_for_later = markdflater
+	result_doc.evaluation_status = "Pending"
+	result_doc.save(ignore_permissions=True)
+
 		
 	return {"qs_name": qs_name, "qs_no": result_doc.seq_no}
 
