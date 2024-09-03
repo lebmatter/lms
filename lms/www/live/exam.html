@@ -169,7 +169,9 @@ Alert!
 
             <!-- Tab Content -->
             <div class="tab-content mt-5">
+                
                 <div id="messages" class="tab-pane fade show active">
+                    {% if exam.enable_chat %}
                     <!-- Tab 1 Content Goes Here -->
                     <div class="chat-container">
                         <div id="chat-messages" class="d-flex flex-column mb-3"></div>
@@ -182,12 +184,19 @@ Alert!
                             </div>
                         </div>
                     </div>
+                    {% else %}
+                    <p class="card-text">Chat disabled.</p>
+                    {% endif %}
                 </div>
                 <div id="calculator" class="tab-pane fade">
+                    {% if exam.enable_calculator %}
                     <!-- Tab 2 Content Goes Here -->
                     <div class="tab-pane fade show active">
                         {{ frappe.render_template('templates/exam/calculator.html', {}) }}
                     </div>
+                    {% else %}
+                    <p class="card-text">Calculator disabled.</p>
+                    {% endif %}
                 </div>
             </div>
             <div class="card  mt-5">

@@ -272,7 +272,9 @@ def get_live_exam(member=None):
 			"enable_calculator": exam.enable_calculator,
 			"live_status": "",
 			"submission_status": submission["status"],
-			"enable_video_proctoring": exam.enable_video_proctoring
+			"enable_video_proctoring": exam.enable_video_proctoring,
+			"enable_chat": exam.enable_chat,
+			"enable_calculator": exam.enable_calculator
 		}
 
 		# make datetime in isoformat
