@@ -336,7 +336,6 @@ function updateOverviewMap() {
                 button.text(i);
                 button.addClass("exam-map-btn btn " + btnCls + " m-1 btn-sm");
                 button.attr("id", "button-" + i);
-                console.log("OVV", data);
                 if (data.message.submitted[i] && data.message.submitted[i].marked_for_later) {
                     button.html(answrLater + ' ' + i);
                 } else if (data.message.submitted[i] && data.message.submitted[i].answer) {
@@ -390,7 +389,6 @@ function displayQuestion(current_qs) {
 
     // Add event listener for markedForLater checkbox
     $('#markedForLater').on('change', function() {
-        hasChanged = true;
         submitAnswer();
     });
     if (currentQuestion["description_image"]) {
@@ -473,27 +471,10 @@ function displayQuestion(current_qs) {
         $('#examTextInput').show();
         var inputTextArea = $("#examTextInput").find("textarea");
         inputTextArea.val(currentQuestion["answer"]);
-        var previousValue = inputTextArea.val(); // initial value of the textarea
-        var hasChanged = false;
         inputTextArea.on('input', function () {
             // Set the flag when the content changes
-            hasChanged = true;
+            submitAnswer();
         });
-
-        // Function to check and call API every 3 seconds
-        setInterval(function () {
-            var currentValue = inputTextArea.val();
-
-            // Only trigger the API call if content has changed
-            if (hasChanged && currentValue !== previousValue) {
-                submitAnswer();
-
-                // Update the previous value and reset the changed flag
-                previousValue = currentValue;
-                hasChanged = false;
-            }
-        }, 5000); // 5 seconds
-
     }
 
     if (exam.time) {
@@ -650,30 +631,28 @@ function submitAnswer(loadNext) {
         answer = $("#examTextInput").find("textarea").val();
     }
 
-    if (answer != '' || mrkForLtr != 0) {
-        frappe.call({
-            method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.submit_question_response",
-            type: "POST",
-            async: false,
-            args: {
-                'exam_submission': exam["exam_submission"],
-                'qs_name': currentQuestion["name"],
-                'answer': answer,
-                'markdflater': mrkForLtr,
-            },
-            callback: (data) => {
-                console.log("submitted answer.");
-                // check if this is the last question
-                if (loadNext) {
-                    if (data.message.qs_no < examOverview["total_questions"]) {
-                        let nextQs = data.message.qs_no + 1
-                        getQuestion(nextQs);
-                        updateOverviewMap();
-                    } else {
-                        showSubmitConfirmPage();
-                    }
+    frappe.call({
+        method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.submit_question_response",
+        type: "POST",
+        async: false,
+        args: {
+            'exam_submission': exam["exam_submission"],
+            'qs_name': currentQuestion["name"],
+            'answer': answer,
+            'markdflater': mrkForLtr,
+        },
+        callback: (data) => {
+            console.log("submitted answer.");
+            // check if this is the last question
+            if (loadNext) {
+                if (data.message.qs_no < examOverview["total_questions"]) {
+                    let nextQs = data.message.qs_no + 1
+                    getQuestion(nextQs);
+                    updateOverviewMap();
+                } else {
+                    showSubmitConfirmPage();
                 }
-            },
-        });
-    }
+            }
+        },
+    });
 };
