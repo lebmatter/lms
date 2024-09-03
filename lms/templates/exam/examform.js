@@ -297,6 +297,17 @@ frappe.ready(() => {
     }, 3000); // 3 seconds
     document.addEventListener("visibilitychange", handleVisibilityChange, false);
 
+    // Attach event listener for all inputs with names starting with "qs_"
+    $(document).on('change', 'input[name^="qs_"]', function () {
+        submitAnswer();
+    });
+
+    // Attach event listener for the "markedForLater" checkbox
+    $(document).on('change', '#markedForLater', function() {
+        submitAnswer();
+    });
+
+
 });
 
 
@@ -387,10 +398,6 @@ function displayQuestion(current_qs) {
         'data-multi': currentQuestion["multiple"]
     });
 
-    // Add event listener for markedForLater checkbox
-    $('#markedForLater').on('change', function() {
-        submitAnswer();
-    });
     if (currentQuestion["description_image"]) {
         $("#question-image").show();
         $("#question-image").attr("src", currentQuestion["description_image"]);
@@ -446,7 +453,7 @@ function displayQuestion(current_qs) {
                     <div class="mb-2">
                         <div class="custom-checkbox">
                             <label class="option-row">
-                                <input class="option" value="${key}" type="${inputType}" name="${currentQuestion["key"]}" ${checked}>
+                                <input class="option" value="${key}" type="${inputType}" name="qs_${currentQuestion["key"]}" ${checked}>
                                 <div class="option-text">${value}</div>
                             </label>
                         </div>
@@ -462,19 +469,11 @@ function displayQuestion(current_qs) {
         $('#choices').html('');
         $('#choices').append(choicesHtml);
 
-        $('input[name="' + currentQuestion["key"] + '"').on('change', function () {
-            submitAnswer();
-        });
-
     } else {
         $('#choices').hide();
         $('#examTextInput').show();
         var inputTextArea = $("#examTextInput").find("textarea");
         inputTextArea.val(currentQuestion["answer"]);
-        inputTextArea.on('input', function () {
-            // Set the flag when the content changes
-            submitAnswer();
-        });
     }
 
     if (exam.time) {
@@ -621,7 +620,7 @@ function submitAnswer(loadNext) {
     var mrkForLtr = $("#markedForLater").prop('checked') ? 1 : 0;
     if (currentQuestion["type"] == "Choices") {
         let checkedValues = [];
-        $("[name='" + currentQuestion["key"] + "']:checked").each(function () {
+        $("[name='" + "qs_" + currentQuestion["key"] + "']:checked").each(function () {
             const numericValue = $(this).val().split("_")[1];
             checkedValues.push(numericValue);
         });
