@@ -1,37 +1,45 @@
 var hiddenTime = 0;
 var visibleTime = 0;
-var startTime;
+var docHiddenStartTime;
+var tabChangeStartTime;
 var examOverview;
 var currentQuestion;
 
 function handleVisibilityChange() {
-    if (document.hidden || document.msHidden || document.webkitHidden) {
+    if (exam.submission_status != "Started") {
+        return
+    }
+    if (document.hidden) {
         // Page is now hidden
-        startTime = new Date();
-    } else if (currentQsNo >= 2) {
+        docHiddenStartTime = new Date();
+    } else if (currentQsNo >= 2 && docHiddenStartTime) {
         // Page is now visible
         var endTime = new Date();
-        var secondsInactive = Math.floor((endTime - startTime) / 1000);
+        var secondsInactive = Math.floor((endTime - docHiddenStartTime) / 1000);
         hiddenTime += secondsInactive;
         visibleTime += (secondsInactive - 1); // Subtract 1 second for the transition time
         let tabChangeStr = "Page was inactive for " + secondsInactive + " seconds";
         if (secondsInactive > 1) {
+            console.log(tabChangeStr);
             sendMessage(tabChangeStr, "Warning", "tabchange");
         }
 
         // Reset the variables
         hiddenTime = 0;
         visibleTime = 0;
-        startTime = null;
+        docHiddenStartTime = null;
     }
 }
 
 function handleWindowChange() {
+    if (exam.submission_status != "Started") {
+        return
+    }
     if (document.hasFocus()) {
         // Window is focused
-        if (startTime) {
+        if (tabChangeStartTime) {
             var endTime = new Date();
-            var totalSeconds = Math.floor((endTime - startTime) / 1000);
+            var totalSeconds = Math.floor((endTime - tabChangeStartTime) / 1000);
             var minutes = Math.floor(totalSeconds / 60);
             if (minutes == 0) {
                 var timeInactive = totalSeconds + "s"
@@ -40,15 +48,16 @@ function handleWindowChange() {
             }
 
             if (totalSeconds > 1) {
-                let windowChangeStr = "Tab change detected for " + timeInactive + ". Return to the exam window immediately.";
+                let windowChangeStr = "Tab change detected for " + timeInactive + ".Return to the exam window immediately.";
+                console.log(windowChangeStr);
                 sendMessage(windowChangeStr, "Warning", "tabchange");
                 examAlert(windowChangeStr);
             }
-            startTime = null;
+            tabChangeStartTime = null;
         }
     } else {
         // Window lost focus
-        startTime = new Date();
+        tabChangeStartTime = new Date();
     }
 }
 
@@ -243,11 +252,6 @@ frappe.ready(() => {
         detectMonitorChange(); // Add this line to start monitoring for screen changes
     }
     if (exam.submission_status === "Started") {
-
-        // Add event listeners for window focus and blur
-        window.addEventListener('focus', handleWindowChange);
-        window.addEventListener('blur', handleWindowChange);
-
         // Add event listener for window unload (close)
         window.addEventListener('beforeunload', function (e) {
             sendMessage("Window closed", "Warning", "tabchange");
@@ -296,6 +300,10 @@ frappe.ready(() => {
         updateMessages(exam["exam_submission"]);
     }, 3000); // 3 seconds
     document.addEventListener("visibilitychange", handleVisibilityChange, false);
+    // Add event listeners for window focus and blur
+    window.addEventListener('focus', handleWindowChange);
+    window.addEventListener('blur', handleWindowChange);
+
 
     // Attach event listener for all inputs with names starting with "qs_"
     $(document).on('change', 'input[name^="qs_"]', function () {
