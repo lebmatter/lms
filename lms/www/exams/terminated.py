@@ -28,7 +28,7 @@ def set_exam_context(context, exam_submission):
 		frappe.throw("Invalid exam requested.")
 	
 	if exam_submission.candidate != frappe.session.user:
-		frappe.throw("Incorrect question requested.")
+		frappe.throw("Incorrect exam requested.")
 
 	if exam_submission.evaluation_pending:
 		frappe.throw("Evaluation pending in exam.")
