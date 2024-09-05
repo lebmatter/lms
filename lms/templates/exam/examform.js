@@ -1,78 +1,8 @@
 var hiddenTime = 0;
 var visibleTime = 0;
-var docHiddenStartTime;
-var tabChangeStartTime;
 var examOverview;
 var currentQuestion;
-
-function handleVisibilityChange() {
-    if (exam.submission_status != "Started") {
-        return
-    }
-    if (document.hidden) {
-        // Page is now hidden
-        docHiddenStartTime = new Date();
-    } else if (currentQsNo >= 2 && docHiddenStartTime) {
-        // Page is now visible
-        var endTime = new Date();
-        var secondsInactive = Math.floor((endTime - docHiddenStartTime) / 1000);
-        hiddenTime += secondsInactive;
-        visibleTime += (secondsInactive - 1); // Subtract 1 second for the transition time
-        let tabChangeStr = "Page was inactive for " + secondsInactive + " seconds";
-        if (secondsInactive > 1) {
-            console.log(tabChangeStr);
-            sendMessage(tabChangeStr, "Warning", "tabchange");
-        }
-
-        // Reset the variables
-        hiddenTime = 0;
-        visibleTime = 0;
-        docHiddenStartTime = null;
-    }
-}
-
-function handleWindowChange() {
-    if (exam.submission_status != "Started") {
-        return
-    }
-    if (document.hasFocus()) {
-        // Window is focused
-        if (tabChangeStartTime) {
-            var endTime = new Date();
-            var totalSeconds = Math.floor((endTime - tabChangeStartTime) / 1000);
-            var minutes = Math.floor(totalSeconds / 60);
-            if (minutes == 0) {
-                var timeInactive = totalSeconds + "s"
-            } else {
-                var timeInactive = minutes + "m:" + totalSeconds + "s";
-            }
-
-            if (totalSeconds > 1) {
-                let windowChangeStr = "Tab change detected for " + timeInactive + ".Return to the exam window immediately.";
-                console.log(windowChangeStr);
-                sendMessage(windowChangeStr, "Warning", "tabchange");
-                examAlert(windowChangeStr);
-            }
-            tabChangeStartTime = null;
-        }
-    } else {
-        // Window lost focus
-        tabChangeStartTime = new Date();
-    }
-}
-
-function detectMonitorChange() {
-    let lastScreens = window.screen.width + 'x' + window.screen.height;
-
-    setInterval(() => {
-        let currentScreens = window.screen.width + 'x' + window.screen.height;
-        if (currentScreens !== lastScreens) {
-            let monitorChangeStr = "Monitor configuration changed from " + lastScreens + " to " + currentScreens;
-            sendMessage(monitorChangeStr, "Warning", "monitorchange");
-            lastScreens = currentScreens;
-        }
-    }, 1000); // Check every second
-}
+var detector;
 
 // Function to update the countdown timer
 function updateTimer() {
@@ -209,6 +139,29 @@ function stopRecording() {
     });
 }
 
+function activateDetector(){
+    if (!detector) {
+        detector = new InactivityDetector({
+            warningThreshold: 2,
+            onInactive: (inactiveStr, secondsInactive) => {
+                tabChangeStr = `Page inactive for ${secondsInactive} seconds.`;
+                console.log(tabChangeStr);
+                sendMessage(tabChangeStr, "Warning", "tabchange");
+                examAlert(tabChangeStr, "Return to the window immediately!");
+            },
+            onActive: () => {
+                console.log("User active again");
+            },
+            onMonitorChange: (lastScreens, currentScreens) => {
+                monitorChangeStr = `Monitor changed from ${lastScreens} to ${currentScreens}`;
+                sendMessage(monitorChangeStr, "Warning", "monitorchange");
+                examAlert(monitorChangeStr);
+            }
+        });
+        detector.init();
+    }
+}
+
 frappe.ready(() => {
     $('#submitTopBtn').hide();
     updateOverviewMap();
@@ -249,7 +202,6 @@ frappe.ready(() => {
         if (exam.enable_video_proctoring) {
             startRecording();
         }
-        detectMonitorChange(); // Add this line to start monitoring for screen changes
     }
     if (exam.submission_status === "Started") {
         // Add event listener for window unload (close)
@@ -263,6 +215,7 @@ frappe.ready(() => {
         }
         // Start the countdown timer
         updateTimer();
+        activateDetector();
     }
 
     $("#nextQs").click((e) => {
@@ -299,11 +252,6 @@ frappe.ready(() => {
     setInterval(function () {
         updateMessages(exam["exam_submission"]);
     }, 3000); // 3 seconds
-    document.addEventListener("visibilitychange", handleVisibilityChange, false);
-    // Add event listeners for window focus and blur
-    window.addEventListener('focus', handleWindowChange);
-    window.addEventListener('blur', handleWindowChange);
-
 
     // Attach event listener for all inputs with names starting with "qs_"
     $(document).on('change', 'input[name^="qs_"]', function () {
@@ -546,6 +494,9 @@ function endExam() {
                 }
                 examEnded = true;
                 stopRecording();
+                if (detector) {
+                    detector.destroy();
+                }
             }
         });
     }
