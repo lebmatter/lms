@@ -181,6 +181,33 @@ frappe.ready(() => {
         e.preventDefault();
     });
 
+    // Disable screenshot-related key combinations
+    document.addEventListener('keydown', function(e) {
+        // Disable "Print Screen" (PrtSc)
+        if (e.key === 'PrintScreen') {
+            e.preventDefault();
+            alert('Screenshots are disabled!');
+        }
+
+        // Disable Ctrl+Shift+S (Windows Snipping Tool shortcut)
+        if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+            e.preventDefault();
+            alert('Screenshots are disabled!');
+        }
+
+        // Disable Cmd+Shift+4 (MacOS screenshot shortcut)
+        if (e.metaKey && e.shiftKey && e.key === '4') {
+            e.preventDefault();
+            alert('Screenshots are disabled!');
+        }
+
+        // Disable Ctrl+P (Print command)
+        if (e.ctrlKey && e.key === 'P') {
+            e.preventDefault();
+            alert('Printing is disabled!');
+        }
+    });
+
     // check if exam is already started
     if (exam["submission_status"] === "Registered") {
         $("#quiz-btn").text("Start exam");
