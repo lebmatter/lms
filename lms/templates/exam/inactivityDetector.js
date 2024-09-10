@@ -18,7 +18,7 @@ class InactivityDetector {
   constructor(options = {}) {
     // Merge default options with provided options
     this.options = {
-      warningThreshold: 5,
+      warningThreshold: 1,
       onInactive: () => {},
       onActive: () => {},
       onMonitorChange: () => {},

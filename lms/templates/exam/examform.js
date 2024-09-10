@@ -142,7 +142,7 @@ function stopRecording() {
 function activateDetector(){
     if (!detector) {
         detector = new InactivityDetector({
-            warningThreshold: 2,
+            warningThreshold: 1,
             onInactive: (inactiveStr, secondsInactive) => {
                 tabChangeStr = `Page inactive for ${secondsInactive} seconds.`;
                 console.log(tabChangeStr);
