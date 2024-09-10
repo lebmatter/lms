@@ -1,6 +1,59 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from frappe.utils import now
+
 import frappe
 from frappe import _
+
+def get_proctor_live_exams(proctor=None):
+	"""
+	Get upcoming/ongoing exam of a proctor.
+
+	Check if current time is inbetween start and end time
+	Function returns only one live/upcoming exam details
+	even if multiple entries are there.
+	"""
+	tracker = "{}:tracker"
+	res = {"live_submissions":[], "pending_candidates": []}
+
+	submissions = frappe.get_all(
+		"LMS Exam Submission",
+		{"assigned_proctor": proctor or frappe.session.user},[
+			"name",
+			"candidate_name",
+			"exam_schedule",
+			"status",
+			"exam_started_time",
+			"exam_submitted_time",
+			"additional_time_given"
+   ])
+	for submission in submissions:
+		if submission["status"] in ["Registration Cancelled", "Aborted"]:
+			continue
+
+		schedule_start_dt, sched_duration = frappe.db.get_value(
+			"LMS Exam Schedule", submission["exam_schedule"], ["start_date_time", "duration"]
+		)
+
+		# end time is schedule start time + duration + additional time given
+		end_time = schedule_start_dt + timedelta(minutes=sched_duration) + \
+			timedelta(minutes=submission["additional_time_given"])
+
+		# checks if current time is between schedule start and end time
+		# ongoing exams can be in Not staryed, started or submitted states
+		tnow = datetime.strptime(now(), '%Y-%m-%d %H:%M:%S.%f')
+		if schedule_start_dt <= tnow <= end_time:
+			userdata = {
+				"name": submission["name"],
+				"candidate_name": submission["candidate_name"],
+				"status": submission["status"]
+			}
+			if frappe.cache().get(tracker.format(submission["name"])):
+				# if tracker exists, candidate started the exam
+				res["live_submissions"].append(userdata)
+			else:
+				res["pending_candidates"].append(userdata)
+
+	return res
 
 def get_context(context):
 	"""
@@ -13,16 +66,10 @@ def get_context(context):
 		raise frappe.Redirect
 
 	context.page_context = {}
-	proctor_list = frappe.get_all("LMS Exam Submission", filters={
-		"assigned_proctor": frappe.session.user,
-	}, fields=["name", "candidate_name", "status"])
-	tracker = "{}:tracker"
-	live_submissions = [
-		p for p in proctor_list if frappe.cache().get(tracker.format(p["name"]))
-	]
+	proctor_list = get_proctor_live_exams()
 
-	context.submissions = live_submissions
-	context.pending_candidates = len(proctor_list) - len(live_submissions)
+	context.submissions = proctor_list["live_submissions"]
+	context.pending_candidates = proctor_list["pending_candidates"]
 	context.video_chunk_length = frappe.db.get_single_value(
 		"LMS Settings", "video_chunk_length"
 	)
