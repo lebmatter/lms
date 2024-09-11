@@ -52,11 +52,11 @@ class LMSExamSubmission(Document):
 		return False, end_time
 	
 	def before_save(self):
-		if frappe.db.exists(
-			"LMS Exam Submission",
-			{"candidate": self.candidate, "exam_schedule": self.exam_schedule}
-		):
-			frappe.throw("Duplicate submission exists for {} - {}".format(self.candidate, self.exam_schedule))
+		# if frappe.db.exists(
+		# 	"LMS Exam Submission",
+		# 	{"candidate": self.candidate, "exam_schedule": self.exam_schedule}
+		# ):
+		# 	frappe.throw("Duplicate submission exists for {} - {}".format(self.candidate, self.exam_schedule))
 
 		if self.exam_started_time:
 			self.total_marks, self.evaluation_pending, self.result_status = evaluation_values(
