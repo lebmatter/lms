@@ -243,7 +243,8 @@
    "in_list_view": 1,
    "label": "Category",
    "options": "LMS Question Category",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "mark",
@@ -255,7 +256,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-15 17:29:50.653545",
+ "modified": "2023-09-16 17:29:50.653545",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Question",

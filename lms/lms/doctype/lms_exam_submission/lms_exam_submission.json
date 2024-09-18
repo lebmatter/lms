@@ -65,7 +65,8 @@
    "in_standard_filter": 1,
    "label": "Candidate",
    "options": "User",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "default": "Registered",
@@ -73,7 +74,8 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "Registered\nRegistration Cancelled\nStarted\nSubmitted\nTerminated"
+   "options": "Registered\nRegistration Cancelled\nStarted\nSubmitted\nTerminated",
+   "search_index": 1
   },
   {
    "fieldname": "exam_started_time",
@@ -208,7 +210,7 @@
    "link_fieldname": "exam_submission"
   }
  ],
- "modified": "2024-08-08 14:42:34.942993",
+ "modified": "2024-08-24 14:42:34.942993",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Submission",

@@ -20,7 +20,8 @@
    "in_list_view": 1,
    "label": "Exam Submission",
    "options": "LMS Exam Submission",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "from",
@@ -66,7 +67,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-24 20:41:23.112348",
+ "modified": "2024-08-24 20:41:23.112348",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Exam Messages",
