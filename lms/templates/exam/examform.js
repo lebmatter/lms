@@ -144,7 +144,7 @@ function activateDetector(){
         detector = new InactivityDetector({
             warningThreshold: 1,
             onInactive: (inactiveStr, secondsInactive) => {
-                tabChangeStr = `Page inactive for ${secondsInactive} seconds.`;
+                tabChangeStr = `Tab changed detected for ${secondsInactive} seconds.`;
                 console.log(tabChangeStr);
                 sendMessage(tabChangeStr, "Warning", "tabchange");
                 examAlert(tabChangeStr, "Return to the window immediately!");
