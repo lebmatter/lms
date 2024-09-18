@@ -469,20 +469,22 @@ function displayQuestion(current_qs) {
 };
 
 function sendMessage(message, messageType, warningType) {
-    frappe.call({
-        method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.post_exam_message",
-        type: "POST",
-        args: {
-            'exam_submission': exam["exam_submission"],
-            'message': message,
-            'type_of_message': messageType,
-            'warning_type': warningType,
-            'from': "Candidate"
-        },
-        callback: (data) => {
-            console.log(data);
-        },
-    });
+    if (warningType === "nowebcam" && currentQsNo > 1) {
+        frappe.call({
+            method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.post_exam_message",
+            type: "POST",
+            args: {
+                'exam_submission': exam["exam_submission"],
+                'message': message,
+                'type_of_message': messageType,
+                'warning_type': warningType,
+                'from': "Candidate"
+            },
+            callback: (data) => {
+                console.log(data);
+            },
+        });
+    }
 }
 
 function sendChatMessage() {
