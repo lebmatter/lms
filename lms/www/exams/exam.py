@@ -34,16 +34,7 @@ def set_exam_context(context, exam_name):
 			"description",
 			"published",
 			"upcoming",
-			"disable_self_learning",
-			"status",
-			"video_link",
-			"enable_certification",
-			"grant_certificate_after",
-			"paid_certificate",
-			"price_certificate",
-			"currency",
-			"max_attempts",
-			"duration",
+			"enable_certification"
 		],
 		as_dict=True,
 	)
