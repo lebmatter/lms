@@ -217,7 +217,6 @@ def get_authored_exams(member=None, only_published=True):
 				"title",
 				"image",
 				"enable_certification",
-				"status",
 				"published",
 			],
 			as_dict=True,
