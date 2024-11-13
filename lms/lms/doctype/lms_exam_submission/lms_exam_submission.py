@@ -500,11 +500,12 @@ def post_exam_message(exam_submission=None, message=None, type_of_message="Gener
 	return {"status": 1}
 
 @frappe.whitelist()
-def terminate_exam(exam_submission):
+def terminate_exam(exam_submission, check_permission=True):
 	doc = frappe.get_doc("LMS Exam Submission", exam_submission)
 	# only proctor can terminate exam
-	if frappe.session.user != doc.assigned_proctor:
-		raise PermissionError("No permission to terminate this exam.")
+	if check_permission:
+		if frappe.session.user != doc.assigned_proctor:
+			raise PermissionError("No permission to terminate this exam.")
 	doc.status = "Terminated"
 	doc.save(ignore_permissions=True)
 	frappe.db.commit()

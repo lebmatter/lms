@@ -42,5 +42,5 @@ class LMSExamMessages(Document):
 			exam = frappe.get_cached_value("LMS Exam Submission", self.exam_submission, "exam")
 			max_warning = frappe.get_cached_value("LMS Exam", exam, "max_warning_count")
 			if new_wc > max_warning:
-				terminate_exam(self.exam_submission)
+				terminate_exam(self.exam_submission, check_permission=False)
 
