@@ -469,7 +469,7 @@ function displayQuestion(current_qs) {
 };
 
 function sendMessage(message, messageType, warningType) {
-    if (warningType === "nowebcam" && currentQsNo > 1) {
+    if (currentQsNo > 1) {
         frappe.call({
             method: "lms.lms.doctype.lms_exam_submission.lms_exam_submission.post_exam_message",
             type: "POST",
