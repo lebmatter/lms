@@ -10,6 +10,7 @@ class InactivityDetector {
    * Create an InactivityDetector instance.
    * @param {Object} options - Configuration options
    * @param {number} [options.warningThreshold=5] - Inactivity time (in seconds) before triggering a warning
+   * @param {Function} [options.onInactivityStart] - Callback function when inactivity is first detected
    * @param {Function} [options.onInactive] - Callback function when user becomes inactive
    * @param {Function} [options.onActive] - Callback function when user becomes active again
    * @param {Function} [options.onMonitorChange] - Callback function when monitor configuration changes
@@ -18,7 +19,8 @@ class InactivityDetector {
   constructor(options = {}) {
     // Merge default options with provided options
     this.options = {
-      warningThreshold: 1,
+      warningThreshold: 5,
+      onInactivityStart: () => {},
       onInactive: () => {},
       onActive: () => {},
       onMonitorChange: () => {},
@@ -33,7 +35,7 @@ class InactivityDetector {
     this.lastScreens = `${window.screen.width}x${window.screen.height}`;
 
     // Bind methods to ensure correct 'this' context when used as event listeners
-    this.handleVisibilityChange = this.handleVisibilityChange.bind(this);
+    this.handleActivityChange = this.handleActivityChange.bind(this);
     this.checkMonitorChange = this.checkMonitorChange.bind(this);
     this.handleBeforeUnload = this.handleBeforeUnload.bind(this);
   }
@@ -45,8 +47,10 @@ class InactivityDetector {
     // Clear any existing hiddenTime in localStorage
     localStorage.removeItem(this.storageKey);
 
-    // Set up visibility change listener to detect when the page is hidden/shown
-    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    // Set up visibility change and focus/blur listeners
+    document.addEventListener('visibilitychange', this.handleActivityChange);
+    window.addEventListener('blur', this.handleActivityChange);
+    window.addEventListener('focus', this.handleActivityChange);
     
     // Set up beforeunload listener to detect when the window is about to close
     window.addEventListener('beforeunload', this.handleBeforeUnload);
@@ -63,7 +67,9 @@ class InactivityDetector {
    */
   destroy() {
     // Remove all event listeners
-    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    document.removeEventListener('visibilitychange', this.handleActivityChange);
+    window.removeEventListener('blur', this.handleActivityChange);
+    window.removeEventListener('focus', this.handleActivityChange);
     window.removeEventListener('beforeunload', this.handleBeforeUnload);
     
     // Clear monitor change interval
@@ -92,21 +98,32 @@ class InactivityDetector {
   }
 
   /**
-   * Handle visibility change events.
-   * This method is called when the page becomes hidden or visible.
+   * Handle focus change events.
+   * This method is called when the window gains or loses focus.
+   * @param {FocusEvent} event - The focus/blur event
    */
-  handleVisibilityChange() {
-    if (document.hidden) {
-      // Page is hidden, store the current time in localStorage
-      localStorage.setItem(this.storageKey, new Date().toISOString());
+  /**
+   * Handle both visibility and focus change events.
+   * This unified method handles both page visibility and window focus changes.
+   */
+  handleActivityChange() {
+    const isInactive = document.hidden || !document.hasFocus();
+    
+    if (isInactive) {
+      // Page is hidden or window lost focus
+      if (!localStorage.getItem(this.storageKey)) {
+        localStorage.setItem(this.storageKey, new Date().toISOString());
+        this.options.onInactivityStart();
+      }
     } else {
-      // Page is visible again, check how long it was hidden
+      // Page is visible or window gained focus
       const storedHiddenTime = localStorage.getItem(this.storageKey);
       if (storedHiddenTime) {
         const hiddenDuration = (new Date() - new Date(storedHiddenTime)) / 1000;
         if (hiddenDuration >= 1) {
           if (hiddenDuration >= this.options.warningThreshold) {
-            this.options.onInactive("Page was hidden", Math.floor(hiddenDuration));
+            const reason = document.hidden ? "Page was hidden" : "Window was blurred";
+            this.options.onInactive(reason, Math.floor(hiddenDuration));
           }
           this.options.onActive(Math.floor(hiddenDuration));
         }
